@@ -15,7 +15,7 @@ public class Person {
 		this.strasse = strasse;
 		this.plz = plz;
 		this.wohnort = ort;
-		
+	
 	}
 	
 	public int getNummer(){
