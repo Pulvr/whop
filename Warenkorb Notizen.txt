@@ -1,0 +1,6 @@
+Jeder Kunde 1 Korb
+
+Soll der Warenkorb schon abchecken ob 1000000 bananen vorhanden sind wenn ein kunde soviel haben will?
+
+warenkorb, wenn ein kunde 8 tische haben will und es gibt nur 10 dann müssen diese  reserviert werden damit nicht ein anderer Kunde der 5 tische haben will diese kaufen kann.
+
