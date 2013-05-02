@@ -17,5 +17,9 @@ public class Person {
 		this.wohnort = ort;
 		
 	}
+	
+	public int getNummer(){
+		return nummer;
+	}
 
 }
