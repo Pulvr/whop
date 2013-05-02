@@ -114,6 +114,7 @@ public class LagerClientCUI {
 			String bezeichnung = liesEingabe();
 			List<Ware> liste = lag.sucheNachBezeichnung(bezeichnung);
 			gibWarenlisteAus(liste);
+			
 		}
 		else if (line.equals("s")) {
 			lag.schreibeWaren();
