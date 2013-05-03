@@ -154,6 +154,7 @@ public class FilePersistenceManager implements PersistenceManager {
 		}else if(p instanceof Mitarbeiter){
 			Mitarbeiter m= (Mitarbeiter) p;
 			schreibeZeile(new Float(m.getGehalt()).toString());
+			return true;
 		}
 		return true;
 	}
