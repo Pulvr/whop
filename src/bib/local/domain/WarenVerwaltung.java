@@ -113,11 +113,12 @@ public class WarenVerwaltung {
 	}
 	
 	
-	
-	public void entfernen(Ware eineWare){
+	//Methode zum entfernen von waren, der Eintrag in vector wird komplett entfernt
+	/*public void entfernen(Ware eineWare){
 		if (warenBestand.contains(eineWare))
 			warenBestand.remove(eineWare);
 	}
+	*/
 	
 	
 	/**

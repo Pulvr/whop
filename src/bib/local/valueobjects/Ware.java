@@ -48,7 +48,7 @@ public class Ware {
 	 * Methode dient Vergleich von zwei Waren-Objekten anhand ihrer Werte,
 	 * d.h. bezeichnung und Nummer.
 	 * 
-	 * @see java.lang.Object#toString()
+	 * @see java.lang.Object#equals()
 	 */
 	public boolean equals(Object andereWare) {
 		if (andereWare instanceof Ware) 
@@ -70,12 +70,16 @@ public class Ware {
 	public int getBestand() {
 		return bestand;
 	}
+	
+	public void setBestand(int bestand){
+		this.bestand = bestand;
+	}
 
 	public String getBezeichnung() {
 		return bezeichnung;
 	}
 
-	public boolean isVerfuegbar() {
+	public boolean istVerfuegbar() {
 		return verfuegbar;
 	}
 }

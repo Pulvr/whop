@@ -41,7 +41,7 @@ public class LagerClientCUI {
 	 */
 	private void gibMenueAus() {
 		System.out.print("Befehle: \n  Ware einfuegen: 'e'");
-		System.out.print("	       \n  Ware entfernen : 'l'");
+	  //System.out.print("	       \n  Ware entfernen : 'l'");
 		System.out.print("	       \n  Waren sortieren : 't'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
 		System.out.print("         \n  Waren suchen:  'f'");
@@ -119,7 +119,7 @@ public class LagerClientCUI {
 		else if (line.equals("s")) {
 			lag.schreibeWaren();
 		}
-		else if (line.equals("l")){
+	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");
 			String nummer = liesEingabe();
 			int Nr = Integer.parseInt(nummer);
@@ -145,7 +145,7 @@ public class LagerClientCUI {
 			}
 			if(liste.isEmpty())
 		     System.out.println(bezeichnung + " wurde nicht gefunden");
-		}
+		}*/
 		
 	}
 	

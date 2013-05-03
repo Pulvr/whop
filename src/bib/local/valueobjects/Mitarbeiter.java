@@ -13,4 +13,8 @@ public class Mitarbeiter extends Person{
 	public float getGehalt() {
 		return gehalt;
 	}
+	
+	public void setGehalt(float gehalt){
+		this.gehalt = gehalt;
+	}
 }

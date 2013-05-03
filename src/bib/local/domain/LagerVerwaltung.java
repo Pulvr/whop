@@ -96,12 +96,12 @@ public class LagerVerwaltung {
 			 meineWaren.artikelSortieren(Sortierung.Nummer); 
 	 }
 	
-	public void entferneWare(String bezeichnung, int nummer, int bestand){
+	/*public void entferneWare(String bezeichnung, int nummer, int bestand){
 		Ware w = new Ware(bezeichnung, nummer , bestand);
 		
 		meineWaren.entfernen(w);
 		
-	}
+	}*/
 
 	/**
 	 * Methode zum Speichern des Warenbestands in einer Datei.
