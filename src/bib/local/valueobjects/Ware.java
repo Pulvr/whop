@@ -1,6 +1,5 @@
 package bib.local.valueobjects;
 
-
 /**
  * Klasse zur Repräsentation einzelner Waren.
  * 
@@ -14,7 +13,7 @@ public class Ware {
 	private boolean verfuegbar; 
 	private int bestand;
 	
-	
+	//
 	public Ware(String bezeichnung, int nr, int bestand) {
 		this(bezeichnung, nr ,bestand, true);
 	}

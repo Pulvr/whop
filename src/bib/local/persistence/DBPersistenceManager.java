@@ -1,7 +1,9 @@
 package bib.local.persistence;
-
+//
 import java.io.IOException;
 
+import bib.local.valueobjects.Kunde;
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 public class DBPersistenceManager implements PersistenceManager {
@@ -36,20 +38,19 @@ public class DBPersistenceManager implements PersistenceManager {
 		return false;
 	}
 
-	/*
-	 *  Wenn später mal eine Kundenverwaltung ergänzt wird:
+	
 
 	@Override
-	public Kunde ladeKunde() throws IOException {
+	public Kunde ladePerson() throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean speichereKunde(Kunde k) throws IOException {
+	public boolean speicherePerson(Person p) throws IOException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	*/
+	
 }

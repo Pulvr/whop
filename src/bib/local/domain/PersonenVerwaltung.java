@@ -1,3 +1,4 @@
+
 package bib.local.domain;
 
 import java.util.Vector;
@@ -15,7 +16,7 @@ import bib.local.valueobjects.Person;
  */
 
 public class PersonenVerwaltung {
-  
+	
 	private Vector<Person> personenListe = new Vector<Person>();
 	
 	private PersistenceManager pm = new FilePersistenceManager();

@@ -1,5 +1,5 @@
 package bib.local.persistence;
-
+//
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -8,6 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import bib.local.valueobjects.Kunde;
+import bib.local.valueobjects.Mitarbeiter;
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -62,16 +65,15 @@ public class FilePersistenceManager implements PersistenceManager {
 			// keine Daten mehr vorhanden
 			return null;
 		}
+		
 		// Nummer einlesen ...
 		String nummerString = liesZeile();
 		// ... und von String in int konvertieren
 		int nummer = Integer.parseInt(nummerString);
 		
-		
 		String bestandString = liesZeile();
 		// ... und von String in int konvertieren
 		int bestand = Integer.parseInt(bestandString);
-		
 		
 		// Ware nicht verfuegbar?
 		String verfuegbarCode = liesZeile();
@@ -105,20 +107,58 @@ public class FilePersistenceManager implements PersistenceManager {
 		return true;
 	}
 
-	/*
-	 *  Wenn später mal eine Kundenverwaltung ergänzt wird:
+	
 
-	public Kunde ladeKunde() throws IOException {
-		// TODO: Implementieren
-		return null;
+	public Person ladePerson() throws IOException {
+		// Name einlesen
+				String name = liesZeile();
+				if (name == null) {
+					// keine Daten mehr vorhanden
+					return null;
+				}
+				// Daten der Person einlesen ...
+				String nummernString = liesZeile();
+				int nummer = Integer.parseInt(nummernString);
+				String anrede = liesZeile();
+				String strasse = liesZeile();
+				String plz = liesZeile();
+				String wohnort = liesZeile();
+				String username = liesZeile();
+				String password = liesZeile();
+				Person p = null;
+				if (p instanceof Kunde){
+					String umsatzString = liesZeile();
+					Float umsatz = Float.parseFloat(umsatzString);
+					p = new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort, username, password,umsatz);
+				}else if(p instanceof Mitarbeiter){
+					String gehaltString = liesZeile();
+					Float gehalt = Float.parseFloat(gehaltString);
+					p = new Mitarbeiter(nummer,name ,anrede ,strasse ,plz ,wohnort, username, password,gehalt);
+				}
+				return p;
 	}
 
-	public boolean speichereKunde(Kunde k) throws IOException {
-		// TODO: Implementieren
-		return false;
+	public boolean speicherePerson(Person p) throws IOException {
+		schreibeZeile(Integer.valueOf(p.getNummer()).toString());
+		schreibeZeile(p.getAnrede());
+		schreibeZeile(p.getName());
+		schreibeZeile(p.getStrasse());
+		schreibeZeile(p.getPlz());
+		schreibeZeile(p.getWohnort());
+		schreibeZeile(p.getUsername());
+		schreibeZeile(p.getPassword());
+		if(p instanceof Kunde){
+			Kunde k = (Kunde) p;
+			schreibeZeile(new Float(k.getUmsatz()).toString());
+            return true;
+		}else if(p instanceof Mitarbeiter){
+			Mitarbeiter m= (Mitarbeiter) p;
+			schreibeZeile(new Float(m.getGehalt()).toString());
+		}
+		return true;
 	}
 
-	*/
+	
 	
 	/*
 	 * Private Hilfsmethoden

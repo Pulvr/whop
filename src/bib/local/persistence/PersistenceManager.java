@@ -1,7 +1,8 @@
 package bib.local.persistence;
-
+//
 import java.io.IOException;
 
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -37,12 +38,22 @@ public interface PersistenceManager {
 	 */
 	public boolean speichereWare(Ware w) throws IOException;
 
-	/*
-	 *  Wenn später mal eine Kundenverwaltung ergänzt wird:
-
-	public Kunde ladeKunde() throws IOException;
-
-	public boolean speichereKunde(Kunde k) throws IOException;
 	
-	*/
+	/**
+	 * Methode zum Einlesen der Personendaten aus einer externen Datenquelle.
+	 * 
+	 * @return Waren-Objekt, wenn Einlesen erfolgreich, false null
+	 */
+	public Person ladePerson() throws IOException;
+	
+	/**
+	 * Methode zum Schreiben der Personendaten in eine externe Datenquelle.
+	 * 
+	 * @param w Waren-Objekt, das gespeichert werden soll
+	 * @return true, wenn Schreibvorgang erfolgreich, false sonst
+	 */
+
+	public boolean speicherePerson(Person p) throws IOException;
+	
+	
 }

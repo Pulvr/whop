@@ -1,5 +1,5 @@
 package bib.local.domain;
-
+//
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +55,7 @@ public class WarenVerwaltung {
 		// Persistenz-Schnittstelle wieder schlieﬂen
 		pm.close();
 	}
-
+//
 	/**
 	 * Methode zum Schreiben der Warendaten in eine Datei.
 	 * 

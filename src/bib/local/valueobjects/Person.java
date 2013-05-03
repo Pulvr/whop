@@ -1,5 +1,5 @@
 package bib.local.valueobjects;
-
+//
 public class Person {
 	private int nummer;
 	private String anrede="";
@@ -7,16 +7,20 @@ public class Person {
 	private String strasse = "";
 	private String plz = "";
 	private String wohnort = "";
+	private String username = "";
+	private String password = "";
 	
 	
 	//Konstruktor
-	public Person(int nr, String name, String anrede, String strasse, String plz, String ort){
+	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String usr, String pw){
 		this.nummer = nr;
 		this.name = name;
-		this.anrede = anrede;
+		this.anrede = anr;
 		this.strasse = strasse;
 		this.plz = plz;
 		this.wohnort = ort;
+		this.username = usr;
+		this.password = pw;
 	}
 	
 	@Override
@@ -50,7 +54,7 @@ public class Person {
 		return name;
 	}
 	
-	public String getStraﬂe(){
+	public String getStrasse(){
 		return strasse;
 	}
 	
@@ -62,4 +66,11 @@ public class Person {
 		return wohnort;
 	}
 
+	public String getUsername(){
+		return username;
+	}
+	
+	public String getPassword(){
+		return password;
+	}
 }

@@ -1,15 +1,19 @@
 package bib.local.valueobjects;
-
+//
 public class Mitarbeiter extends Person{
 	
+	//Mitarbeiter hat extra-Attribut gehalt
 	private float gehalt;
 	
-	public Mitarbeiter (int nr, String name, String anrede, String strasse, String plz, String ort, float gehalt){
-		super(nr, name, anrede, strasse, plz, ort);
+	//Konstruktor
+	public Mitarbeiter (int nr, String name, String anrede, String strasse, String plz, String ort, String usr, String pw, float gehalt){
+		super(nr, name, anrede, strasse, plz, ort, usr, pw);
 		this.gehalt=gehalt;
 		
 	}
 	
+	
+	//Accessor-Methoden
 	public float getGehalt() {
 		return gehalt;
 	}

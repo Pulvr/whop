@@ -1,6 +1,5 @@
 package bib.local.valueobjects;
 
-
 /**
  * Klasse zur Repraesentation einzelner Kunden.
  * 
@@ -17,8 +16,8 @@ public class Kunde extends Person{
 	private float umsatz = 0.0f;
 	
 
-    public Kunde(int nr, String name, String anrede, String strasse, String plz, String ort,float um) {
-		super(nr, name, anrede, strasse, plz, ort);
+    public Kunde(int nr, String name, String anrede, String strasse, String plz, String ort,String usr, String pw,float um) {
+		super(nr ,name ,anrede ,strasse ,plz ,ort ,usr ,pw );
 		this.umsatz=um;
 	}
     
