@@ -1,5 +1,5 @@
 package bib.local.domain.exceptions;
-//
+
 import bib.local.valueobjects.Ware;
 
 /**
