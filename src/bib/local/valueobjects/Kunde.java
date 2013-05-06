@@ -16,8 +16,8 @@ public class Kunde extends Person{
 	private float umsatz = 0.0f;
 	
 
-    public Kunde(int nr, String name, String anrede, String strasse, String plz, String ort,String usr, String pw,float um) {
-		super(nr ,name ,anrede ,strasse ,plz ,ort ,usr ,pw );
+    public Kunde(int nr, String name, String anrede, String strasse, String plz, String ort, String email,String usr, String pw,float um) {
+		super(nr ,name ,anrede ,strasse ,plz ,ort ,email ,usr ,pw );
 		this.umsatz=um;
 	}
     

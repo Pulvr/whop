@@ -123,17 +123,18 @@ public class FilePersistenceManager implements PersistenceManager {
 				String strasse = liesZeile();
 				String plz = liesZeile();
 				String wohnort = liesZeile();
+				String email = liesZeile();
 				String username = liesZeile();
 				String password = liesZeile();
 				Person p = null;
 				if (p instanceof Kunde){
 					String umsatzString = liesZeile();
 					Float umsatz = Float.parseFloat(umsatzString);
-					p = new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort, username, password,umsatz);
+					p = new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort, email, username, password,umsatz);
 				}else if(p instanceof Mitarbeiter){
 					String gehaltString = liesZeile();
 					Float gehalt = Float.parseFloat(gehaltString);
-					p = new Mitarbeiter(nummer,name ,anrede ,strasse ,plz ,wohnort, username, password,gehalt);
+					p = new Mitarbeiter(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password,gehalt);
 				}
 				return p;
 	}
@@ -145,6 +146,7 @@ public class FilePersistenceManager implements PersistenceManager {
 		schreibeZeile(p.getStrasse());
 		schreibeZeile(p.getPlz());
 		schreibeZeile(p.getWohnort());
+		schreibeZeile(p.getEmail());
 		schreibeZeile(p.getUsername());
 		schreibeZeile(p.getPassword());
 		if(p instanceof Kunde){

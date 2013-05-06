@@ -7,23 +7,25 @@ public class Person {
 	private String strasse = "";
 	private String plz = "";
 	private String wohnort = "";
+	private String email = "";
 	private String username = "";
 	private String password = "";
 	
 	
 	//Konstruktor
-	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String usr, String pw){
+	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw){
 		this.nummer = nr;
 		this.name = name;
 		this.anrede = anr;
 		this.strasse = strasse;
 		this.plz = plz;
 		this.wohnort = ort;
+		this.email = email;
 		this.username = usr;
 		this.password = pw;
 	}
 	
-	@Override
+	
 	/**
 	 * Standard-Methode von Object überschrieben.
 	 * Methode dient Vergleich von zwei Personen-Objekten anhand ihrer Werte,
@@ -39,7 +41,10 @@ public class Person {
 			return false;
 		
 	}
-	
+	public String toString() {
+		return ("Nr: " + nummer + " / Name: " + name + " / Anrede: " + anrede + " / Strasse: " + strasse + " / Postleitzahl: "+plz+"" +
+				" / Wohnort: "+wohnort+" / E-Mail "+email);
+	}
 	
 	//Accessor-Methoden
 	public int getNummer(){
@@ -64,6 +69,10 @@ public class Person {
 	
 	public String getWohnort(){
 		return wohnort;
+	}
+	
+	public String getEmail(){
+		return email;
 	}
 
 	public String getUsername(){

@@ -6,8 +6,8 @@ public class Mitarbeiter extends Person{
 	private float gehalt;
 	
 	//Konstruktor
-	public Mitarbeiter (int nr, String name, String anrede, String strasse, String plz, String ort, String usr, String pw, float gehalt){
-		super(nr, name, anrede, strasse, plz, ort, usr, pw);
+	public Mitarbeiter (int nr, String name, String anrede, String strasse, String plz, String ort, String email, String usr, String pw, float gehalt){
+		super(nr, name, anrede, strasse, plz, ort, email, usr, pw);
 		this.gehalt=gehalt;
 		
 	}
