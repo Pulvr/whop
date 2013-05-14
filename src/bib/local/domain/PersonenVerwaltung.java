@@ -7,7 +7,7 @@ import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Person;
 
-//
+
 
 /**
  * Klasse zur Verwaltung von Personen (Kunde und Mitarbeiter)
