@@ -5,6 +5,7 @@ import java.util.List;
 
 import bib.local.domain.WarenVerwaltung.Sortierung;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -21,6 +22,7 @@ public class LagerVerwaltung {
 	private String datei = "";
 	
 	private WarenVerwaltung meineWaren;
+	private PersonenVerwaltung meinePersonen;
 	// private KundenVerwaltung meineKunden;
 	// hier weitere Verwaltungsklassen, z.B. für Autoren oder Angestellte
 	
@@ -41,10 +43,10 @@ public class LagerVerwaltung {
 		// Warenbestand aus Datei einlesen
 		meineWaren = new WarenVerwaltung();
 		meineWaren.liesDaten(datei+"_B.txt");
+		
 		// Kundenkartei aus Datei einlesen
-//		meineKunden = new KundenVerwaltung();
-//		meineKunden.liesDaten(datei+"_K.txt");
-//		meineKunden.schreibeDaten(datei+"_K.txt");
+		meinePersonen = new PersonenVerwaltung();
+		meinePersonen.liesDaten(datei+"_P.txt");
 	}
 
 
@@ -56,6 +58,11 @@ public class LagerVerwaltung {
 	public List<Ware> gibAlleWaren() {
 		// einfach delegieren an meineWaren
 		return meineWaren.getWarenBestand();
+	}
+	
+	public List<Person> gibAllePersonen() {
+		// einfach delegieren an meineWaren
+		return meinePersonen.getPersonen();
 	}
 
 	/**
@@ -110,6 +117,10 @@ public class LagerVerwaltung {
 	 */
 	public void schreibeWaren() throws IOException {
 		meineWaren.schreibeDaten(datei+"_B.txt");
+	}
+	
+	public void schreibePersonen() throws IOException {
+		meinePersonen.schreibeDaten(datei+"_P.txt");
 	}
 
 	// TODO: Weitere Funktionen der LagerVerwaltung, z.B. ausleihen, zurückgeben etc.

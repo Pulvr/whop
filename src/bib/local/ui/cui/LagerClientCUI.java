@@ -9,6 +9,7 @@ import java.util.List;
 
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -44,6 +45,8 @@ public class LagerClientCUI {
 	  //System.out.print("	       \n  Ware entfernen : 'l'");
 		System.out.print("	       \n  Waren sortieren : 't'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
+		System.out.print("         \n  Personen ausgeben:  'l'");
+		System.out.print("         \n  Personen speichern:  'b'");
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
 		System.out.println("         \n  Beenden:        'q'");
@@ -94,8 +97,12 @@ public class LagerClientCUI {
 				System.out.println("Fehler beim Einfügen");
 		}
 		else if (line.equals("a")) {
-			List<Ware> liste = lag.gibAlleWaren();
-			gibWarenlisteAus(liste);
+			List<Ware> listeW = lag.gibAlleWaren();
+			gibWarenlisteAus(listeW);
+		}
+		else if (line.equals("l")) {
+			List<Person> listeP = lag.gibAllePersonen();
+			gibPersonenAus(listeP);
 		}
 		else if (line.equals("t")){
 			System.out.println("Nach was soll sortiert werden?");
@@ -118,6 +125,9 @@ public class LagerClientCUI {
 		}
 		else if (line.equals("s")) {
 			lag.schreibeWaren();
+		}
+		else if (line.equals("b")) {
+			lag.schreibePersonen();
 		}
 	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");
@@ -162,6 +172,18 @@ public class LagerClientCUI {
 			while (iter.hasNext()) {
 				Ware ware = iter.next();
 				System.out.println(ware.toString());
+			}
+		}
+	}
+	
+	private void gibPersonenAus(List<Person> personen) {
+		if (personen.isEmpty()) {
+			System.out.println("Liste ist leer.");
+		} else {
+			Iterator<Person> iter = personen.iterator();
+			while (iter.hasNext()) {
+				Person person = iter.next();
+				System.out.println(person.toString());
 			}
 		}
 	}
