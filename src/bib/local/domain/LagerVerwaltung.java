@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import bib.local.domain.WarenVerwaltung.Sortierung;
+import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -14,25 +15,25 @@ import bib.local.valueobjects.Ware;
  * zur Suche nach Waren, zum Einfügen neuer Waren 
  * und zum Speichern des Bestands.
  * 
- * @author teschke
+ * @author Meisermann
  * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
 public class LagerVerwaltung {
-	// Präfix für Namen der Dateien, in der die Bibliotheksdaten gespeichert sind
+	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind
 	private String datei = "";
 	
 	private WarenVerwaltung meineWaren;
 	private PersonenVerwaltung meinePersonen;
 	// private KundenVerwaltung meineKunden;
-	// hier weitere Verwaltungsklassen, z.B. für Autoren oder Angestellte
+	// hier weitere Verwaltungsklassen, z.B. für Waren oder Angestellte
 	
 	/**
-	 * Konstruktor, der die Basisdaten (Bücher, Kunden, Autoren) aus Dateien einliest
-	 * (Initialisierung der Bibliothek).
+	 * Konstruktor, der die Basisdaten (Waren, Personen) aus Dateien einliest
+	 * (Initialisierung des shops).
 	 * 
 	 * Namensmuster für Dateien:
 	 *   datei+"_B.txt" ist die Datei der Waren
-	 *   datei+"_K.txt" ist die Datei der Kunden
+	 *   datei+"_P.txt" ist die Datei der Personen
 	 * 
 	 * @param datei
 	 * @throws IOException, z.B. wenn eine der Dateien nicht existiert.
@@ -61,7 +62,7 @@ public class LagerVerwaltung {
 	}
 	
 	public List<Person> gibAllePersonen() {
-		// einfach delegieren an meineWaren
+		// einfach delegieren an meinePersonen
 		return meinePersonen.getPersonen();
 	}
 
@@ -88,7 +89,17 @@ public class LagerVerwaltung {
 	public void fuegeWareEin(String bezeichnung, int nummer, int bestand) throws WareExistiertBereitsException {
 		Ware w = new Ware(bezeichnung, nummer,  bestand);
 //		try {
-		meineWaren.einfuegen(w);
+		meineWaren.wareEinfuegen(w);
+//		} catch (WareExistiertBereitsException e) {
+//			return false;
+//		}
+//		return true;
+	}
+	
+	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw) throws PersonExistiertBereitsException {
+		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw);
+//		try {
+		meinePersonen.personEinfuegen(p);
 //		} catch (WareExistiertBereitsException e) {
 //			return false;
 //		}

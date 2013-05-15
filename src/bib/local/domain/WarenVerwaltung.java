@@ -15,7 +15,7 @@ import bib.local.valueobjects.Ware;
 /**
  * Klasse zur Verwaltung von Waren.
  * 
- * @author teschke
+ * 
  * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
 public class WarenVerwaltung {
@@ -44,7 +44,7 @@ public class WarenVerwaltung {
 			if (eineWare != null) {
 				// Ware in Liste einfügen
 				try {
-					einfuegen(eineWare);
+					wareEinfuegen(eineWare);
 				} catch (WareExistiertBereitsException e1) {
 					// Kann hier eigentlich nicht auftreten,
 					// daher auch keine Fehlerbehandlung...
@@ -69,8 +69,8 @@ public class WarenVerwaltung {
 		if (!warenBestand.isEmpty()) {
 			Iterator<Ware> iter = warenBestand.iterator();
 			while (iter.hasNext()) {
-				Ware b = iter.next();
-				pm.speichereWare(b);				
+				Ware w = iter.next();
+				pm.speichereWare(w);				
 			}
 		}			
 		
@@ -84,7 +84,7 @@ public class WarenVerwaltung {
 	 * @param eineWare die einzufügende Ware
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
-	public void einfuegen(Ware eineWare) throws WareExistiertBereitsException {
+	public void wareEinfuegen(Ware eineWare) throws WareExistiertBereitsException {
 		if (!warenBestand.contains(eineWare))
 			warenBestand.add(eineWare);
 		else
@@ -164,7 +164,7 @@ public class WarenVerwaltung {
 	 */
 	public List<Ware> getWarenBestand() {
 		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
-		// mit Kopien der Buch-Objekte zurückzugeben
+		// mit Kopien der Waren-Objekte zurückzugeben
 		return warenBestand;
 	}
 }

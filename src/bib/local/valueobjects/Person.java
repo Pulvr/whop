@@ -11,7 +11,9 @@ public class Person {
 	private String username = "";
 	private String password = "";
 	
-	
+	public Person (){
+		
+	}
 	//Konstruktor
 	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw){
 		this.nummer = nr;

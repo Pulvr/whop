@@ -1,17 +1,14 @@
 package bib.local.domain;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Person;
-import bib.local.valueobjects.Ware;
 
 /**
  * Klasse zur Verwaltung von Personen (Mitarbeiter und Kunden).
@@ -40,16 +37,16 @@ public class PersonenVerwaltung {
 
 		Person einePerson;
 		do {
-			// Ware-Objekt einlesen
+			// Personen-Objekt einlesen
 			einePerson = pm.ladePerson();
 			if (einePerson != null) {
-				// Ware in Liste einfügen
-				//try {
-					einfuegen(einePerson);
-				//} catch (WareExistiertBereitsException e1) {
+				//Person in Liste einfügen
+				try {
+					personEinfuegen(einePerson);
+				} catch (PersonExistiertBereitsException e1) {
 					// Kann hier eigentlich nicht auftreten,
 					// daher auch keine Fehlerbehandlung...
-				//}
+				}
 			}
 		} while (einePerson != null);
 
@@ -57,9 +54,11 @@ public class PersonenVerwaltung {
 		pm.close();
 	}
 
-	private void einfuegen(Person einePerson) {
-		// TODO Auto-generated method stub
-
+	public void personEinfuegen(Person einePerson) throws PersonExistiertBereitsException{
+		if (!personen.contains(einePerson))
+			personen.add(einePerson);
+		else
+			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
 	}
 	
 	public void schreibeDaten(String datei) throws IOException  {
@@ -69,8 +68,8 @@ public class PersonenVerwaltung {
 		if (!personen.isEmpty()) {
 			Iterator<Person> iter = personen.iterator();
 			while (iter.hasNext()) {
-				Person b = iter.next();
-				pm.speicherePerson(b);				
+				Person p = iter.next();
+				pm.speicherePerson(p);				
 			}
 		}			
 		
@@ -80,7 +79,7 @@ public class PersonenVerwaltung {
 	
 	public List<Person> getPersonen() {
 		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
-		// mit Kopien der Buch-Objekte zurückzugeben
+		// mit Kopien der Personen-Objekte zurückzugeben
 		return personen;
 	}
 }

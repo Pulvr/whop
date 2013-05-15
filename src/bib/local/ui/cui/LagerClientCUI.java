@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import bib.local.domain.LagerVerwaltung;
+import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -45,6 +46,7 @@ public class LagerClientCUI {
 	  //System.out.print("	       \n  Ware entfernen : 'l'");
 		System.out.print("	       \n  Waren sortieren : 't'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
+		System.out.print("         \n  Person einfuegen: 'p'");
 		System.out.print("         \n  Personen ausgeben:  'l'");
 		System.out.print("         \n  Personen speichern:  'b'");
 		System.out.print("         \n  Waren suchen:  'f'");
@@ -95,6 +97,40 @@ public class LagerClientCUI {
 				System.out.println("Einfügen ok");
 			else
 				System.out.println("Fehler beim Einfügen");
+		} else if (line.equals("p")) {
+			System.out.print("Nummer > ");
+			String nr = liesEingabe();
+			int pNr = Integer.parseInt(nr);
+			System.out.print("Name > ");
+			String name = liesEingabe();
+			System.out.print("Anrede > ");
+			String anr = liesEingabe();
+			System.out.print("Straße > ");
+			String strasse = liesEingabe();
+			System.out.print("PLZ > ");
+			String plz = liesEingabe();
+			System.out.print("Ort > ");
+			String ort = liesEingabe();
+			System.out.print("E-Mail > ");
+			String email = liesEingabe();
+			System.out.print("Username > ");
+			String usr = liesEingabe();
+			System.out.print("Passwort > ");
+			String pw = liesEingabe();
+			boolean ok = false;
+			try{
+				lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw);
+				ok = true;
+			}catch (PersonExistiertBereitsException e){
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+			if (ok)
+				System.out.println("Einfügen ok");
+			else
+				System.out.println("Fehler beim Einfügen");
+			
+			
 		}
 		else if (line.equals("a")) {
 			List<Ware> listeW = lag.gibAlleWaren();
