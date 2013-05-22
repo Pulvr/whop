@@ -1,5 +1,9 @@
+/**
+ * Personenklasse , Superklasse von Kunde und Mitarbeiter
+ */
+
 package bib.local.valueobjects;
-//
+
 public class Person {
 	private int nummer;
 	private String anrede="";
@@ -43,6 +47,11 @@ public class Person {
 			return false;
 		
 	}
+	
+	/**
+	 * Standard-Methode  von Object überschrieben
+	 * dient der einfachereren ausgabe der attribute der Person
+	 */
 	public String toString() {
 		return ("Nr: " + nummer + " / Name: " + name + " / Anrede: " + anrede + " / Strasse: " + strasse + " / Postleitzahl: "+plz+"" +
 				" / Wohnort: "+wohnort+" / E-Mail "+email);

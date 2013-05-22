@@ -1,6 +1,5 @@
-
 package bib.local.ui.cui;
-//
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +18,6 @@ import bib.local.valueobjects.Ware;
  * und Ausgaben auf der Kommandozeile, daher der Name CUI
  * (Command line User Interface).
  * 
- * @author teschke
- * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
 public class LagerClientCUI {
 
@@ -256,7 +253,7 @@ public class LagerClientCUI {
 	public static void main(String[] args) {
 		LagerClientCUI cui;
 		try {
-			cui = new LagerClientCUI("BIB");
+			cui = new LagerClientCUI("LAG");
 			cui.run();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

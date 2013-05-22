@@ -1,5 +1,9 @@
+/**
+ * Mitarbeiter Klasse von Person abgeleitet
+ */
+
 package bib.local.valueobjects;
-//
+
 public class Mitarbeiter extends Person{
 	
 	//Mitarbeiter hat extra-Attribut gehalt

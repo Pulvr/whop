@@ -7,6 +7,7 @@ package bib.local.valueobjects;
  * Anwendung bisland nur Waren verwaltet.
  * 
  * 
+ * 
  */
 public class Kunde extends Person{
 
