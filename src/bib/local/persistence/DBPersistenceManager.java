@@ -1,5 +1,5 @@
 package bib.local.persistence;
-//
+
 import java.io.IOException;
 
 import bib.local.valueobjects.Kunde;

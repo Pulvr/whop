@@ -52,14 +52,20 @@ public class LagerVerwaltung {
 
 
 	/**
-	 * Methode, die eine Liste aller im Bestand befindlichen Bücher zurückgibt.
+	 * Methode, die eine Liste aller im Bestand befindlichen Waren zurückgibt.
 	 * 
-	 * @return Liste aller Bücher im Bestand der Bibliothek
+	 * @return Liste aller Waren im Lager
 	 */
 	public List<Ware> gibAlleWaren() {
 		// einfach delegieren an meineWaren
 		return meineWaren.getWarenBestand();
 	}
+	
+	/**
+	 * Methode, die eine Liste aller Personen
+	 * 
+	 * @return Liste aller Personen
+	 */
 	
 	public List<Person> gibAllePersonen() {
 		// einfach delegieren an meinePersonen
@@ -95,6 +101,21 @@ public class LagerVerwaltung {
 //		}
 //		return true;
 	}
+	/**
+	 * Methode zum Einfügen einer Person in eine Liste
+	 * 
+	 * 
+	 * @param nr Nummer der Person
+	 * @param name Name der Person
+	 * @param anr Anrede der Person
+	 * @param strasse 
+	 * @param plz
+	 * @param ort
+	 * @param email
+	 * @param usr
+	 * @param pw 
+	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
+	 */
 	
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw) throws PersonExistiertBereitsException {
 		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw);
@@ -106,6 +127,7 @@ public class LagerVerwaltung {
 //		return true;
 	}
 	
+	 // Sortiert die Waren entweder nach bezeichnung oder nummer 
 	 public void sortiereDieWaren(String aufgabe) {
 		 	
 		 if (aufgabe.equals ("b")) 
@@ -114,12 +136,15 @@ public class LagerVerwaltung {
 			 meineWaren.artikelSortieren(Sortierung.Nummer); 
 	 }
 	
-	/*public void entferneWare(String bezeichnung, int nummer, int bestand){
+	/** Entfernt waren aus dem Vector, wird nicht verwendet weil letztendlich nur der bestand verändert wird und
+	 *  keine Waren aus dem Vector entfernt werden, vielleicht noch nützlich momementan nicht
+	 */
+	 /*public void entferneWare(String bezeichnung, int nummer, int bestand){
 		Ware w = new Ware(bezeichnung, nummer , bestand);
 		
 		meineWaren.entfernen(w);
 		
-	}*/
+	 }*/
 
 	/**
 	 * Methode zum Speichern des Warenbestands in einer Datei.
@@ -129,7 +154,11 @@ public class LagerVerwaltung {
 	public void schreibeWaren() throws IOException {
 		meineWaren.schreibeDaten(datei+"_B.txt");
 	}
-	
+	/**
+	 * Methode zum speichern der Personen in einer Datei
+	 * 
+	 * @throws IOException
+	 */
 	public void schreibePersonen() throws IOException {
 		meinePersonen.schreibeDaten(datei+"_P.txt");
 	}

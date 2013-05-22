@@ -6,13 +6,13 @@ package bib.local.valueobjects;
  * Die Klasse wird derzeit noch nicht verwendet, weil die Bibliotheks-
  * Anwendung bisland nur Waren verwaltet.
  * 
- * @author teschke
+ * 
  */
 public class Kunde extends Person{
 
 	
 
-	
+	//ausgaben die ein Kunde insgesamt für alle produkte getätigt hat
 	private float umsatz = 0.0f;
 	
 

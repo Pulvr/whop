@@ -14,7 +14,6 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- * @author teschke
  *
  * Realisierung einer Schnittstelle zur persistenten Speicherung von
  * Daten in Dateien.
@@ -111,8 +110,8 @@ public class FilePersistenceManager implements PersistenceManager {
 
 	public Person ladePerson() throws IOException {
 		// Name einlesen
-				String name = liesZeile();
-				if (name == null) {
+				String username = liesZeile();
+				if (username == null) {
 					// keine Daten mehr vorhanden
 					return null;
 				}
@@ -120,11 +119,11 @@ public class FilePersistenceManager implements PersistenceManager {
 				String nummernString = liesZeile();
 				int nummer = Integer.parseInt(nummernString);
 				String anrede = liesZeile();
+				String name = liesZeile();
 				String strasse = liesZeile();
 				String plz = liesZeile();
 				String wohnort = liesZeile();
 				String email = liesZeile();
-				String username = liesZeile();
 				String password = liesZeile();
 				Person p = null;
 				if (p instanceof Kunde){
@@ -136,13 +135,15 @@ public class FilePersistenceManager implements PersistenceManager {
 					Float gehalt = Float.parseFloat(gehaltString);
 					p = new Mitarbeiter(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password,gehalt);
 				}
-				return p;
+				return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password);
+				
+				
 	}
 
 	public boolean speicherePerson(Person p) throws IOException {
+		schreibeZeile(p.getName());
 		schreibeZeile(Integer.valueOf(p.getNummer()).toString());
 		schreibeZeile(p.getAnrede());
-		schreibeZeile(p.getName());
 		schreibeZeile(p.getStrasse());
 		schreibeZeile(p.getPlz());
 		schreibeZeile(p.getWohnort());

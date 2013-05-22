@@ -113,7 +113,7 @@ public class WarenVerwaltung {
 	}
 	
 	
-	//Methode zum entfernen von waren, der Eintrag in vector wird komplett entfernt
+	//Methode zum entfernen von waren, der Eintrag in vector wird komplett entfernt und ist deswegen unbenutzt
 	/*public void entfernen(Ware eineWare){
 		if (warenBestand.contains(eineWare))
 			warenBestand.remove(eineWare);
@@ -121,10 +121,14 @@ public class WarenVerwaltung {
 	*/
 	
 	
+	
+
+	 
 	/**
-	 * enum ist ein spezieller Datentyp, der einer Variable erlaubt einen 
-	 * gewissen Wert anzunehemen
-	 *
+	 * Methode zum sortieren der Waren nach Bezeichnung oder Nummer , die methode ist erweiterbar um noch nach bestand o.ä.
+	 * zu sortieren
+	 * 
+	 * @param sortieren
 	 */
 	public void artikelSortieren(Sortierung sortieren){
 		switch (sortieren){
@@ -146,17 +150,14 @@ public class WarenVerwaltung {
 		}
 		
 	}
-	
+//	  enum ist ein spezieller Datentyp, der einer Variable erlaubt einen 
+//	  gewissen Wert anzunehemen
 	public static enum Sortierung{
 		Bezeichnung,
 		Nummer
 	}
 	
 	
-	
-	// TODO: Weitere Methoden, z.B. Entfernen von Waren aus dem Bestand
-	// ...
-
 	/**
 	 * Methode, die den Warenbestand als Vector zurückgibt.
 	 * 

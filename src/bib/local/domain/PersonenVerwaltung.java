@@ -27,8 +27,7 @@ public class PersonenVerwaltung {
 	/**
 	 * Methode zum Einlesen von Personendaten aus einer Datei.
 	 * 
-	 * @param datei
-	 *            Datei, die einzulesende Kundeninformationen enthält
+	 * @param datei Datei, die einzulesende Kundeninformationen enthält
 	 * @throws IOException
 	 */
 	public void liesDaten(String datei) throws IOException {
@@ -53,14 +52,24 @@ public class PersonenVerwaltung {
 		// Persistenz-Schnittstelle wieder schließen
 		pm.close();
 	}
-
+	/**
+	 * Methode zum einfügen von Personen
+	 * 
+	 * @param einePerson
+	 * @throws PersonExistiertBereitsException
+	 */
 	public void personEinfuegen(Person einePerson) throws PersonExistiertBereitsException{
 		if (!personen.contains(einePerson))
 			personen.add(einePerson);
 		else
 			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
 	}
-	
+	/**
+	 * Schreibe die Daten in eine Datei
+	 * 
+	 * @param datei
+	 * @throws IOException
+	 */
 	public void schreibeDaten(String datei) throws IOException  {
 		// PersistenzManager für Schreibvorgänge öffnen
 		pm.openForWriting(datei);
