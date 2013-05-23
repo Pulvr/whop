@@ -110,8 +110,8 @@ public class FilePersistenceManager implements PersistenceManager {
 
 	public Person ladePerson() throws IOException {
 		// Name einlesen
-				String username = liesZeile();
-				if (username == null) {
+				String name = liesZeile();
+				if (name == null) {
 					// keine Daten mehr vorhanden
 					return null;
 				}
@@ -119,11 +119,11 @@ public class FilePersistenceManager implements PersistenceManager {
 				String nummernString = liesZeile();
 				int nummer = Integer.parseInt(nummernString);
 				String anrede = liesZeile();
-				String name = liesZeile();
 				String strasse = liesZeile();
 				String plz = liesZeile();
 				String wohnort = liesZeile();
 				String email = liesZeile();
+				String username = liesZeile();
 				String password = liesZeile();
 				Person p = null;
 				if (p instanceof Kunde){

@@ -53,8 +53,7 @@ public class Person {
 	 * dient der einfachereren ausgabe der attribute der Person
 	 */
 	public String toString() {
-		return ("Nr: " + nummer + " / Name: " + name + " / Anrede: " + anrede + " / Strasse: " + strasse + " / Postleitzahl: "+plz+"" +
-				" / Wohnort: "+wohnort+" / E-Mail "+email);
+		return ("User: " + username + "\n" + anrede + " " + name + " / E-Mail " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
 	}
 	
 	//Accessor-Methoden

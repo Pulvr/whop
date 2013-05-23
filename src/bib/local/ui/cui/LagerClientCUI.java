@@ -208,7 +208,11 @@ public class LagerClientCUI {
 			}
 		}
 	}
-	
+	/* (non-Javadoc)
+	 * 
+	 * Interne (private) Methode zum Ausgeben aller angemeldeter Personen.
+	 *
+	 */
 	private void gibPersonenAus(List<Person> personen) {
 		if (personen.isEmpty()) {
 			System.out.println("Liste ist leer.");
