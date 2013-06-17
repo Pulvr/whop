@@ -9,23 +9,19 @@ public class Ware {
 
 	// Attribute zur Beschreibung einer Ware:
 	private String bezeichnung;
-	private int nummer;
-	private boolean verfuegbar; 
+	private int nummer; 
 	private int bestand;
+	private int bestellteMenge;
 	
 	//
-	public Ware(String bezeichnung, int nr, int bestand) {
-		this(bezeichnung, nr ,bestand, true);
-	}
+	//public Ware(String bezeichnung, int nr, int bestand) {
+	//	this(bezeichnung, nr ,bestand, true);
+	//}
 
-	public Ware(String bezeichnung, int nr,int bstd ,  boolean verfuegbar) {
+	public Ware(String bezeichnung, int nr,int bstd) {
 		nummer = nr;
 		this.bezeichnung = bezeichnung;
 		this.bestand= bstd;
-		if (bstd >= 1)
-            this.verfuegbar = verfuegbar;
-		else
-            this.verfuegbar = !verfuegbar;
 	}
 	
 	// --- Dienste der Waren-Objekte ---
@@ -38,8 +34,8 @@ public class Ware {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String verfuegbarkeit = verfuegbar ? "verfuegbar" : "ausverkauft";
-		return ("Nr: " + nummer + " / Bezeichnung: " + bezeichnung + " / Bestand : " + bestand + " / " + verfuegbarkeit);
+		//String verfuegbarkeit = verfuegbar ? "verfuegbar" : "ausverkauft";
+		return ("Nr: " + nummer + " / Bezeichnung: " + bezeichnung + " / Bestand : " + bestand + " / ");
 	}
 
 	/**
@@ -63,22 +59,27 @@ public class Ware {
 	 */
 	
 	public int getNummer() {
-		return nummer;
+		return this.nummer;
 	}
 	
 	public int getBestand() {
-		return bestand;
+		return this.bestand;
 	}
 	
 	public void setBestand(int bestand){
 		this.bestand = bestand;
 	}
+	
+	public void setBestellteMenge(int menge){
+		this.bestellteMenge = menge;
+	}
 
 	public String getBezeichnung() {
-		return bezeichnung;
+		return this.bezeichnung;
 	}
-
-	public boolean istVerfuegbar() {
-		return verfuegbar;
+	
+	public int getBestellteMenge(){
+		return this.bestellteMenge;
 	}
+	
 }

@@ -1,5 +1,7 @@
 package bib.local.valueobjects;
 
+import java.util.HashMap;
+
 /**
  * Klasse zur Repraesentation einzelner Kunden.
  * 

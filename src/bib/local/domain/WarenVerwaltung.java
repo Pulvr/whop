@@ -1,15 +1,18 @@
 package bib.local.domain;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.Collections;
-import java.util.Comparator;
 
+import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
+import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -26,6 +29,8 @@ public class WarenVerwaltung {
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs verantwortlich ist
 	private PersistenceManager pm = new FilePersistenceManager();
 	
+	private HashMap<String, Ware> warenObjekte = new HashMap<String, Ware>();
+
 	
 	/**
 	 * Methode zum Einlesen von Warendaten aus einer Datei.
@@ -85,8 +90,10 @@ public class WarenVerwaltung {
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
 	public void wareEinfuegen(Ware eineWare) throws WareExistiertBereitsException {
-		if (!warenBestand.contains(eineWare))
+		if (!warenBestand.contains(eineWare)){
 			warenBestand.add(eineWare);
+			warenObjekte.put(eineWare.getBezeichnung(), eineWare);
+		}
 		else
 			throw new WareExistiertBereitsException(eineWare, " - in 'einfuegen()'");
 	}
@@ -167,5 +174,9 @@ public class WarenVerwaltung {
 		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
 		// mit Kopien der Waren-Objekte zurückzugeben
 		return warenBestand;
+	}
+	
+	public HashMap<String, Ware> getWarenObjekte(){
+		return this.warenObjekte;
 	}
 }

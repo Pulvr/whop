@@ -1,14 +1,17 @@
 package bib.local.domain;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Person;
+import bib.local.valueobjects.Ware;
 
 /**
  * Klasse zur Verwaltung von Personen (Mitarbeiter und Kunden).
@@ -19,6 +22,8 @@ public class PersonenVerwaltung {
 
 	// Verwaltung der Personen in einem Vector
 	private List<Person> personen = new Vector<Person>();
+	
+	private HashMap<Integer, Person> personenObjekte = new HashMap<Integer, Person>();
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs
 	// verantwortlich ist
@@ -60,7 +65,8 @@ public class PersonenVerwaltung {
 	 */
 	public void personEinfuegen(Person einePerson) throws PersonExistiertBereitsException{
 		if (!personen.contains(einePerson))
-			personen.add(einePerson);
+			{personen.add(einePerson);
+			personenObjekte.put(einePerson.getNummer(), einePerson);}
 		else
 			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
 	}
@@ -90,5 +96,17 @@ public class PersonenVerwaltung {
 		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
 		// mit Kopien der Personen-Objekte zurückzugeben
 		return personen;
+	}
+	
+	public HashMap<Integer, Person> getPersonenObjekte(){
+		return this.personenObjekte;
+	}
+	
+	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
+		if((menge >= 0) && (ware.getBestand() >= menge)){
+			p.inWarenKorbLegen(ware, menge);
+		} else if (menge < 0) {
+			throw new BestellteMengeNegativException();
+		}
 	}
 }

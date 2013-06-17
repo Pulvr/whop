@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import bib.local.domain.LagerVerwaltung;
+import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.valueobjects.Person;
@@ -49,6 +50,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
 		System.out.println("         \n  Beenden:        'q'");
+		System.out.println("		\n bestellte Menge ändern 'j'");
 		System.out.print("> "); // Prompt
 		System.out.flush(); // ohne NL ausgeben
 	}
@@ -161,6 +163,30 @@ public class LagerClientCUI {
 		}
 		else if (line.equals("b")) {
 			lag.schreibePersonen();
+		}
+		else if (line.equals("j")){
+			System.out.println("Welche Ware möchtest du kaufen?");
+			String bezeichnung = liesEingabe();
+			System.out.println("Wieviel möchtest du davon?");
+			String mengenString = liesEingabe();
+			int menge = Integer.parseInt(mengenString);
+			System.out.println("Wer bist du überhaupt?");
+			String knummerString = liesEingabe();
+			int knummer = Integer.parseInt(knummerString);
+			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				try {
+					lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+					System.out.println("Ihr Warenkorb beinhaltet:" + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
+				} catch (BestellteMengeNegativException e) {
+					// TODO Auto-generated catch block
+					System.err.print(e.getMessage());
+				}
+			} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
+				System.err.println("Die Person existiert nicht.");
+			} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				System.err.println("Die Ware existiert nicht.");
+			}
+
 		}
 	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");

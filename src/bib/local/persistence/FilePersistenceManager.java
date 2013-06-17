@@ -74,15 +74,9 @@ public class FilePersistenceManager implements PersistenceManager {
 		// ... und von String in int konvertieren
 		int bestand = Integer.parseInt(bestandString);
 		
-		// Ware nicht verfuegbar?
-		String verfuegbarCode = liesZeile();
-		// Codierung des Ausleihstatus in boolean umwandeln
-		boolean verfuegbar = false;
-		if (verfuegbarCode.equals("t"))
-			verfuegbar = true;
-		
+		// Ware nicht verfuegbarn
 		// neues Buch-Objekt anlegen und zurückgeben
-		return new Ware(bezeichnung, nummer,bestand, verfuegbar);
+		return new Ware(bezeichnung, nummer,bestand);
 	}
 
 	/**
@@ -98,11 +92,6 @@ public class FilePersistenceManager implements PersistenceManager {
 		schreibeZeile(w.getBezeichnung());
 		schreibeZeile(Integer.valueOf(w.getNummer()).toString());
 		schreibeZeile(Integer.valueOf(w.getBestand()).toString());
-		if (w.istVerfuegbar())
-			schreibeZeile("t");
-		else
-			schreibeZeile("f");
-
 		return true;
 	}
 
@@ -125,16 +114,20 @@ public class FilePersistenceManager implements PersistenceManager {
 				String email = liesZeile();
 				String username = liesZeile();
 				String password = liesZeile();
-				Person p = null;
-				if (p instanceof Kunde){
+				//String berechtigung = liesZeile();
+				/*if (berechtigung.equals("Kunde")){
 					String umsatzString = liesZeile();
-					Float umsatz = Float.parseFloat(umsatzString);
-					p = new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort, email, username, password,umsatz);
-				}else if(p instanceof Mitarbeiter){
+					int umsatz = Integer.parseInt(umsatzString);
+					
+					return new Kunde(nummer, name ,anrede ,strasse ,plz ,wohnort,email, username, password, umsatz);
+					
+				}else if(berechtigung.equals("Mitarbeiter")){
 					String gehaltString = liesZeile();
 					Float gehalt = Float.parseFloat(gehaltString);
-					p = new Mitarbeiter(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password,gehalt);
-				}
+					
+					return new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, gehalt);
+					
+				}*/
 				return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password);
 				
 				

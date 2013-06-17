@@ -4,6 +4,9 @@
 
 package bib.local.valueobjects;
 
+import java.util.HashMap;
+import java.util.Vector;
+
 public class Person {
 	private int nummer;
 	private String anrede="";
@@ -14,6 +17,7 @@ public class Person {
 	private String email = "";
 	private String username = "";
 	private String password = "";
+	private Vector<Ware> warenkorb;
 	
 	public Person (){
 		
@@ -53,7 +57,7 @@ public class Person {
 	 * dient der einfachereren ausgabe der attribute der Person
 	 */
 	public String toString() {
-		return ("User: " + username + "\n" + anrede + " " + name + " / E-Mail " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
+		return ("User: " + username + "\n" + anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
 	}
 	
 	//Accessor-Methoden
@@ -91,5 +95,14 @@ public class Person {
 	
 	public String getPassword(){
 		return password;
+	}
+	
+	public Vector<Ware> getWarenkorb(){
+		return this.warenkorb;
+	}
+	
+	public void inWarenKorbLegen(Ware w, int menge){
+		for(int i = 0; i < menge; i++)
+			this.warenkorb.add(w);
 	}
 }

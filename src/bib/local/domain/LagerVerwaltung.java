@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import bib.local.domain.WarenVerwaltung.Sortierung;
+import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.valueobjects.Person;
@@ -21,6 +22,8 @@ import bib.local.valueobjects.Ware;
 public class LagerVerwaltung {
 	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind
 	private String datei = "";
+	
+	
 	
 	private WarenVerwaltung meineWaren;
 	private PersonenVerwaltung meinePersonen;
@@ -161,6 +164,18 @@ public class LagerVerwaltung {
 	 */
 	public void schreibePersonen() throws IOException {
 		meinePersonen.schreibeDaten(datei+"_P.txt");
+	}
+	
+	public void inWarenKorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
+		meinePersonen.inWarenkorbLegen(menge, ware, p);
+	}
+	
+	public PersonenVerwaltung getMeinePersonenVerwaltung(){
+		return this.meinePersonen;
+	}
+	
+	public WarenVerwaltung getMeineWarenVerwaltung(){
+		return this.meineWaren;
 	}
 
 	// TODO: Weitere Funktionen der LagerVerwaltung, z.B. ausleihen, zurückgeben etc.
