@@ -4,7 +4,6 @@
 
 package bib.local.valueobjects;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 public class Person {
@@ -17,7 +16,7 @@ public class Person {
 	private String email = "";
 	private String username = "";
 	private String password = "";
-	private Vector<Ware> warenkorb;
+	private Vector<Ware> warenkorb = new Vector<Ware>();
 	
 	public Person (){
 		

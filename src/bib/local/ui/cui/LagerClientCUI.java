@@ -49,8 +49,9 @@ public class LagerClientCUI {
 		System.out.print("         \n  Personen speichern:  'b'");
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
+		System.out.print("		 \n Waren in den Korb legen 'j'");
 		System.out.println("         \n  Beenden:        'q'");
-		System.out.println("		\n bestellte Menge ändern 'j'");
+		
 		System.out.print("> "); // Prompt
 		System.out.flush(); // ohne NL ausgeben
 	}
@@ -173,20 +174,27 @@ public class LagerClientCUI {
 			System.out.println("Wer bist du überhaupt?");
 			String knummerString = liesEingabe();
 			int knummer = Integer.parseInt(knummerString);
-			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
+					lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 				try {
-					lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
-					System.out.println("Ihr Warenkorb beinhaltet:" + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
+					lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
+							lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+					//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
+					System.out.println("Ihr Warenkorb beinhaltet:" + 
+							lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb()+"\n");
 				} catch (BestellteMengeNegativException e) {
 					// TODO Auto-generated catch block
 					System.err.print(e.getMessage());
+				}
 				}
 			} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
 				System.err.println("Die Person existiert nicht.");
 			} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 				System.err.println("Die Ware existiert nicht.");
+			} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
+				System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 			}
-
 		}
 	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");
