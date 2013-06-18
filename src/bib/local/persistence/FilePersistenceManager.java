@@ -69,12 +69,11 @@ public class FilePersistenceManager implements PersistenceManager {
 		String nummerString = liesZeile();
 		// ... und von String in int konvertieren
 		int nummer = Integer.parseInt(nummerString);
-		
+		//Bestand einlesen ...
 		String bestandString = liesZeile();
 		// ... und von String in int konvertieren
 		int bestand = Integer.parseInt(bestandString);
-		
-		// Ware nicht verfuegbarn
+	
 		// neues Buch-Objekt anlegen und zurückgeben
 		return new Ware(bezeichnung, nummer,bestand);
 	}
@@ -85,10 +84,10 @@ public class FilePersistenceManager implements PersistenceManager {
 	 * codiert abgelegt.
 	 * 
 	 * @param w Waren-Objekt, das gespeichert werden soll
-	 * @return true, wenn Schreibvorgang erfolgreich, false sonst
+	 * @return true, wenn Schreibvorgang erfolgreich,sonst false
 	 */
 	public boolean speichereWare(Ware w) throws IOException {
-		// Titel, Nummer und Verfügbarkeit schreiben
+		// Bezeichnung und Nummer schreiben
 		schreibeZeile(w.getBezeichnung());
 		schreibeZeile(Integer.valueOf(w.getNummer()).toString());
 		schreibeZeile(Integer.valueOf(w.getBestand()).toString());
@@ -96,7 +95,9 @@ public class FilePersistenceManager implements PersistenceManager {
 	}
 
 	
-
+	/**
+	 * Methode zum einlesen von Personen aus einer externen Datei
+	 */
 	public Person ladePerson() throws IOException {
 		// Name einlesen
 				String name = liesZeile();
@@ -132,7 +133,12 @@ public class FilePersistenceManager implements PersistenceManager {
 				
 				
 	}
-
+	
+	/**
+	 * Methode zum speichern von Personen in einer externen Datei
+	 * 
+	 * @param p Person die gespeichert wird
+	 */
 	public boolean speicherePerson(Person p) throws IOException {
 		schreibeZeile(p.getName());
 		schreibeZeile(Integer.valueOf(p.getNummer()).toString());

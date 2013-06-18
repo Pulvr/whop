@@ -14,9 +14,9 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- * Klasse zur Verwaltung von Personen (Mitarbeiter und Kunden).
+ * Klasse zur Verwaltung von Personen (noch ohne Mitarbeiter und Kunden).
  * 
- * @author Maik Eisermann
+ * @author Maik
  */
 public class PersonenVerwaltung {
 
@@ -102,6 +102,15 @@ public class PersonenVerwaltung {
 		return this.personenObjekte;
 	}
 	
+	/**
+	 * Methode die Waren in den Warenkorb legt, aber nur wenn die verlangte Menge > 0 und der
+	 * Bestand der Anfrage standhalten kann
+	 * 
+	 * @param menge wieviele von der angegeben Ware?
+	 * @param ware welche ware?
+	 * @param p welche Person?
+	 * @throws BestellteMengeNegativException
+	 */
 	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
 		if((menge > 0) && (ware.getBestand() >= menge)){
 			p.inWarenKorbLegen(ware, menge);

@@ -179,16 +179,16 @@ public class LagerClientCUI {
 			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
 					lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 				if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
-				try {
-					lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
-							lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
-					//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
-					System.out.println("Ihr Warenkorb beinhaltet:" + 
-							lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb()+"\n");
-				} catch (BestellteMengeNegativException e) {
-					// TODO Auto-generated catch block
-					System.err.print(e.getMessage());
-				}
+					try {
+						lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
+								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+						//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
+						System.out.println("Ihr Warenkorb beinhaltet:" + 
+								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
+					} catch (BestellteMengeNegativException e) {
+						// TODO Auto-generated catch block
+						System.err.print(e.getMessage());
+					}
 				}
 			} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
 				System.err.println("Die Person existiert nicht.");

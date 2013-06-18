@@ -1,18 +1,13 @@
 package bib.local.valueobjects;
 
-
 /**
  * Klasse zur Repraesentation einzelner Kunden.
  * 
  * Die Klasse wird derzeit noch nicht verwendet, weil die Bibliotheks-
  * Anwendung bisland nur Waren verwaltet.
  * 
- * 
- * 
  */
 public class Kunde extends Person{
-
-	
 
 	//ausgaben die ein Kunde insgesamt für alle produkte getätigt hat
 	private float umsatz = 0.0f;
@@ -23,6 +18,7 @@ public class Kunde extends Person{
 		this.umsatz=um;
 	}
     
+    
     public void setUmsatz(float umsatz) {
 		this.umsatz = umsatz;
 	}
@@ -30,5 +26,4 @@ public class Kunde extends Person{
 	public float getUmsatz() {
 		return umsatz;
 	}
-	// Weitere Dienste der Kunden-Objekte
 }

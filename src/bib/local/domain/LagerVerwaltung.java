@@ -17,13 +17,10 @@ import bib.local.valueobjects.Ware;
  * und zum Speichern des Bestands.
  * 
  * @author Maik
- * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
 public class LagerVerwaltung {
 	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind
 	private String datei = "";
-	
-	
 	
 	private WarenVerwaltung meineWaren;
 	private PersonenVerwaltung meinePersonen;
@@ -65,11 +62,10 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode, die eine Liste aller Personen
+	 * Methode, die eine Liste aller Personen gibt
 	 * 
 	 * @return Liste aller Personen
 	 */
-	
 	public List<Person> gibAllePersonen() {
 		// einfach delegieren an meinePersonen
 		return meinePersonen.getPersonen();
@@ -97,40 +93,27 @@ public class LagerVerwaltung {
 	 */
 	public void fuegeWareEin(String bezeichnung, int nummer, int bestand) throws WareExistiertBereitsException {
 		Ware w = new Ware(bezeichnung, nummer,  bestand);
-//		try {
 		meineWaren.wareEinfuegen(w);
-//		} catch (WareExistiertBereitsException e) {
-//			return false;
-//		}
-//		return true;
 	}
+	
 	/**
 	 * Methode zum Einfügen einer Person in eine Liste
 	 * 
-	 * 
-	 * @param nr Nummer der Person
-	 * @param name Name der Person
-	 * @param anr Anrede der Person
-	 * @param strasse 
-	 * @param plz
-	 * @param ort
-	 * @param email
-	 * @param usr
-	 * @param pw 
+	 * @param Daten der Person
 	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
 	 */
 	
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw) throws PersonExistiertBereitsException {
 		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw);
-//		try {
 		meinePersonen.personEinfuegen(p);
-//		} catch (WareExistiertBereitsException e) {
-//			return false;
-//		}
-//		return true;
 	}
 	
-	 // Sortiert die Waren entweder nach bezeichnung oder nummer 
+	/**
+	 * Methode zum sortieren des Vectors der die Waren speichert.
+	 * Nach Bezeichnung oder Waren nummer
+	 * 
+	 * @param aufgabe soll nach Bezeichnung oder Nummer sortiert werden?
+	 */
 	 public void sortiereDieWaren(String aufgabe) {
 		 	
 		 if (aufgabe.equals ("b")) 
@@ -157,6 +140,7 @@ public class LagerVerwaltung {
 	public void schreibeWaren() throws IOException {
 		meineWaren.schreibeDaten(datei+"_B.txt");
 	}
+	
 	/**
 	 * Methode zum speichern der Personen in einer Datei
 	 * 
@@ -166,18 +150,31 @@ public class LagerVerwaltung {
 		meinePersonen.schreibeDaten(datei+"_P.txt");
 	}
 	
+	/**
+	 * Methode mit der Waren in den Korb gelegt werden
+	 * 
+	 * @param menge wieviele Waren sollen gekauft werden?
+	 * @param ware welche Ware?
+	 * @param p welche Person?
+	 * @throws BestellteMengeNegativException
+	 */
 	public void inWarenKorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
 		meinePersonen.inWarenkorbLegen(menge, ware, p);
 	}
 	
+	/**
+	 * Gibt die PersonenVerwaltung zurück
+	 * @return
+	 */
 	public PersonenVerwaltung getMeinePersonenVerwaltung(){
 		return this.meinePersonen;
 	}
 	
+	/**
+	 * Gibt die WarenVerwaltung zurück
+	 * @return
+	 */
 	public WarenVerwaltung getMeineWarenVerwaltung(){
 		return this.meineWaren;
 	}
-
-	// TODO: Weitere Funktionen der LagerVerwaltung, z.B. ausleihen, zurückgeben etc.
-	// ...
 }

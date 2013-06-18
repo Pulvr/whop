@@ -14,8 +14,7 @@ import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Ware;
 
 /**
- * Klasse zur Verwaltung von Waren.
- * 
+ * Klasse zur Verwaltung der Waren.
  * 
  * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
@@ -113,7 +112,6 @@ public class WarenVerwaltung {
 				ergebnis.add(ware);
 			}
 		}
-		
 		return ergebnis;
 	}
 	
@@ -125,15 +123,11 @@ public class WarenVerwaltung {
 	}
 	*/
 	
-	
-	
-
-	 
 	/**
 	 * Methode zum sortieren der Waren nach Bezeichnung oder Nummer , die methode ist erweiterbar um noch nach bestand o.ä.
 	 * zu sortieren
 	 * 
-	 * @param sortieren
+	 * @param sortieren nach was soll sortiert werden
 	 */
 	public void artikelSortieren(Sortierung sortieren){
 		switch (sortieren){
@@ -155,8 +149,12 @@ public class WarenVerwaltung {
 		}
 		
 	}
-//	  enum ist ein spezieller Datentyp, der einer Variable erlaubt einen 
-//	  gewissen Wert anzunehemen
+
+	/**
+	 * Ein enum was zum sortieren der Waren benötigt wird. 
+	 * Enum ist ein spezieller Datentyp der den Wert von verschiedenen Konstanten annehmen kann
+	 * 
+	 */
 	public static enum Sortierung{
 		Bezeichnung,
 		Nummer

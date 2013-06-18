@@ -6,7 +6,7 @@ package bib.local.valueobjects;
 
 public class Mitarbeiter extends Person{
 	
-	//Mitarbeiter hat extra-Attribut gehalt
+	//Mitarbeiter hat extra-Attribut gehalt welches des Gehalt des Mitarbeiters angibt
 	private float gehalt;
 	
 	//Konstruktor

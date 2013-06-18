@@ -18,6 +18,7 @@ public class Person {
 	private String password = "";
 	private Vector<Ware> warenkorb = new Vector<Ware>();
 	
+	//Default Konstruktor
 	public Person (){
 		
 	}
@@ -57,6 +58,16 @@ public class Person {
 	 */
 	public String toString() {
 		return ("User: " + username + "\n" + anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
+	}
+	
+	/**
+	 * methode zum hinzufügen von Waren in den Warenkorb
+	 * @param w
+	 * @param menge
+	 */
+	public void inWarenKorbLegen(Ware w, int menge){
+		for(int i = 0; i < menge; i++)
+			this.warenkorb.add(w);
 	}
 	
 	//Accessor-Methoden
@@ -100,13 +111,4 @@ public class Person {
 		return this.warenkorb;
 	}
 	
-	/**
-	 * methode zum hinzufügen von Waren in den Warenkorb
-	 * @param w
-	 * @param menge
-	 */
-	public void inWarenKorbLegen(Ware w, int menge){
-		for(int i = 0; i < menge; i++)
-			this.warenkorb.add(w);
-	}
 }
