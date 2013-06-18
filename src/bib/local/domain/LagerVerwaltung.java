@@ -16,7 +16,7 @@ import bib.local.valueobjects.Ware;
  * zur Suche nach Waren, zum Einfügen neuer Waren 
  * und zum Speichern des Bestands.
  * 
- * @author Meisermann
+ * @author Maik
  * @version 3 (Verwaltung der Waren in Vector mit Generics)
  */
 public class LagerVerwaltung {

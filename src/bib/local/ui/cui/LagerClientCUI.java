@@ -49,7 +49,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Personen speichern:  'b'");
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
-		System.out.print("		 \n Waren in den Korb legen 'j'");
+		System.out.print("		   \n  Waren in den Korb legen 'j'");
 		System.out.println("         \n  Beenden:        'q'");
 		
 		System.out.print("> "); // Prompt
@@ -147,8 +147,10 @@ public class LagerClientCUI {
 			String antwort = liesEingabe();
 			if(antwort.equals("b")){
 				lag.sortiereDieWaren("b");
+				System.out.println("Waren wurden nach Bezeichnung sortiert");
 			}else if(antwort.equals("n")){
-				lag.sortiereDieWaren("n");	
+				lag.sortiereDieWaren("n");
+				System.out.println("Waren wurden nach Nummer sortiert");
 			}
 			
 		}
@@ -171,7 +173,7 @@ public class LagerClientCUI {
 			System.out.println("Wieviel möchtest du davon?");
 			String mengenString = liesEingabe();
 			int menge = Integer.parseInt(mengenString);
-			System.out.println("Wer bist du überhaupt?");
+			System.out.println("Gib eine Kundennummer an");
 			String knummerString = liesEingabe();
 			int knummer = Integer.parseInt(knummerString);
 			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 

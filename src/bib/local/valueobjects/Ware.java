@@ -2,8 +2,6 @@ package bib.local.valueobjects;
 
 /**
  * Klasse zur Repräsentation einzelner Waren.
- * 
- * @author teschke
  */
 public class Ware {
 

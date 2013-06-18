@@ -100,6 +100,11 @@ public class Person {
 		return this.warenkorb;
 	}
 	
+	/**
+	 * methode zum hinzufügen von Waren in den Warenkorb
+	 * @param w
+	 * @param menge
+	 */
 	public void inWarenKorbLegen(Ware w, int menge){
 		for(int i = 0; i < menge; i++)
 			this.warenkorb.add(w);

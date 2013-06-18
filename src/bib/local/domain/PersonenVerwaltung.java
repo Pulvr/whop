@@ -103,7 +103,7 @@ public class PersonenVerwaltung {
 	}
 	
 	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
-		if((menge >= 0) && (ware.getBestand() >= menge)){
+		if((menge > 0) && (ware.getBestand() >= menge)){
 			p.inWarenKorbLegen(ware, menge);
 		} else if (menge < 0) {
 			throw new BestellteMengeNegativException();

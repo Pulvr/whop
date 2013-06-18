@@ -8,11 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
-import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
