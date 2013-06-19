@@ -70,6 +70,23 @@ public class Person {
 			this.warenkorb.add(w);
 	}
 	
+	public void warenkorbAusgeben(Vector<Ware> w){
+		int i = 0;
+		int anzahl = 1;
+		int u = 0;
+		while(u < w.capacity() + 1){
+			while(w.elementAt(i).equals(w.elementAt(i+1))){
+				anzahl++;
+				i++;
+				u++;
+			}
+			System.out.println("<-- Artikel: " + w.elementAt(u).getBezeichnung() + " - Menge: " + anzahl + " -->");
+			anzahl = 1;
+			i = 0;
+			u++;
+		}
+	}
+	
 	//Accessor-Methoden
 	public int getNummer(){
 		return nummer;

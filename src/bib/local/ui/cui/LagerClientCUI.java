@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
@@ -40,7 +41,7 @@ public class LagerClientCUI {
 	 * Interne (private) Methode zur Ausgabe des Menüs.
 	 */
 	private void gibMenueAus() {
-		System.out.print("Befehle: \n  Ware einfuegen: 'e'");
+		System.out.print("\nBefehle: \n  Ware einfuegen: 'e'");
 	  //System.out.print("	       \n  Ware entfernen : 'l'");
 		System.out.print("	       \n  Waren sortieren : 't'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
@@ -50,43 +51,46 @@ public class LagerClientCUI {
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
 		System.out.print("		   \n  Waren in den Korb legen 'j'");
-		System.out.println("         \n  Beenden:        'q'");
+		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
+		System.out.println("         \n\n  Beenden:        'q'\n");
 		
 		System.out.print("> "); // Prompt
 		System.out.flush(); // ohne NL ausgeben
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * Interne (private) Methode zum Einlesen von Benutzereingaben.
-	 */
-	private String liesEingabe() throws IOException {
-		// einlesen von Konsole
-		return in.readLine();
-	}
-
-	/* (non-Javadoc)
-	 * 
-	 * Interne (private) Methode zur Verarbeitung von Eingaben
-	 * und Ausgabe von Ergebnissen.
-	 */
+	
+	
+	// Vergleicht eingegebenen Buchstaben mit Menüpunkten und führt den gewünschten Befehl aus
+	
 	private void verarbeiteEingabe(String line) throws IOException {
 		
-		// Eingabe bearbeiten:
+		
+		
+		
+		// WARE EINFÜGEN:
+		
 		if (line.equals("e")) { 
-			// lese die notwendigen Parameter, einzeln pro Zeile
+			
+			// Liest die Eigenschaften der neuen Ware nacheinander ein
+			
 			System.out.print("Warennummer > ");
-			String nummer = liesEingabe();
+				String nummer = liesEingabe();
 			int bNr = Integer.parseInt(nummer);
+			
 			System.out.print("Warenbezeichnung  > ");
-			String bezeichnung = liesEingabe();
+				String bezeichnung = liesEingabe();
+				
 			System.out.print("Bestand > ");
-			String bstd = liesEingabe();
-			int bestand = Integer.parseInt(bstd);
+				String bstd = liesEingabe();
+				int bestand = Integer.parseInt(bstd);
+				
+			System.out.print("Preis > ");
+				String preisString = liesEingabe();
+				float preis = Float.parseFloat(preisString);
 
 			boolean ok = false;
 			try {
-				lag.fuegeWareEin(bezeichnung, bNr, bestand);
+				lag.fuegeWareEin(bezeichnung, bNr, bestand, preis);
 				ok = true;
 			} catch (WareExistiertBereitsException e) {
 				System.err.println(e.getMessage());
@@ -132,9 +136,17 @@ public class LagerClientCUI {
 			
 			
 		}
+		else if (line.equals("o")){
+			System.out.println("\nGib deine Kundennummer an.");
+			String knummerString = liesEingabe();
+			int knummer = Integer.parseInt(knummerString);
+			Vector<Ware> warenkorb = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb();
+			lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).warenkorbAusgeben(warenkorb);
+		}
 		else if (line.equals("a")) {
 			List<Ware> listeW = lag.gibAlleWaren();
 			gibWarenlisteAus(listeW);
+
 		}
 		else if (line.equals("l")) {
 			List<Person> listeP = lag.gibAllePersonen();
@@ -168,12 +180,12 @@ public class LagerClientCUI {
 			lag.schreibePersonen();
 		}
 		else if (line.equals("j")){
-			System.out.println("Welche Ware möchtest du kaufen?");
+			System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
 			String bezeichnung = liesEingabe();
-			System.out.println("Wieviel möchtest du davon?");
+			System.out.println("\nZu bestellende Anzahl?");
 			String mengenString = liesEingabe();
 			int menge = Integer.parseInt(mengenString);
-			System.out.println("Gib eine Kundennummer an");
+			System.out.println("\nGib deine Kundennummer an.");
 			String knummerString = liesEingabe();
 			int knummer = Integer.parseInt(knummerString);
 			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
@@ -183,7 +195,7 @@ public class LagerClientCUI {
 						lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
 								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
 						//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
-						System.out.println("Ihr Warenkorb beinhaltet:" + 
+						System.out.println("Ihr Warenkorb beinhaltet:\n" + 
 								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
 					} catch (BestellteMengeNegativException e) {
 						// TODO Auto-generated catch block
@@ -260,6 +272,12 @@ public class LagerClientCUI {
 			}
 		}
 	}
+	private void enterZumFortfahren() throws IOException{
+		System.out.println("\n		-> Zum Fortfahren bitte die Enter-Taste drücken.");
+		String input = this.liesEingabe();
+		System.out.println("\n\n");
+		input = null;
+	}
 
 
 	/**
@@ -279,12 +297,20 @@ public class LagerClientCUI {
 			try {
 				input = liesEingabe();
 				verarbeiteEingabe(input);
+				enterZumFortfahren();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} while (!input.equals("q"));
 	}
+	
+	// Liest Eingaben des Nutzers ein
+	
+		private String liesEingabe() throws IOException {
+			// einlesen von Konsole
+			return in.readLine();
+		}
 	
 	
 	/**

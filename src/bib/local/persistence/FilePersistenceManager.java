@@ -69,13 +69,19 @@ public class FilePersistenceManager implements PersistenceManager {
 		String nummerString = liesZeile();
 		// ... und von String in int konvertieren
 		int nummer = Integer.parseInt(nummerString);
+		
 		//Bestand einlesen ...
 		String bestandString = liesZeile();
 		// ... und von String in int konvertieren
 		int bestand = Integer.parseInt(bestandString);
-	
-		// neues Buch-Objekt anlegen und zurückgeben
-		return new Ware(bezeichnung, nummer,bestand);
+		
+		//Preis einlesen ...
+		String preisString = liesZeile();
+		// ... und von String in float konvertieren
+		float preis = Float.parseFloat(preisString);
+		
+		// neues Buch-Objekt mit eingelesenen Daten anlegen und zurückgeben
+		return new Ware(bezeichnung, nummer, bestand, preis);
 	}
 
 	/**

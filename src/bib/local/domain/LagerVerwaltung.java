@@ -91,8 +91,8 @@ public class LagerVerwaltung {
 	 * @param nummer Nummer der Waren
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
-	public void fuegeWareEin(String bezeichnung, int nummer, int bestand) throws WareExistiertBereitsException {
-		Ware w = new Ware(bezeichnung, nummer,  bestand);
+	public void fuegeWareEin(String bezeichnung, int nummer, int bestand, float preis) throws WareExistiertBereitsException {
+		Ware w = new Ware(bezeichnung, nummer,  bestand, preis);
 		meineWaren.wareEinfuegen(w);
 	}
 	

@@ -10,16 +10,18 @@ public class Ware {
 	private int nummer; 
 	private int bestand;
 	private int bestellteMenge;
+	private float preis;
 	
 	//
 	//public Ware(String bezeichnung, int nr, int bestand) {
 	//	this(bezeichnung, nr ,bestand, true);
 	//}
 
-	public Ware(String bezeichnung, int nr,int bstd) {
+	public Ware(String bezeichnung, int nr,int bstd, float preis) {
 		nummer = nr;
 		this.bezeichnung = bezeichnung;
 		this.bestand= bstd;
+		this.preis = preis;
 	}
 	
 	// --- Dienste der Waren-Objekte ---
@@ -32,8 +34,7 @@ public class Ware {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		//String verfuegbarkeit = verfuegbar ? "verfuegbar" : "ausverkauft";
-		return ("Nr: " + nummer + " / Bezeichnung: " + bezeichnung + " / Bestand : " + bestand + " / ");
+		return (nummer + " - " + bezeichnung + " / Preis: " + preis + "€ / Auf Lager: " + bestand + " / \n");
 	}
 
 	/**
