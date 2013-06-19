@@ -162,6 +162,14 @@ public class LagerVerwaltung {
 		meinePersonen.inWarenkorbLegen(menge, ware, p);
 	}
 	
+	public void entferneAusWarenkorb(int menge, Ware ware, Person p)throws BestellteMengeNegativException{
+		meinePersonen.entferneAusWarenkorb(menge, ware, p);
+	}
+	
+	public void warenkorbLeeren(Person p){
+		meinePersonen.warenkorbLeeren(p);
+	}
+	
 	/**
 	 * Gibt die PersonenVerwaltung zurück
 	 * @return

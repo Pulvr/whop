@@ -70,6 +70,22 @@ public class Person {
 			this.warenkorb.add(w);
 	}
 	
+	/**
+	 * Methode zum entfernen einzelner Waren (ungetestet)
+	 * @param w
+	 * @param menge
+	 */
+	public void entferneAusWarenkorb(Ware w, int menge){
+		for(int i = 0; i < menge; i++)
+			this.warenkorb.remove(w);
+	}
+	/**
+	 * Methode zum kompletten leeren des Warenkorbs
+	 */
+	public void warenkorbLeeren(){
+		this.warenkorb.removeAllElements();
+	}
+	
 	public void warenkorbAusgeben(Vector<Ware> w){
 		int i = 0;
 		int anzahl = 1;

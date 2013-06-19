@@ -118,4 +118,21 @@ public class PersonenVerwaltung {
 			throw new BestellteMengeNegativException();
 		}
 	}
+	
+	public void entferneAusWarenkorb(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
+		if((menge > 0) && (ware.getBestand() >= menge)){
+			p.entferneAusWarenkorb(ware, menge);
+		} else if (menge < 0){
+			throw new BestellteMengeNegativException();
+		}
+		
+	}
+	/**
+	 * Warenkorb einer Person komplett leeren
+	 * @param p
+	 */
+	public void warenkorbLeeren( Person p){
+		p.warenkorbLeeren();
+	}
+
 }

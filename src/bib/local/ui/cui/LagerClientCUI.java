@@ -51,6 +51,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
 		System.out.print("		   \n  Waren in den Korb legen 'j'");
+		System.out.print("         \n  Warenkorb leeren 'h'");
 		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
 		
@@ -209,6 +210,12 @@ public class LagerClientCUI {
 			} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
 				System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 			}
+		} else if(line.equals("h")){
+			System.out.println("Der Korb wessen users soll geleert werden?");
+			String knummernString = liesEingabe();
+			int knummer = Integer.parseInt(knummernString);
+			lag.warenkorbLeeren(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+			System.out.println("Der Warenkorb wurde geleert");
 		}
 	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");
