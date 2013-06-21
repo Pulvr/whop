@@ -43,7 +43,7 @@ public class LagerVerwaltung {
 		
 		// Warenbestand aus Datei einlesen
 		meineWaren = new WarenVerwaltung();
-		meineWaren.liesDaten(datei+"_B.txt");
+		meineWaren.liesDaten(datei+"_W.txt");
 		
 		// Kundenkartei aus Datei einlesen
 		meinePersonen = new PersonenVerwaltung();
