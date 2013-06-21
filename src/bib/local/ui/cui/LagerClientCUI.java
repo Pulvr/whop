@@ -289,6 +289,10 @@ public class LagerClientCUI {
 		}*/
 		
 	}
+	/*
+	private void login (){
+		lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(key)
+	}
 	
 	/* (non-Javadoc)
 	 * 

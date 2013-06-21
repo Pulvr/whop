@@ -97,6 +97,7 @@ public class FilePersistenceManager implements PersistenceManager {
 		schreibeZeile(w.getBezeichnung());
 		schreibeZeile(Integer.valueOf(w.getNummer()).toString());
 		schreibeZeile(Integer.valueOf(w.getBestand()).toString());
+		schreibeZeile(Float.valueOf(w.getPreis()).toString());
 		return true;
 	}
 
