@@ -51,6 +51,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Waren suchen:  'f'");
 		System.out.print("         \n  Daten sichern:  's'");
 		System.out.print("		   \n  Waren in den Korb legen 'j'");
+		System.out.print("		   \n  Waren aus Korb entfernen 'z'");
 		System.out.print("         \n  Warenkorb leeren 'h'");
 		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
@@ -69,154 +70,196 @@ public class LagerClientCUI {
 		
 		
 		// WARE EINFÜGEN:
-		
-		if (line.equals("e")) { 
-			
-			// Liest die Eigenschaften der neuen Ware nacheinander ein
-			
-			System.out.print("Warennummer > ");
-				String nummer = liesEingabe();
-			int bNr = Integer.parseInt(nummer);
-			
-			System.out.print("Warenbezeichnung  > ");
-				String bezeichnung = liesEingabe();
+		try{
+			if (line.equals("e")) { 
 				
-			System.out.print("Bestand > ");
-				String bstd = liesEingabe();
-				int bestand = Integer.parseInt(bstd);
+				// Liest die Eigenschaften der neuen Ware nacheinander ein
 				
-			System.out.print("Preis > ");
-				String preisString = liesEingabe();
-				float preis = Float.parseFloat(preisString);
-
-			boolean ok = false;
-			try {
-				lag.fuegeWareEin(bezeichnung, bNr, bestand, preis);
-				ok = true;
-			} catch (WareExistiertBereitsException e) {
-				System.err.println(e.getMessage());
-				e.printStackTrace();
-			}
+				System.out.print("Warennummer > ");
+					String nummer = liesEingabe();
+				int bNr = Integer.parseInt(nummer);
+				
+				System.out.print("Warenbezeichnung  > ");
+					String bezeichnung = liesEingabe();
+					
+				System.out.print("Bestand > ");
+					String bstd = liesEingabe();
+					int bestand = Integer.parseInt(bstd);
+					
+				System.out.print("Preis > ");
+					String preisString = liesEingabe();
+					float preis = Float.parseFloat(preisString);
 	
-			if (ok)
-				System.out.println("Einfügen ok");
-			else
-				System.out.println("Fehler beim Einfügen");
-		} else if (line.equals("p")) {
-			System.out.print("Nummer > ");
-			String nr = liesEingabe();
-			int pNr = Integer.parseInt(nr);
-			System.out.print("Name > ");
-			String name = liesEingabe();
-			System.out.print("Anrede > ");
-			String anr = liesEingabe();
-			System.out.print("Straße > ");
-			String strasse = liesEingabe();
-			System.out.print("PLZ > ");
-			String plz = liesEingabe();
-			System.out.print("Ort > ");
-			String ort = liesEingabe();
-			System.out.print("E-Mail > ");
-			String email = liesEingabe();
-			System.out.print("Username > ");
-			String usr = liesEingabe();
-			System.out.print("Passwort > ");
-			String pw = liesEingabe();
-			boolean ok = false;
-			try{
-				lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw);
-				ok = true;
-			}catch (PersonExistiertBereitsException e){
-				System.err.println(e.getMessage());
-				e.printStackTrace();
-			}
-			if (ok)
-				System.out.println("Einfügen ok");
-			else
-				System.out.println("Fehler beim Einfügen");
-			
-			
-		}
-		else if (line.equals("o")){
-			System.out.println("\nGib deine Kundennummer an.");
-			String knummerString = liesEingabe();
-			int knummer = Integer.parseInt(knummerString);
-			Vector<Ware> warenkorb = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb();
-			lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).warenkorbAusgeben(warenkorb);
-		}
-		else if (line.equals("a")) {
-			List<Ware> listeW = lag.gibAlleWaren();
-			gibWarenlisteAus(listeW);
-
-		}
-		else if (line.equals("l")) {
-			List<Person> listeP = lag.gibAllePersonen();
-			gibPersonenAus(listeP);
-		}
-		else if (line.equals("t")){
-			System.out.println("Nach was soll sortiert werden?");
-			System.out.println("b = WarenBezeichnung");
-			System.out.println("n = WarenNummer");
-			String antwort = liesEingabe();
-			if(antwort.equals("b")){
-				lag.sortiereDieWaren("b");
-				System.out.println("Waren wurden nach Bezeichnung sortiert");
-			}else if(antwort.equals("n")){
-				lag.sortiereDieWaren("n");
-				System.out.println("Waren wurden nach Nummer sortiert");
-			}
-			
-		}
-		else if (line.equals("f")) {
-			System.out.print("Warenbezeichnung  > ");
-			String bezeichnung = liesEingabe();
-			List<Ware> liste = lag.sucheNachBezeichnung(bezeichnung);
-			gibWarenlisteAus(liste);
-			
-		}
-		else if (line.equals("s")) {
-			lag.schreibeWaren();
-		}
-		else if (line.equals("b")) {
-			lag.schreibePersonen();
-		}
-		else if (line.equals("j")){
-			System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
-			String bezeichnung = liesEingabe();
-			System.out.println("\nZu bestellende Anzahl?");
-			String mengenString = liesEingabe();
-			int menge = Integer.parseInt(mengenString);
-			System.out.println("\nGib deine Kundennummer an.");
-			String knummerString = liesEingabe();
-			int knummer = Integer.parseInt(knummerString);
-			if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
-					lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-				if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
-					try {
-						lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
-								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
-						//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
-						System.out.println("Ihr Warenkorb beinhaltet:\n" + 
-								lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
-					} catch (BestellteMengeNegativException e) {
-						// TODO Auto-generated catch block
-						System.err.print(e.getMessage());
-					}
+				boolean ok = false;
+				try {
+					lag.fuegeWareEin(bezeichnung, bNr, bestand, preis);
+					ok = true;
+				} catch (WareExistiertBereitsException e) {
+					System.err.println(e.getMessage());
+					e.printStackTrace();
 				}
-			} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
-				System.err.println("Die Person existiert nicht.");
-			} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-				System.err.println("Die Ware existiert nicht.");
-			} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
-				System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+		
+				if (ok)
+					System.out.println("Einfügen ok");
+				else
+					System.out.println("Fehler beim Einfügen");
+			} else if (line.equals("p")) {
+				System.out.print("Nummer > ");
+				String nr = liesEingabe();
+				int pNr = Integer.parseInt(nr);
+				System.out.print("Name > ");
+				String name = liesEingabe();
+				System.out.print("Anrede > ");
+				String anr = liesEingabe();
+				System.out.print("Straße > ");
+				String strasse = liesEingabe();
+				System.out.print("PLZ > ");
+				String plz = liesEingabe();
+				System.out.print("Ort > ");
+				String ort = liesEingabe();
+				System.out.print("E-Mail > ");
+				String email = liesEingabe();
+				System.out.print("Username > ");
+				String usr = liesEingabe();
+				System.out.print("Passwort > ");
+				String pw = liesEingabe();
+				boolean ok = false;
+				try{
+					lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw);
+					ok = true;
+				}catch (PersonExistiertBereitsException e){
+					System.err.println(e.getMessage());
+					e.printStackTrace();
+				}
+				if (ok)
+					System.out.println("Einfügen ok");
+				else
+					System.out.println("Fehler beim Einfügen");
+				
+				
 			}
-		} else if(line.equals("h")){
-			System.out.println("Der Korb wessen users soll geleert werden?");
-			String knummernString = liesEingabe();
-			int knummer = Integer.parseInt(knummernString);
-			lag.warenkorbLeeren(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
-			System.out.println("Der Warenkorb wurde geleert");
+			else if (line.equals("o")){
+				System.out.println("\nGib deine Kundennummer an.");
+				String knummerString = liesEingabe();
+				int knummer = Integer.parseInt(knummerString);
+				Vector<Ware> warenkorb = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb();
+				lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).warenkorbAusgeben(warenkorb);
+			}
+			else if (line.equals("a")) {
+				List<Ware> listeW = lag.gibAlleWaren();
+				gibWarenlisteAus(listeW);
+	
+			}
+			else if (line.equals("l")) {
+				List<Person> listeP = lag.gibAllePersonen();
+				gibPersonenAus(listeP);
+			}
+			else if (line.equals("t")){
+				System.out.println("Nach was soll sortiert werden?");
+				System.out.println("b = WarenBezeichnung");
+				System.out.println("n = WarenNummer");
+				String antwort = liesEingabe();
+				if(antwort.equals("b")){
+					lag.sortiereDieWaren("b");
+					System.out.println("Waren wurden nach Bezeichnung sortiert");
+				}else if(antwort.equals("n")){
+					lag.sortiereDieWaren("n");
+					System.out.println("Waren wurden nach Nummer sortiert");
+				}
+				
+			}
+			else if (line.equals("f")) {
+				System.out.print("Warenbezeichnung  > ");
+				String bezeichnung = liesEingabe();
+				List<Ware> liste = lag.sucheNachBezeichnung(bezeichnung);
+				gibWarenlisteAus(liste);
+				
+			}
+			else if (line.equals("s")) {
+				lag.schreibeWaren();
+			}
+			else if (line.equals("b")) {
+				lag.schreibePersonen();
+			}
+			// INKORBLEGEN INKORBLEGEN INKORBLEGEN
+			else if (line.equals("j")){
+				
+					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
+					String bezeichnung = liesEingabe();
+					System.out.println("\nZu bestellende Anzahl?");
+					String mengenString = liesEingabe();
+					int menge = Integer.parseInt(mengenString);
+					System.out.println("\nGib deine Kundennummer an.");
+					String knummerString = liesEingabe();
+					int knummer = Integer.parseInt(knummerString);
+				
+				if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
+						lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
+						try {
+							lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
+									lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+							//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
+							System.out.println("Ihr Warenkorb beinhaltet:\n" + 
+									lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
+						} catch (BestellteMengeNegativException e) {
+							// TODO Auto-generated catch block
+							System.err.print(e.getMessage());
+						}
+					}
+				} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
+					System.err.println("Die Person existiert nicht.");
+				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+					System.err.println("Die Ware existiert nicht.");
+				} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
+					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+				}
+			
+			//ENTFERNEN ENTFERNEN ENTFERNEN
+			} else if(line.equals("z")){
+				
+				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du aus dem Korb entfernen möchtest.");
+				String bezeichnung = liesEingabe();
+				System.out.println("\nZu entfernende Anzahl?");
+				String mengenString = liesEingabe();
+				int menge = Integer.parseInt(mengenString);
+				System.out.println("\nGib deine Kundennummer an.");
+				String knummerString = liesEingabe();
+				int knummer = Integer.parseInt(knummerString);
+				
+				if(lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer) && 
+						lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
+						try {
+							lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), 
+									lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+							//lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).setBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() - menge);
+							System.out.println("Ihr Warenkorb beinhaltet:\n" + 
+									lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb());
+						} catch (BestellteMengeNegativException e) {
+							// TODO Auto-generated catch block
+							System.err.print(e.getMessage());
+						}
+					}
+				} else if(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(knummer)) {
+					System.err.println("Die Person existiert nicht.");
+				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+					System.err.println("Die Ware existiert nicht.");
+				} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
+					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+				}
+			//LEEREN LEEREN LEEREN	
+			} else if(line.equals("h")){
+				System.out.println("Der Korb wessen users soll geleert werden?");
+				String knummernString = liesEingabe();
+				int knummer = Integer.parseInt(knummernString);
+				lag.warenkorbLeeren(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer));
+				System.out.println("Der Warenkorb wurde geleert");
+			}
+		} catch (NumberFormatException e){
+				System.err.println(e.getMessage());
 		}
+		
 	/*	else if (line.equals("l")){
 			System.out.print("Warennummer > ");
 			String nummer = liesEingabe();

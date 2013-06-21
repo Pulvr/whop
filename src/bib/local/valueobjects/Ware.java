@@ -9,7 +9,7 @@ public class Ware {
 	private String bezeichnung;
 	private int nummer; 
 	private int bestand;
-	private int bestellteMenge;
+	private int bestellteMenge; //Wofür ?
 	private float preis;
 	
 	//
@@ -61,8 +61,16 @@ public class Ware {
 		return this.nummer;
 	}
 	
+	public String getBezeichnung() {
+		return this.bezeichnung;
+	}
+	
 	public int getBestand() {
 		return this.bestand;
+	}
+	
+	public float getPreis(){
+		return this.preis;
 	}
 	
 	public void setBestand(int bestand){
@@ -73,10 +81,6 @@ public class Ware {
 		this.bestellteMenge = menge;
 	}
 
-	public String getBezeichnung() {
-		return this.bezeichnung;
-	}
-	
 	public int getBestellteMenge(){
 		return this.bestellteMenge;
 	}
