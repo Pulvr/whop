@@ -4,7 +4,7 @@ import bib.local.valueobjects.Ware;
 
 /**
  * Exception zur Signalisierung, dass ein ware bereits existiert (z.B. bei einem Einfügevorgang).
- * -wird momentan nicht verwendet
+ * 
  */
 public class WareExistiertBereitsException extends Exception {
 
@@ -16,6 +16,6 @@ public class WareExistiertBereitsException extends Exception {
 	 */
 	public WareExistiertBereitsException(Ware ware, String zusatzMsg) {
 		super("Ware mit Bezeichnung " + ware.getBezeichnung() + " und Nummer " + ware.getNummer() 
-				+ " existiert bereits" + zusatzMsg);
+				+ " existiert bereits" + zusatzMsg +" Oder die Waren Nummer ist bereits vergeben.");
 	}
 }

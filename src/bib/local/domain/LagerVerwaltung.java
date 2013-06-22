@@ -116,10 +116,15 @@ public class LagerVerwaltung {
 	 */
 	 public void sortiereDieWaren(String aufgabe) {
 		 	
-		 if (aufgabe.equals ("b")) 
+		 if (aufgabe.equals ("b")){
 			 meineWaren.artikelSortieren(Sortierung.Bezeichnung);   
-		 else if (aufgabe.equals("n")) 
+		 }else if (aufgabe.equals("n")){
 			 meineWaren.artikelSortieren(Sortierung.Nummer); 
+		 }else if (aufgabe.equals("e")){
+			 meineWaren.artikelSortieren(Sortierung.Bestand);
+		 }else if (aufgabe.equals("p")){
+			 meineWaren.artikelSortieren(Sortierung.Preis);
+		 }
 	 }
 	
 	/** Entfernt waren aus dem Vector, wird nicht verwendet weil letztendlich nur der bestand verändert wird und

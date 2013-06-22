@@ -42,7 +42,6 @@ public class LagerClientCUI {
 	 */
 	private void gibMenueAus() {
 		System.out.print("\nBefehle: \n  Ware einfuegen: 'e'");
-	  //System.out.print("	       \n  Ware entfernen : 'l'");
 		System.out.print("	       \n  Waren sortieren : 't'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
 		System.out.print("         \n  Person einfuegen: 'p'");
@@ -69,19 +68,20 @@ public class LagerClientCUI {
 		
 		
 		
-		// WARE EINFÜGEN:
+		
 		try{
+			// WARE EINFÜGEN:
 			if (line.equals("e")) { 
 				
 				// Liest die Eigenschaften der neuen Ware nacheinander ein
 				
+				System.out.print("Warenbezeichnung  > ");
+				String bezeichnung = liesEingabe();
+				
 				System.out.print("Warennummer > ");
 					String nummer = liesEingabe();
-				int bNr = Integer.parseInt(nummer);
+					int bNr = Integer.parseInt(nummer);
 				
-				System.out.print("Warenbezeichnung  > ");
-					String bezeichnung = liesEingabe();
-					
 				System.out.print("Bestand > ");
 					String bstd = liesEingabe();
 					int bestand = Integer.parseInt(bstd);
@@ -90,11 +90,11 @@ public class LagerClientCUI {
 					String preisString = liesEingabe();
 					float preis = Float.parseFloat(preisString);
 	
-				boolean ok = false;
+				boolean ok = false;	
 				try {
 					lag.fuegeWareEin(bezeichnung, bNr, bestand, preis);
 					ok = true;
-				} catch (WareExistiertBereitsException e) {
+					} catch (WareExistiertBereitsException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();
 				}
@@ -103,6 +103,9 @@ public class LagerClientCUI {
 					System.out.println("Einfügen ok");
 				else
 					System.out.println("Fehler beim Einfügen");
+				
+				
+			//PERSON EINFÜGEN
 			} else if (line.equals("p")) {
 				System.out.print("Nummer > ");
 				String nr = liesEingabe();
@@ -144,29 +147,51 @@ public class LagerClientCUI {
 				int knummer = Integer.parseInt(knummerString);
 				Vector<Ware> warenkorb = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getWarenkorb();
 				lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).warenkorbAusgeben(warenkorb);
+				
+			//GIB ALLE WAREN AUS
 			}
 			else if (line.equals("a")) {
 				List<Ware> listeW = lag.gibAlleWaren();
 				gibWarenlisteAus(listeW);
-	
+				
+			//GIB ALLE PERSONEN AUS
 			}
 			else if (line.equals("l")) {
 				List<Person> listeP = lag.gibAllePersonen();
 				gibPersonenAus(listeP);
+				
+			//SORTIERE DIE WAREN
 			}
 			else if (line.equals("t")){
 				System.out.println("Nach was soll sortiert werden?");
 				System.out.println("b = WarenBezeichnung");
 				System.out.println("n = WarenNummer");
+				System.out.println("e = WarenBestand");
+				System.out.println("p = WarenPreis");
 				String antwort = liesEingabe();
 				if(antwort.equals("b")){
 					lag.sortiereDieWaren("b");
+					List<Ware> listeW = lag.gibAlleWaren();
+					gibWarenlisteAus(listeW);
 					System.out.println("Waren wurden nach Bezeichnung sortiert");
 				}else if(antwort.equals("n")){
 					lag.sortiereDieWaren("n");
+					List<Ware> listeW = lag.gibAlleWaren();
+					gibWarenlisteAus(listeW);
 					System.out.println("Waren wurden nach Nummer sortiert");
+				}else if(antwort.equals("e")){
+					lag.sortiereDieWaren("e");
+					List<Ware> listeW = lag.gibAlleWaren();
+					gibWarenlisteAus(listeW);
+					System.out.println("Waren wurden nach Bestand sortiert");
+				}else if(antwort.equals("p")){
+					lag.sortiereDieWaren("p");
+					List<Ware> listeW = lag.gibAlleWaren();
+					gibWarenlisteAus(listeW);
+					System.out.println("Waren wurden nach Preis sortiert");
 				}
 				
+			//SUCHE NACH WAREN
 			}
 			else if (line.equals("f")) {
 				System.out.print("Warenbezeichnung  > ");
@@ -174,14 +199,17 @@ public class LagerClientCUI {
 				List<Ware> liste = lag.sucheNachBezeichnung(bezeichnung);
 				gibWarenlisteAus(liste);
 				
+			//SPEICHERE WAREN
 			}
 			else if (line.equals("s")) {
 				lag.schreibeWaren();
+				
+			//SPEICHERE PERSONEN
 			}
 			else if (line.equals("b")) {
 				lag.schreibePersonen();
 			}
-			// INKORBLEGEN INKORBLEGEN INKORBLEGEN
+			// INKORBLEGEN 
 			else if (line.equals("j")){
 				
 					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
@@ -215,7 +243,7 @@ public class LagerClientCUI {
 					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 				}
 			
-			//ENTFERNEN ENTFERNEN ENTFERNEN
+			//ENTFERNEN 
 			} else if(line.equals("z")){
 				
 				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du aus dem Korb entfernen möchtest.");
@@ -248,7 +276,7 @@ public class LagerClientCUI {
 				} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
 					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 				}
-			//LEEREN LEEREN LEEREN	
+			//LEEREN 
 			} else if(line.equals("h")){
 				System.out.println("Der Korb wessen users soll geleert werden?");
 				String knummernString = liesEingabe();
@@ -259,34 +287,6 @@ public class LagerClientCUI {
 		} catch (NumberFormatException e){
 				System.err.println(e.getMessage());
 		}
-		
-	/*	else if (line.equals("l")){
-			System.out.print("Warennummer > ");
-			String nummer = liesEingabe();
-			int Nr = Integer.parseInt(nummer);
-			System.out.print("Warenbezeichnung  > ");
-			String bezeichnung = liesEingabe();
-			System.out.print("Bestand > ");
-			String bstd = liesEingabe();
-			int bestand = Integer.parseInt(bstd);
-			List<Ware> liste = lag.sucheNachBezeichnung(bezeichnung);
-			
-			if(!liste.isEmpty()){
-				System.out.print(bezeichnung +" mit der Nummer"+ Nr +" wurde gefunden , löschen? (y/n)");
-				String answ = liesEingabe();
-				if (answ.equals("y")){
-					lag.entferneWare(bezeichnung, Nr, bestand);
-					System.out.println("gelöscht");
-					
-					
-				}else {
-					System.out.println("dann nicht...");
-						
-				}
-			}
-			if(liste.isEmpty())
-		     System.out.println(bezeichnung + " wurde nicht gefunden");
-		}*/
 		
 	}
 	/*

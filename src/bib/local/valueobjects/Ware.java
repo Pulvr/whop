@@ -18,7 +18,7 @@ public class Ware {
 	//}
 
 	public Ware(String bezeichnung, int nr,int bstd, float preis) {
-		nummer = nr;
+		this.nummer = nr;
 		this.bezeichnung = bezeichnung;
 		this.bestand= bstd;
 		this.preis = preis;

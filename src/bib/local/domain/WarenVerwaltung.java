@@ -87,7 +87,7 @@ public class WarenVerwaltung {
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
 	public void wareEinfuegen(Ware eineWare) throws WareExistiertBereitsException {
-		if (!warenBestand.contains(eineWare)){
+		if (!warenBestand.contains(eineWare)&&warenBestand.contains(eineWare.getNummer())){
 			warenBestand.add(eineWare);
 			warenObjekte.put(eineWare.getBezeichnung(), eineWare);
 		}
@@ -146,8 +146,26 @@ public class WarenVerwaltung {
 				}
 			});
 			break;
-		}
 		
+
+		case Bestand:
+		Collections.sort(warenBestand, new Comparator<Ware>(){
+			public int compare(Ware w1, Ware w2){
+				return w1.getBestand() - w2.getBestand();
+			}
+		});
+		break;
+		
+		//Sortieren nach Preis geht noch nicht ganz wegen int typecast
+		case Preis:
+			Collections.sort(warenBestand, new Comparator<Ware>(){
+				public int compare(Ware w1, Ware w2){
+					return (int) (w1.getPreis() - w2.getPreis());
+				}
+			});
+			break;
+		
+		}
 	}
 
 	/**
@@ -157,7 +175,9 @@ public class WarenVerwaltung {
 	 */
 	public static enum Sortierung{
 		Bezeichnung,
-		Nummer
+		Nummer,
+		Bestand,
+		Preis
 	}
 	
 	
@@ -169,7 +189,8 @@ public class WarenVerwaltung {
 	public List<Ware> getWarenBestand() {
 		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
 		// mit Kopien der Waren-Objekte zurückzugeben
-		return warenBestand;
+		List<Ware> warenBestandKopie = new Vector<Ware>(warenBestand);
+		return warenBestandKopie;
 	}
 	
 	public HashMap<String, Ware> getWarenObjekte(){
