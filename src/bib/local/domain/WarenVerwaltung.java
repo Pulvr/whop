@@ -87,7 +87,7 @@ public class WarenVerwaltung {
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
 	public void wareEinfuegen(Ware eineWare) throws WareExistiertBereitsException {
-		if (!warenBestand.contains(eineWare)&&warenBestand.contains(eineWare.getNummer())){
+		if (!warenBestand.contains(eineWare)/*&&!warenBestand.contains(eineWare.getNummer())*/){
 			warenBestand.add(eineWare);
 			warenObjekte.put(eineWare.getBezeichnung(), eineWare);
 		}
