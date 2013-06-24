@@ -56,7 +56,7 @@ public class LagerClientCUI {
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
 		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware einfuegen: 'e'");
 		System.out.print("	       \n  Waren sortieren : 't'");
-		System.out.print("         \n  WarenBestand ändern:  'c'");
+		if (mitarbeiterAngemeldet) System.out.print("         \n  WarenBestand ändern:  'c'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
 		System.out.print("         \n  Person einfuegen: 'p'");
 		if (mitarbeiterAngemeldet) System.out.print("         \n  Personen ausgeben:  'l'");
@@ -130,21 +130,24 @@ public class LagerClientCUI {
 				
 			//WARENBESTAND ÄNDERN
 			}else if(line.equals("c")){
-				
-				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, dessen Bestand geändert werden soll.");
-				String bezeichnung = liesEingabe();
-				
-				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				try {
+					einloggenAbfrage();
+					System.out.print("Gib die exakte Bezeichnung des Artikels ein, dessen Bestand geändert werden soll >");
+					String bezeichnung = liesEingabe();
+					
 					System.out.print("neuer Bestand > ");
 					String bstd = liesEingabe();
 					int neuerBestand = Integer.parseInt(bstd);
-					try {
-						lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), neuerBestand);
-					} catch (WareExistiertNichtException e) {
+						
+					lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), neuerBestand);
+					
+					System.out.println("Der Bestand für '"+lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBezeichnung()+ "' wurde geändert");
+				} catch (WareExistiertNichtException e) {
 						// TODO Auto-generated catch block
+						System.err.println(e.getMessage());
 						e.printStackTrace();
-					}
 				}
+			
 			//PERSON EINFÜGEN	
 			} else if (line.equals("p")) {
 				System.out.print("Nummer > ");

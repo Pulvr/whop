@@ -16,7 +16,7 @@ public class Person {
 	private String email = "";
 	private String username = "";
 	private String password = "";
-	private boolean mitarbeiter = false;
+	private boolean mitarbeiter;
 	private Vector<Ware> warenkorb = new Vector<Ware>();
 	
 	//Default Konstruktor
