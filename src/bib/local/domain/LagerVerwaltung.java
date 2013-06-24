@@ -103,8 +103,8 @@ public class LagerVerwaltung {
 	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
 	 */
 	
-	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw) throws PersonExistiertBereitsException {
-		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw);
+	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma) throws PersonExistiertBereitsException {
+		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw, ma);
 		meinePersonen.personEinfuegen(p);
 	}
 	

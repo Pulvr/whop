@@ -16,6 +16,7 @@ public class Person {
 	private String email = "";
 	private String username = "";
 	private String password = "";
+	private boolean mitarbeiter = false;
 	private Vector<Ware> warenkorb = new Vector<Ware>();
 	
 	//Default Konstruktor
@@ -23,7 +24,7 @@ public class Person {
 		
 	}
 	//Konstruktor
-	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw){
+	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma){
 		this.nummer = nr;
 		this.name = name;
 		this.anrede = anr;
@@ -33,6 +34,7 @@ public class Person {
 		this.email = email;
 		this.username = usr;
 		this.password = pw;
+		this.mitarbeiter = ma;
 	}
 	
 	
@@ -142,6 +144,10 @@ public class Person {
 	
 	public Vector<Ware> getWarenkorb(){
 		return this.warenkorb;
+	}
+	
+	public boolean getMitarbeiterberechtigung(){
+		return this.mitarbeiter;
 	}
 	
 }

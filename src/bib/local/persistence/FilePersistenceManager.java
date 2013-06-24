@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import bib.local.valueobjects.Kunde;
-import bib.local.valueobjects.Mitarbeiter;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
@@ -122,21 +120,10 @@ public class FilePersistenceManager implements PersistenceManager {
 				String email = liesZeile();
 				String username = liesZeile();
 				String password = liesZeile();
-				//String berechtigung = liesZeile();
-				/*if (berechtigung.equals("Kunde")){
-					String umsatzString = liesZeile();
-					int umsatz = Integer.parseInt(umsatzString);
-					
-					return new Kunde(nummer, name ,anrede ,strasse ,plz ,wohnort,email, username, password, umsatz);
-					
-				}else if(berechtigung.equals("Mitarbeiter")){
-					String gehaltString = liesZeile();
-					Float gehalt = Float.parseFloat(gehaltString);
-					
-					return new Kunde(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, gehalt);
-					
-				}*/
-				return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password);
+				String berechtigung = liesZeile();
+				if (berechtigung.equals("K")){
+					return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, false);
+				} else return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, true);
 				
 				
 	}
@@ -156,15 +143,7 @@ public class FilePersistenceManager implements PersistenceManager {
 		schreibeZeile(p.getEmail());
 		schreibeZeile(p.getUsername());
 		schreibeZeile(p.getPassword());
-		if(p instanceof Kunde){
-			Kunde k = (Kunde) p;
-			schreibeZeile(new Float(k.getUmsatz()).toString());
-            return true;
-		}else if(p instanceof Mitarbeiter){
-			Mitarbeiter m= (Mitarbeiter) p;
-			schreibeZeile(new Float(m.getGehalt()).toString());
-			return true;
-		}
+		schreibeZeile("K");
 		return true;
 	}
 

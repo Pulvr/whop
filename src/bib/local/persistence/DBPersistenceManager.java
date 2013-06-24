@@ -2,7 +2,6 @@ package bib.local.persistence;
 
 import java.io.IOException;
 
-import bib.local.valueobjects.Kunde;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
@@ -41,7 +40,7 @@ public class DBPersistenceManager implements PersistenceManager {
 	
 
 	@Override
-	public Kunde ladePerson() throws IOException {
+	public Person ladePerson() throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
