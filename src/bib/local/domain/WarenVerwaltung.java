@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Vector;
 
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Ware;
@@ -93,6 +94,14 @@ public class WarenVerwaltung {
 		}
 		else
 			throw new WareExistiertBereitsException(eineWare, " - in 'einfuegen()'");
+	}
+	
+	public void aendereBestand(Ware eineWare, int neuerBestand)throws WareExistiertNichtException{
+		if(warenBestand.contains(eineWare)){
+			eineWare.setBestand(neuerBestand);
+		}
+		else
+			throw new WareExistiertNichtException();
 	}
 
 	/**

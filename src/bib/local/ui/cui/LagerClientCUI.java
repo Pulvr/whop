@@ -11,6 +11,7 @@ import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.domain.exceptions.WarenkorbLeerException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -55,6 +56,7 @@ public class LagerClientCUI {
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
 		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware einfuegen: 'e'");
 		System.out.print("	       \n  Waren sortieren : 't'");
+		System.out.print("         \n  WarenBestand ändern:  'c'");
 		System.out.print("         \n  Waren ausgeben:  'a'");
 		System.out.print("         \n  Person einfuegen: 'p'");
 		if (mitarbeiterAngemeldet) System.out.print("         \n  Personen ausgeben:  'l'");
@@ -71,15 +73,9 @@ public class LagerClientCUI {
 		System.out.flush(); // ohne NL ausgeben
 	}
 
-	
-	
 	// Vergleicht eingegebenen Buchstaben mit Menüpunkten und führt den gewünschten Befehl aus
 	
 	private void verarbeiteEingabe(String line) throws IOException {
-		
-		
-		
-		
 		
 		try{
 			
@@ -130,9 +126,26 @@ public class LagerClientCUI {
 					System.out.println("Einfügen ok");
 				else
 					System.out.println("Fehler beim Einfügen");
+			
 				
+			//WARENBESTAND ÄNDERN
+			}else if(line.equals("c")){
 				
-			//PERSON EINFÜGEN
+				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, dessen Bestand geändert werden soll.");
+				String bezeichnung = liesEingabe();
+				
+				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+					System.out.print("neuer Bestand > ");
+					String bstd = liesEingabe();
+					int neuerBestand = Integer.parseInt(bstd);
+					try {
+						lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), neuerBestand);
+					} catch (WareExistiertNichtException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			//PERSON EINFÜGEN	
 			} else if (line.equals("p")) {
 				System.out.print("Nummer > ");
 				String nr = liesEingabe();
@@ -171,7 +184,7 @@ public class LagerClientCUI {
 			
 			// WARENKORB AUSGEBEN LASSEN
 			else if (line.equals("o")){
-				this.einloggenAbfrage();
+				einloggenAbfrage();
 				if(!User.getWarenkorb().isEmpty()){
 					System.out.println("Ihr Warenkorb beinhaltet: \n" + User.getWarenkorb());
 				} else System.out.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
@@ -381,6 +394,7 @@ public class LagerClientCUI {
 		System.out.print("\nErfolgreich eingeloggt!");
 		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getUsername() + "!\n");
 	}
+	
 	private void enterZumFortfahren() throws IOException{
 		System.out.println("\n		-> Zum Fortfahren bitte die Enter-Taste drücken.");
 		String input = this.liesEingabe();

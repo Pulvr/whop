@@ -7,6 +7,7 @@ import bib.local.domain.WarenVerwaltung.Sortierung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
@@ -94,6 +95,10 @@ public class LagerVerwaltung {
 	public void fuegeWareEin(String bezeichnung, int nummer, int bestand, float preis) throws WareExistiertBereitsException {
 		Ware w = new Ware(bezeichnung, nummer,  bestand, preis);
 		meineWaren.wareEinfuegen(w);
+	}
+	
+	public void aendereBestand(Ware w,int neuerBestand)throws WareExistiertNichtException{
+		meineWaren.aendereBestand(w, neuerBestand);
 	}
 	
 	/**
