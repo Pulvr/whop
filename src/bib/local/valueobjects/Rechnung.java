@@ -3,7 +3,7 @@ package bib.local.valueobjects;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Map;
+import java.util.HashMap;
 
 public class Rechnung {
 	
@@ -17,9 +17,9 @@ public class Rechnung {
 	private float gSumme = 0.0F;
 	
 	private Person p = null;
-	private Map<Ware, Integer>warenListe = null;
+	private HashMap<String, Ware>warenListe = null;
 	
-	public Rechnung (Person person, Map<Ware, Integer> warenListe){
+	public Rechnung (Person person, HashMap<String, Ware> warenListe){
 		this.p = person;
 		this.warenListe = warenListe;
 	}

@@ -253,7 +253,7 @@ public class LagerClientCUI {
 			else if (line.equals("b")) {
 				lag.schreibePersonen();
 			}
-			// INKORBLEGEN 
+			// IN KORB LEGEN 
 			else if (line.equals("j")){
 				if(!eingeloggt) einloggenAbfrage();
 					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
@@ -272,12 +272,12 @@ public class LagerClientCUI {
 							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
 						}
+					}else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
+					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 					}
 				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 					System.err.println("Die Ware existiert nicht.");
-				} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
-					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
-				}
+				} 
 			
 			//ENTFERNEN 
 			} else if(line.equals("z")){
@@ -337,7 +337,7 @@ public class LagerClientCUI {
 			Iterator<Ware> iter = waren.iterator();
 			while (iter.hasNext()) {
 				Ware ware = iter.next();
-				System.out.println(ware.toString());
+				System.out.println(ware.warenListe());
 			}
 		}
 	}

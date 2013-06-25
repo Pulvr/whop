@@ -9,7 +9,7 @@ public class Ware {
 	private String bezeichnung;
 	private int nummer; 
 	private int bestand;
-	private int bestellteMenge; //Wofür ?
+	//private int bestellteMenge; //Wofür ?
 	private float preis;
 	
 	//
@@ -34,9 +34,13 @@ public class Ware {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
+		return (bezeichnung + " " + preis + "€ / Auf Lager: " + bestand + " / \n");
+	}
+	
+	public String warenListe() {
 		return (nummer + " - " + bezeichnung + " / Preis: " + preis + "€ / Auf Lager: " + bestand + " / \n");
 	}
-
+	
 	/**
 	 * Standard-Methode von Object überschrieben.
 	 * Methode dient Vergleich von zwei Waren-Objekten anhand ihrer Werte,
@@ -44,13 +48,13 @@ public class Ware {
 	 * 
 	 * @see java.lang.Object#equals()
 	 */
-	public boolean equals(Object andereWare) {
+	/*public boolean equals(Object andereWare) {
 		if (andereWare instanceof Ware) 
 			return ((this.nummer == ((Ware) andereWare).nummer) 
 					&& (this.bezeichnung.equals(((Ware) andereWare).bezeichnung)));
 		else
 			return false;
-	}
+	}*/
 
 	
 	/*
@@ -76,7 +80,7 @@ public class Ware {
 	public void setBestand(int bestand){
 		this.bestand = bestand;
 	}
-	
+	/*
 	public void setBestellteMenge(int menge){
 		this.bestellteMenge = menge;
 	}
@@ -84,5 +88,5 @@ public class Ware {
 	public int getBestellteMenge(){
 		return this.bestellteMenge;
 	}
-	
+	*/
 }

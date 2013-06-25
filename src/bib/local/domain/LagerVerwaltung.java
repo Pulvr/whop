@@ -148,7 +148,7 @@ public class LagerVerwaltung {
 	 * @throws IOException
 	 */
 	public void schreibeWaren() throws IOException {
-		meineWaren.schreibeDaten(datei+"_B.txt");
+		meineWaren.schreibeDaten(datei+"_W.txt");
 	}
 	
 	/**

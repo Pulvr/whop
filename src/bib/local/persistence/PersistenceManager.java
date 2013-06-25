@@ -6,7 +6,7 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- * @author teschke
+ * @author Maik
  *
  * Allgemeine Schnittstelle für den Zugriff auf ein Speichermedium
  * (z.B. Datei oder Datenbank) zum Ablegen von beispielsweise

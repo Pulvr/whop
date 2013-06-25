@@ -78,7 +78,7 @@ public class FilePersistenceManager implements PersistenceManager {
 		// ... und von String in float konvertieren
 		float preis = Float.parseFloat(preisString);
 		
-		// neues Buch-Objekt mit eingelesenen Daten anlegen und zurückgeben
+		// neues Waren-Objekt mit eingelesenen Daten anlegen und zurückgeben
 		return new Ware(bezeichnung, nummer, bestand, preis);
 	}
 

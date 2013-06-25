@@ -203,6 +203,8 @@ public class WarenVerwaltung {
 	}
 	
 	public HashMap<String, Ware> getWarenObjekte(){
-		return this.warenObjekte;
+		//Hier wird ebenfalls eine Kopie der WarenObjekte zurück gegeben
+		HashMap<String, Ware> warenObjekteKopie = new HashMap<String, Ware>(warenObjekte);
+		return warenObjekteKopie;
 	}
 }
