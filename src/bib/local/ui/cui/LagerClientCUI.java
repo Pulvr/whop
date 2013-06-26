@@ -228,6 +228,8 @@ public class LagerClientCUI {
 					List<Ware> listeW = lag.gibAlleWaren();
 					gibWarenlisteAus(listeW);
 					System.out.println("Waren wurden nach Bestand sortiert");
+					//Sortieren nach Preis funktioniert noch nicht ganz, da compare() eine int merhode ist und nicht mit float werten umgehen kann
+					//somit musste der float wert in einen int wert getypecastet werden dies führt aber zu Ungenauigkeiten
 				}else if(antwort.equals("p")){
 					lag.sortiereDieWaren("p");
 					List<Ware> listeW = lag.gibAlleWaren();
@@ -256,9 +258,9 @@ public class LagerClientCUI {
 			// IN KORB LEGEN 
 			else if (line.equals("j")){
 				if(!eingeloggt) einloggenAbfrage();
-					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest.");
+					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest > ");
 					String bezeichnung = liesEingabe();
-					System.out.println("\nZu bestellende Anzahl?");
+					System.out.println("\nZu bestellende Anzahl? > ");
 					String mengenString = liesEingabe();
 					int menge = Integer.parseInt(mengenString);
 				
@@ -266,14 +268,14 @@ public class LagerClientCUI {
 					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 						try {
 							lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), User);
-							System.out.println("Ihr Warenkorb beinhaltet:\n" + 
+							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
 									User.getWarenkorb());
 						} catch (BestellteMengeNegativException e) {
 							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
 						}
 					}else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
-					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+					 System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
 					}
 				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 					System.err.println("Die Ware existiert nicht.");
@@ -282,9 +284,9 @@ public class LagerClientCUI {
 			//ENTFERNEN 
 			} else if(line.equals("z")){
 				einloggenAbfrage();
-				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du aus dem Korb entfernen möchtest.");
+				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du aus dem Korb entfernen möchtest > ");
 				String bezeichnung = liesEingabe();
-				System.out.println("\nZu entfernende Anzahl?");
+				System.out.println("\nZu entfernende Anzahl? > ");
 				String mengenString = liesEingabe();
 				int menge = Integer.parseInt(mengenString);
 				
@@ -292,18 +294,16 @@ public class LagerClientCUI {
 					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 						try {
 							lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), User);
-							System.out.println("Ihr Warenkorb beinhaltet:\n" + 
+							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
 									User.getWarenkorb());
 						} catch (BestellteMengeNegativException e) {
 							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
 						}
 					}
-				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-					System.err.println("Die Ware existiert nicht.");
-				} else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
-					System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
-				}
+				}else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				 System.err.println("Die Ware existiert nicht.");
+				} 
 			//LEEREN 
 			} else if(line.equals("h")){
 				einloggenAbfrage();
@@ -319,10 +319,6 @@ public class LagerClientCUI {
 				System.err.println(e.getMessage());
 		}
 		
-	}
-	/*
-	private void login (){
-		lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(key)
 	}
 	
 	/* (non-Javadoc)
@@ -360,7 +356,7 @@ public class LagerClientCUI {
 	
 	private void einloggenAbfrage() throws IOException{
 		if(!eingeloggt){
-			System.out.println("Bitte loggen Sie sich zunächst ein!\n");
+			System.out.println("\nBitte loggen Sie sich zunächst ein!\n");
 			this.einloggen();
 		}
 	}
@@ -368,7 +364,8 @@ public class LagerClientCUI {
 	private boolean nachfragen(String zusatz) throws IOException{
 		System.out.print("Bist du sicher, dass du " + zusatz + "?");
 		System.out.print("         \n  ja: 'j'");
-		System.out.print("         \n  nein:  'n'");
+		System.out.println("         \n  nein:  'n'");
+		System.out.print(" > ");
 		String antwort = liesEingabe();
 		if(antwort.equals("j")) return true;
 		else return false;
@@ -377,18 +374,18 @@ public class LagerClientCUI {
 	private void einloggen() throws IOException{
 		// Angemeldete User geben ihre Kundennummer und ihr Passwort an, um sich einzuloggen
 		
-		System.out.print("Bitte geben Sie ihre Kundennummer ein:\n");
+		System.out.print("Bitte geben Sie ihre Kundennummer ein > \n");
 		String knummer = this.liesEingabe();
 		int nummer = Integer.parseInt(knummer);
 		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(nummer)){
-			System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut:\n");
+			System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut > \n");
 			knummer = liesEingabe();
 			nummer = Integer.parseInt(knummer);
 		}
-		System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein:\n");
+		System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
 		String passwort = liesEingabe();
 		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getPassword().equals(passwort)){
-			System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut:\n");
+			System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
 			passwort = liesEingabe();
 		}
 		this.eingeloggt = true;
@@ -437,7 +434,6 @@ public class LagerClientCUI {
 			// einlesen von Konsole
 			return in.readLine();
 		}
-	
 	
 	/**
 	 * Die main-Methode...

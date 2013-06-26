@@ -62,20 +62,15 @@ public class FilePersistenceManager implements PersistenceManager {
 			// keine Daten mehr vorhanden
 			return null;
 		}
-		
 		// Nummer einlesen ...
 		String nummerString = liesZeile();
 		// ... und von String in int konvertieren
 		int nummer = Integer.parseInt(nummerString);
 		
-		//Bestand einlesen ...
 		String bestandString = liesZeile();
-		// ... und von String in int konvertieren
 		int bestand = Integer.parseInt(bestandString);
 		
-		//Preis einlesen ...
 		String preisString = liesZeile();
-		// ... und von String in float konvertieren
 		float preis = Float.parseFloat(preisString);
 		
 		// neues Waren-Objekt mit eingelesenen Daten anlegen und zurückgeben
@@ -84,14 +79,12 @@ public class FilePersistenceManager implements PersistenceManager {
 
 	/**
 	 * Methode zum Schreiben der Warendaten in eine externe Datenquelle.
-	 * Das Verfügbarkeitsattribut wird in der Datenquelle (Datei) als "t" oder "f"
-	 * codiert abgelegt.
 	 * 
 	 * @param w Waren-Objekt, das gespeichert werden soll
 	 * @return true, wenn Schreibvorgang erfolgreich,sonst false
 	 */
 	public boolean speichereWare(Ware w) throws IOException {
-		// Bezeichnung und Nummer schreiben
+		// Bezeichnung, Nummer, Bestand und Preis schreiben
 		schreibeZeile(w.getBezeichnung());
 		schreibeZeile(Integer.valueOf(w.getNummer()).toString());
 		schreibeZeile(Integer.valueOf(w.getBestand()).toString());
@@ -124,8 +117,6 @@ public class FilePersistenceManager implements PersistenceManager {
 				if (berechtigung.equals("K")){
 					return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, false);
 				} else return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, true);
-				
-				
 	}
 	
 	/**
@@ -146,13 +137,10 @@ public class FilePersistenceManager implements PersistenceManager {
 		schreibeZeile("K");
 		return true;
 	}
-
-	
 	
 	/*
 	 * Private Hilfsmethoden
 	 */
-	
 	private String liesZeile() throws IOException {
 		if (reader != null)
 			return reader.readLine();

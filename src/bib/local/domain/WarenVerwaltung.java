@@ -96,9 +96,15 @@ public class WarenVerwaltung {
 			throw new WareExistiertBereitsException(eineWare, " - in 'einfuegen()'");
 	}
 	
-	public void aendereBestand(Ware eineWare, int neuerBestand)throws WareExistiertNichtException{
-		if(warenBestand.contains(eineWare)){
-			eineWare.setBestand(neuerBestand);
+	/**
+	 * Methode die den Bestand einer angegebenen Ware ändert 
+	 * @param w name der Ware
+	 * @param neuerBestand der Neue Bestand dieser Ware
+	 * @throws WareExistiertNichtException
+	 */
+	public void aendereBestand(Ware w, int neuerBestand)throws WareExistiertNichtException{
+		if(warenBestand.contains(w)){
+			w.setBestand(neuerBestand);
 		}
 		else
 			throw new WareExistiertNichtException();
@@ -124,14 +130,6 @@ public class WarenVerwaltung {
 		return ergebnis;
 	}
 	
-	
-	//Methode zum entfernen von waren, der Eintrag in vector wird komplett entfernt und ist deswegen unbenutzt
-	/*public void entfernen(Ware eineWare){
-		if (warenBestand.contains(eineWare))
-			warenBestand.remove(eineWare);
-	}
-	*/
-	
 	/**
 	 * Methode zum sortieren der Waren nach Bezeichnung oder Nummer , die methode ist erweiterbar um noch nach bestand o.ä.
 	 * zu sortieren
@@ -141,20 +139,20 @@ public class WarenVerwaltung {
 	public void artikelSortieren(Sortierung sortieren){
 		switch (sortieren){
 		case Bezeichnung:
-			Collections.sort(warenBestand, new Comparator<Ware>(){
-				public int compare(Ware w1, Ware w2){
-					return w1.getBezeichnung().compareTo(w2.getBezeichnung());
-				}
-			});
-			break;
+		Collections.sort(warenBestand, new Comparator<Ware>(){
+			public int compare(Ware w1, Ware w2){
+				return w1.getBezeichnung().compareTo(w2.getBezeichnung());
+			}
+		});
+		break;
 			
 		case Nummer:
-			Collections.sort(warenBestand, new Comparator<Ware>(){
-				public int compare(Ware w1, Ware w2){
-					return w1.getNummer() - w2.getNummer();
-				}
-			});
-			break;
+		Collections.sort(warenBestand, new Comparator<Ware>(){
+			public int compare(Ware w1, Ware w2){
+				return w1.getNummer() - w2.getNummer();
+			}
+		});
+		break;
 		
 
 		case Bestand:
@@ -167,13 +165,12 @@ public class WarenVerwaltung {
 		
 		//Sortieren nach Preis geht noch nicht ganz wegen int typecast
 		case Preis:
-			Collections.sort(warenBestand, new Comparator<Ware>(){
-				public int compare(Ware w1, Ware w2){
-					return (int) (w1.getPreis() - w2.getPreis());
-				}
-			});
-			break;
-		
+		Collections.sort(warenBestand, new Comparator<Ware>(){
+			public int compare(Ware w1, Ware w2){
+				return (int) (w1.getPreis() - w2.getPreis());
+			}
+		});
+		break;
 		}
 	}
 
@@ -192,18 +189,18 @@ public class WarenVerwaltung {
 	
 	/**
 	 * Methode, die den Warenbestand als Vector zurückgibt.
-	 * 
-	 * @return Liste aller Waren im Warenbestand
+	 * @return Eine Kopie des WarenBestandes als Vector
 	 */
 	public List<Ware> getWarenBestand() {
-		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
-		// mit Kopien der Waren-Objekte zurückzugeben
 		List<Ware> warenBestandKopie = new Vector<Ware>(warenBestand);
 		return warenBestandKopie;
 	}
 	
+	/**
+	 * Methode, die den Warenbestand als Hashmap zurückgibt 
+	 * @return Eine Kopie des Warenbestandes als Hashmap
+	 */
 	public HashMap<String, Ware> getWarenObjekte(){
-		//Hier wird ebenfalls eine Kopie der WarenObjekte zurück gegeben
 		HashMap<String, Ware> warenObjekteKopie = new HashMap<String, Ware>(warenObjekte);
 		return warenObjekteKopie;
 	}

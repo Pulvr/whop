@@ -92,14 +92,22 @@ public class PersonenVerwaltung {
 		pm.close();
 	}
 	
+	/**
+	 * Methode die die Personen als Vector zurück gibt
+	 * @return Kopie des Vectors
+	 */
 	public List<Person> getPersonen() {
-		// Achtung: hier wäre es sinnvoller / sicherer, eine Kopie des Vectors 
-		// mit Kopien der Personen-Objekte zurückzugeben
-		return personen;
+		List<Person> personenKopie = new Vector<Person>(personen);
+		return personenKopie;
 	}
 	
+	/**
+	 * Methode die die Personen als HashMap zurück gibt
+	 * @return Kopie der HashMap
+	 */
 	public HashMap<Integer, Person> getPersonenObjekte(){
-		return this.personenObjekte;
+		HashMap<Integer, Person> personenObjekteKopie = new HashMap<Integer, Person>(personenObjekte);
+		return personenObjekteKopie;
 	}
 	
 	/**

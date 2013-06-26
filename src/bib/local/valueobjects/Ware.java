@@ -9,13 +9,7 @@ public class Ware {
 	private String bezeichnung;
 	private int nummer; 
 	private int bestand;
-	//private int bestellteMenge; //Wofür ?
 	private float preis;
-	
-	//
-	//public Ware(String bezeichnung, int nr, int bestand) {
-	//	this(bezeichnung, nr ,bestand, true);
-	//}
 
 	public Ware(String bezeichnung, int nr,int bstd, float preis) {
 		this.nummer = nr;
@@ -80,13 +74,4 @@ public class Ware {
 	public void setBestand(int bestand){
 		this.bestand = bestand;
 	}
-	/*
-	public void setBestellteMenge(int menge){
-		this.bestellteMenge = menge;
-	}
-
-	public int getBestellteMenge(){
-		return this.bestellteMenge;
-	}
-	*/
 }

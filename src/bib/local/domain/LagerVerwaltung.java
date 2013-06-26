@@ -25,8 +25,6 @@ public class LagerVerwaltung {
 	
 	private WarenVerwaltung meineWaren;
 	private PersonenVerwaltung meinePersonen;
-	// private KundenVerwaltung meineKunden;
-	// hier weitere Verwaltungsklassen, z.B. für Waren oder Angestellte
 	
 	/**
 	 * Konstruktor, der die Basisdaten (Waren, Personen) aus Dateien einliest
@@ -50,7 +48,6 @@ public class LagerVerwaltung {
 		meinePersonen = new PersonenVerwaltung();
 		meinePersonen.liesDaten(datei+"_P.txt");
 	}
-
 
 	/**
 	 * Methode, die eine Liste aller im Bestand befindlichen Waren zurückgibt.
@@ -97,6 +94,12 @@ public class LagerVerwaltung {
 		meineWaren.wareEinfuegen(w);
 	}
 	
+	/**
+	 * Methode zum neusetzen des Bestands eines Artikels, bisher ohne addition oder subtraktion
+	 * @param w
+	 * @param neuerBestand
+	 * @throws WareExistiertNichtException
+	 */
 	public void aendereBestand(Ware w,int neuerBestand)throws WareExistiertNichtException{
 		meineWaren.aendereBestand(w, neuerBestand);
 	}
@@ -107,7 +110,6 @@ public class LagerVerwaltung {
 	 * @param Daten der Person
 	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
 	 */
-	
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma) throws PersonExistiertBereitsException {
 		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw, ma);
 		meinePersonen.personEinfuegen(p);
@@ -120,7 +122,6 @@ public class LagerVerwaltung {
 	 * @param aufgabe soll nach Bezeichnung oder Nummer sortiert werden?
 	 */
 	 public void sortiereDieWaren(String aufgabe) {
-		 	
 		 if (aufgabe.equals ("b")){
 			 meineWaren.artikelSortieren(Sortierung.Bezeichnung);   
 		 }else if (aufgabe.equals("n")){
@@ -131,16 +132,6 @@ public class LagerVerwaltung {
 			 meineWaren.artikelSortieren(Sortierung.Preis);
 		 }
 	 }
-	
-	/** Entfernt waren aus dem Vector, wird nicht verwendet weil letztendlich nur der bestand verändert wird und
-	 *  keine Waren aus dem Vector entfernt werden, vielleicht noch nützlich momementan nicht
-	 */
-	 /*public void entferneWare(String bezeichnung, int nummer, int bestand){
-		Ware w = new Ware(bezeichnung, nummer , bestand);
-		
-		meineWaren.entfernen(w);
-		
-	 }*/
 
 	/**
 	 * Methode zum Speichern des Warenbestands in einer Datei.
@@ -153,7 +144,6 @@ public class LagerVerwaltung {
 	
 	/**
 	 * Methode zum speichern der Personen in einer Datei
-	 * 
 	 * @throws IOException
 	 */
 	public void schreibePersonen() throws IOException {
@@ -162,7 +152,6 @@ public class LagerVerwaltung {
 	
 	/**
 	 * Methode mit der Waren in den Korb gelegt werden
-	 * 
 	 * @param menge wieviele Waren sollen gekauft werden?
 	 * @param ware welche Ware?
 	 * @param p welche Person?
@@ -172,10 +161,21 @@ public class LagerVerwaltung {
 		meinePersonen.inWarenkorbLegen(menge, ware, p);
 	}
 	
+	/**
+	 * Methode die Waren aus dem Korb entfernen kann
+	 * @param menge
+	 * @param ware
+	 * @param p
+	 * @throws BestellteMengeNegativException
+	 */
 	public void entferneAusWarenkorb(int menge, Ware ware, Person p)throws BestellteMengeNegativException{
 		meinePersonen.entferneAusWarenkorb(menge, ware, p);
 	}
 	
+	/**
+	 * Methode die den Warenkorb eines angegeben Users leert
+	 * @param p Name der Person
+	 */
 	public void warenkorbLeeren(Person p){
 		meinePersonen.warenkorbLeeren(p);
 	}

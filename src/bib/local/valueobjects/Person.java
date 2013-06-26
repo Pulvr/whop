@@ -23,6 +23,7 @@ public class Person {
 	public Person (){
 		
 	}
+	
 	//Konstruktor
 	public Person(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma){
 		this.nummer = nr;
@@ -51,7 +52,6 @@ public class Person {
 					&& name.equals(((Person) anderePerson).name));
 		else
 			return false;
-		
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class Person {
 	}
 	
 	/**
-	 * Methode zum entfernen einzelner Waren (ungetestet)
+	 * Methode zum entfernen einzelner odere mehrer Waren 
 	 * @param w
 	 * @param menge
 	 */
