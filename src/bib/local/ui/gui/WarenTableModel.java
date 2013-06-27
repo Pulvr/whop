@@ -7,12 +7,12 @@ import javax.swing.table.DefaultTableModel;
 
 import bib.local.valueobjects.Ware;
 
-public class BooksTableModel extends DefaultTableModel {
+public class WarenTableModel extends DefaultTableModel {
 
 	private Vector<String> columnNames;
 	private Vector<Vector<String>> data;
 	
-	public BooksTableModel(List<Ware> buecher) {
+	public WarenTableModel(List<Ware> buecher) {
 		super();
 		
 		columnNames = new Vector<String>();
@@ -20,7 +20,6 @@ public class BooksTableModel extends DefaultTableModel {
 		columnNames.add("Titel");
 		columnNames.add("Bestand");
 		columnNames.add("Preis");
-		//columnNames.add("Verfügbarkeit");
 		
 		data = new Vector<Vector<String>>();
 		updateDataVector(buecher);
@@ -35,10 +34,9 @@ public class BooksTableModel extends DefaultTableModel {
 			warenVector.add(w.getBezeichnung());
 			warenVector.add(w.getBestand()+"");
 			warenVector.add(w.getPreis()+"");
-			//buchVector.add(w.isVerfuegbar() ? "true" : "false");
+			//warenVector.add(w.isVerfuegbar() ? "true" : "false");
 			data.add(warenVector);
 		}
-		
 		setDataVector(data, columnNames);
 	}
 }

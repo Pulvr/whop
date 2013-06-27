@@ -19,6 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import bib.local.domain.LagerVerwaltung;
@@ -27,12 +30,11 @@ import bib.local.valueobjects.Ware;
 
 /**
  * Klasse für sehr einfache graphische Benutzungsschnittstelle (GUI)
- * für die Bibliothek. 
- * 
- * @author teschke
+ * für den eshop. 
+ *
  * @version 7 (Swing-GUI)
  */
-public class SwingBibClientGUI extends JFrame {
+public class SwingLagClientGUI extends JFrame {
 
 	private LagerVerwaltung lag;
 	
@@ -43,8 +45,8 @@ public class SwingBibClientGUI extends JFrame {
 //	private JList bookList;
 	private JTable bookTable;
 	
-	public SwingBibClientGUI(String datei) throws IOException {
-		super("Bibliothek");
+	public SwingLagClientGUI(String datei) throws IOException {
+		super("ESHOP");
 		
 //		// Code für Umschaltung des Look-and-Feels:
 //		// (Einfach mal ausprobieren!)
@@ -137,7 +139,7 @@ public class SwingBibClientGUI extends JFrame {
 //		bookList = new JList();
 //		updateList(bib.gibAlleBuecher());
 		// Code für den Einsatz einer JTable
-		bookTable = new JTable(new BooksTableModel(lag.gibAlleWaren()));
+		bookTable = new JTable(new WarenTableModel(lag.gibAlleWaren()));
 
 		JScrollPane scrollPane = new JScrollPane(bookTable);
 		
@@ -179,7 +181,7 @@ public class SwingBibClientGUI extends JFrame {
 //		bookList.setModel(lm);
 
 		// Code für den Einsatz einer JTable
-		BooksTableModel btm = (BooksTableModel) bookTable.getModel();
+		WarenTableModel btm = (WarenTableModel) bookTable.getModel();
 		btm.updateDataVector(buecher);
 	}
 	
@@ -189,7 +191,7 @@ public class SwingBibClientGUI extends JFrame {
 	 */
 	public static void main(String[] args) {
 		try {
-			SwingBibClientGUI gui = new SwingBibClientGUI("LAG");
+			SwingLagClientGUI gui = new SwingLagClientGUI("LAG");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
