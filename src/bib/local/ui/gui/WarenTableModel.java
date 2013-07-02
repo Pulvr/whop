@@ -12,17 +12,17 @@ public class WarenTableModel extends DefaultTableModel {
 	private Vector<String> columnNames;
 	private Vector<Vector<String>> data;
 	
-	public WarenTableModel(List<Ware> buecher) {
+	public WarenTableModel(List<Ware> waren) {
 		super();
 		
 		columnNames = new Vector<String>();
-		columnNames.add("Nummer");
 		columnNames.add("Titel");
-		columnNames.add("Bestand");
 		columnNames.add("Preis");
+		columnNames.add("Bestand");
+		columnNames.add("Artikelnummer");
 		
 		data = new Vector<Vector<String>>();
-		updateDataVector(buecher);
+		updateDataVector(waren);
 	}
 
 	public void updateDataVector(List<Ware> waren) {
@@ -30,11 +30,10 @@ public class WarenTableModel extends DefaultTableModel {
 		
 		for (Ware w: waren) {
 			Vector<String> warenVector = new Vector<String>();
-			warenVector.add(w.getNummer()+"");
 			warenVector.add(w.getBezeichnung());
+			warenVector.add(w.getPreis()+" €");
 			warenVector.add(w.getBestand()+"");
-			warenVector.add(w.getPreis()+"");
-			//warenVector.add(w.isVerfuegbar() ? "true" : "false");
+			warenVector.add(w.getNummer()+"");
 			data.add(warenVector);
 		}
 		setDataVector(data, columnNames);
