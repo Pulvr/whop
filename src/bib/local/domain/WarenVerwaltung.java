@@ -1,8 +1,12 @@
 package bib.local.domain;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,8 +15,10 @@ import java.util.Vector;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.persistence.FilePersistenceManager;
+import bib.local.persistence.LogPersistenceManager;
 import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Ware;
+import bib.local.valueobjects.WarenLog;
 
 /**
  * Klasse zur Verwaltung der Waren.
@@ -28,6 +34,9 @@ public class WarenVerwaltung {
 	private FilePersistenceManager pm = new FilePersistenceManager();
 	
 	private HashMap<String, Ware> warenObjekte = new HashMap<String, Ware>();
+	private LogPersistenceManager logP = new LogPersistenceManager();
+	private File warenLog = new File("WAREN_LOG.txt");
+	private SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
 
 	
 	/**
@@ -78,7 +87,10 @@ public class WarenVerwaltung {
 			Iterator<Ware> iter = warenBestand.iterator();
 			while (iter.hasNext()) {
 				Ware w = iter.next();
-				pm.speichereWare(w);				
+				pm.speichereWare(w);
+				Date d = new Date();
+				String text = this.ft.format(d) + "\n" + w.getBezeichnung() + "\n" + w.getNummer() + "\n" + w.getPreis() + "\n" + w.getBestand() + "\n";
+				this.logP.writeLog(this.warenLog, text);
 			}
 		}			
 		
@@ -107,7 +119,8 @@ public class WarenVerwaltung {
 	 * @param neuerBestand der Neue Bestand dieser Ware
 	 * @throws WareExistiertNichtException
 	 */
-	public void aendereBestand(Ware w, int neuerBestand)throws WareExistiertNichtException{
+	//throws ...
+	public void aendereBestand(Ware w, int neuerBestand)throws WareExistiertNichtException, IOException{
 		if(warenBestand.contains(w)){
 			w.setBestand(neuerBestand);
 		}
@@ -208,5 +221,9 @@ public class WarenVerwaltung {
 	public HashMap<String, Ware> getWarenObjekte(){
 		HashMap<String, Ware> warenObjekteKopie = new HashMap<String, Ware>(warenObjekte);
 		return warenObjekteKopie;
+	}
+	
+	public Vector<WarenLog> getWarenLog(String bezeichnung, int daysInPast) throws ParseException, IOException{
+		return this.logP.readLog(this.warenLog, bezeichnung, daysInPast);
 	}
 }

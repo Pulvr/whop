@@ -9,7 +9,6 @@ import java.util.Vector;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.persistence.FilePersistenceManager;
-import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
@@ -67,11 +66,12 @@ public class PersonenVerwaltung {
 	 * @throws PersonExistiertBereitsException
 	 */
 	public void personEinfuegen(Person einePerson) throws PersonExistiertBereitsException{
-		if (!personen.contains(einePerson))
-			{personen.add(einePerson);
-			personenObjekte.put(einePerson.getNummer(), einePerson);}
-		else
+		if (!personen.contains(einePerson)){
+			personen.add(einePerson);
+			personenObjekte.put(einePerson.getNummer(), einePerson);
+		} else {
 			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
+		}
 	}
 	/**
 	 * Schreibe die Daten in eine Datei
@@ -87,7 +87,7 @@ public class PersonenVerwaltung {
 			Iterator<Person> iter = personen.iterator();
 			while (iter.hasNext()) {
 				Person p = iter.next();
-				pm.speicherePerson(p);				
+				pm.speicherePerson(p);	
 			}
 		}			
 		

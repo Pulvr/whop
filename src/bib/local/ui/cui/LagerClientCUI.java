@@ -3,16 +3,15 @@ package bib.local.ui.cui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
-import bib.local.domain.exceptions.WarenkorbLeerException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
@@ -69,6 +68,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Warenkorb leeren 'h'");
 		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
 		System.out.print("		   \n  Waren KAUFEN 'k'");
+		System.out.print("		   \n  WarenLog ausgeben 'd'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
 		
 		System.out.print("> "); // Prompt
@@ -312,7 +312,24 @@ public class LagerClientCUI {
 				System.out.println(lag.getRechnung().toString());
 				lag.warenkorbKaufen(user, user.getWarenkorb());
 
-			//LEEREN 
+			 
+			}else if (line.equals("d")){
+				try{
+					System.out.print("Warenbezeichnung  > ");
+					String bezeichnung = liesEingabe();
+					
+					System.out.print("Wie viele Tage soll der Log zurueckliegen? > ");
+						String daysInPastString = liesEingabe();
+						int daysInPast = Integer.parseInt(daysInPastString);
+						
+					for(int i = 0; i < lag.getWarenLog(bezeichnung, daysInPast).size(); i++){
+						System.out.println(lag.getWarenLog(bezeichnung, daysInPast).elementAt(i));
+					}
+				} catch(IOException | ParseException e){
+					e.printStackTrace();
+				}
+				
+			//LEEREN	
 			}else if(line.equals("h")){
 				einloggenAbfrage();
 				if (!user.getWarenkorb().isEmpty()){

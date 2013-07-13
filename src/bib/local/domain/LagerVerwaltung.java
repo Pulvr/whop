@@ -1,6 +1,7 @@
 package bib.local.domain;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,6 +13,7 @@ import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
+import bib.local.valueobjects.WarenLog;
 
 /**
  * Klasse zur Verwaltung eines (sehr einfachen) Lagers.
@@ -103,7 +105,7 @@ public class LagerVerwaltung {
 	 * @param neuerBestand
 	 * @throws WareExistiertNichtException
 	 */
-	public void aendereBestand(Ware w,int neuerBestand)throws WareExistiertNichtException{
+	public void aendereBestand(Ware w,int neuerBestand)throws WareExistiertNichtException, IOException{
 		meineWaren.aendereBestand(w, neuerBestand);
 	}
 	
@@ -190,6 +192,10 @@ public class LagerVerwaltung {
 	 */
 	public void warenkorbLeeren(Person p){
 		meinePersonen.warenkorbLeeren(p);
+	}
+	
+	public Vector<WarenLog> getWarenLog(String bezeichnung, int daysInPast)throws IOException,ParseException{
+		return meineWaren.getWarenLog(bezeichnung, daysInPast);
 	}
 	
 	/**
