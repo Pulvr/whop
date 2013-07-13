@@ -10,10 +10,10 @@ import java.util.Vector;
 
 public class Rechnung {
 	
-	private GregorianCalendar gcal = new GregorianCalendar();
+	//private GregorianCalendar gcal = new GregorianCalendar();
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-	private Date date = gcal.getTime();
-	private String dateStr = sdf.format(date);
+	private Date date;
+	private String dateStr;
 	
 	private String rechnungsNr;
 	
@@ -22,41 +22,29 @@ public class Rechnung {
 
 	private DecimalFormat df = new DecimalFormat("0.00");
 
-	private Person p = null;
-	private Vector<Ware>warenkorbPerson = null;
+	private Person p;
 	
-	public Rechnung (Person person, Vector<Ware> warenkorbPerson){
+	public Rechnung (Person person){
+		this.dateStr = this.sdf.format(new Date());
 		this.p =person;
-		this.warenkorbPerson = warenkorbPerson;
 	}
 	
 	public String toString(){
 		
 		String output = "";
-		output += "Rechnungs-Nummer: "+ getRechnungsNummer()+ " am " +dateStr+ " \n";
+		//output += "Rechnungs-Nummer: "+ getRechnungsNummer()+ " am " +dateStr+ " \n";
+		output += this.dateStr + "\n";
 		output += p.getAnrede()+" \n";
 		output += p.getName()+" \n";
 		output += p.getStrasse()+" \n";
 		output += p.getPlz()+" "+p.getWohnort()+ " \n";
 		output += "*-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-* \n";
-		Iterator<Ware> iter = warenkorbPerson.iterator();
-			while(iter.hasNext()){
-				Ware w = iter.next();
-				if (iter.next().equals(iter)){
-					int anz = 0;
-					anz++;
-				}
-				//gibWarenRechnung(w,warenkorbPerson.)
-			}
+		for(int i = 0; i < p.getWarenkorb().size(); i++){
+			output += p.getWarenkorb().elementAt(i)+"\n";
+			this.gSumme += p.getWarenkorb().elementAt(i).getPreis();
+		}
+		output += "Gesamtpreis: " + df.format(this.gSumme) + "€";
 		
 		return output;
-	}
-	
-	public String gibWarenRechnung(Ware w,int anzahl, float Preis){
-		return w.getNummer()+"\t"+w.getBezeichnung()+"\t"+anzahl+"\t"+df.format(w.getPreis());
-	}
-	
-	public String getRechnungsNummer(){
-		return rechnungsNr;
 	}
 }

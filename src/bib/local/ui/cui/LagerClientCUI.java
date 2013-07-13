@@ -14,6 +14,7 @@ import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.domain.exceptions.WarenkorbLeerException;
 import bib.local.valueobjects.Person;
+import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -40,7 +41,7 @@ public class LagerClientCUI {
 	}
 	
 	// Eingeloggten User festlegen
-	public Person User = new Person();
+	public Person user = new Person();
 	
 	// Ist jemand eingeloggt und ist es ein Mitarbeiter?
 	public boolean eingeloggt = false;
@@ -67,6 +68,7 @@ public class LagerClientCUI {
 		System.out.print("		   \n  Waren aus Korb entfernen 'z'");
 		System.out.print("         \n  Warenkorb leeren 'h'");
 		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
+		System.out.print("		   \n  Waren KAUFEN 'k'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
 		
 		System.out.print("> "); // Prompt
@@ -82,12 +84,12 @@ public class LagerClientCUI {
 			// EINLOGGEN:
 			if (line.equals("i")){
 				if(!eingeloggt) einloggen();
-				else System.out.print("Sie sind bereits als " + User.getUsername() + " eingeloggt.");
+				else System.out.print("Sie sind bereits als " + user.getUsername() + " eingeloggt.");
 			}
 			// AUSLOGGEN:
 			if (line.equals("u") && eingeloggt){
 				if(nachfragen("dich ausloggen möchtest")){
-					User = null;
+					user = null;
 					System.out.print("Erfolgreich ausgeloggt.");
 					eingeloggt = false;
 					mitarbeiterAngemeldet = false;
@@ -188,8 +190,8 @@ public class LagerClientCUI {
 			// WARENKORB AUSGEBEN LASSEN
 			else if (line.equals("o")){
 				einloggenAbfrage();
-				if(!User.getWarenkorb().isEmpty()){
-					System.out.println("Ihr Warenkorb beinhaltet: \n" + User.getWarenkorb());
+				if(!user.getWarenkorb().isEmpty()){
+					System.out.println("Ihr Warenkorb beinhaltet: \n" + user.getWarenkorb());
 				} else System.out.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
 			}
 			
@@ -267,9 +269,9 @@ public class LagerClientCUI {
 				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 						try {
-							lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), User);
+							lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
 							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
-									User.getWarenkorb());
+									user.getWarenkorb());
 						} catch (BestellteMengeNegativException e) {
 							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
@@ -293,9 +295,9 @@ public class LagerClientCUI {
 				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 						try {
-							lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), User);
+							lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
 							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
-									User.getWarenkorb());
+									user.getWarenkorb());
 						} catch (BestellteMengeNegativException e) {
 							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
@@ -303,17 +305,23 @@ public class LagerClientCUI {
 					}
 				}else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 				 System.err.println("Die Ware existiert nicht.");
-				} 
+				}
+			//WARENKORB KAUFEN	
+			}else if(line.equals("k")){
+				lag.setRechnung(new Rechnung(user));
+				System.out.println(lag.getRechnung().toString());
+				lag.warenkorbKaufen(user, user.getWarenkorb());
+
 			//LEEREN 
-			} else if(line.equals("h")){
+			}else if(line.equals("h")){
 				einloggenAbfrage();
-				if (!User.getWarenkorb().isEmpty()){
+				if (!user.getWarenkorb().isEmpty()){
 					if (nachfragen("deinen Warenkorb leeren willst")){
-						lag.warenkorbLeeren(User);
+						lag.warenkorbLeeren(user);
 						System.out.println("Der Warenkorb wurde geleert.");
 					}
 				}
-				else System.out.println("Ihr Warenkorb enthält bislang keinerlei Artikel.");
+				else System.out.println("Ihr Warenkorb enthält keine Artikel.");
 			}
 		} catch (NumberFormatException e){
 				System.err.println(e.getMessage());
@@ -389,8 +397,8 @@ public class LagerClientCUI {
 			passwort = liesEingabe();
 		}
 		this.eingeloggt = true;
-		this.User = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer);
-		if(this.User.getMitarbeiterberechtigung()) this.mitarbeiterAngemeldet = true;
+		this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer);
+		if(this.user.getMitarbeiterberechtigung()) this.mitarbeiterAngemeldet = true;
 		System.out.print("\nErfolgreich eingeloggt!");
 		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getUsername() + "!\n");
 	}

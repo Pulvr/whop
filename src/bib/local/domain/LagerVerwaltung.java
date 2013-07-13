@@ -2,6 +2,7 @@ package bib.local.domain;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 import bib.local.domain.WarenVerwaltung.Sortierung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
@@ -9,6 +10,7 @@ import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
+import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -25,6 +27,7 @@ public class LagerVerwaltung {
 	
 	private WarenVerwaltung meineWaren;
 	private PersonenVerwaltung meinePersonen;
+	private Rechnung rechnung;
 	
 	/**
 	 * Konstruktor, der die Basisdaten (Waren, Personen) aus Dateien einliest
@@ -151,6 +154,15 @@ public class LagerVerwaltung {
 	}
 	
 	/**
+	 * den Warenkorb kaufen trololol
+	 * @param p
+	 * @param warenkorb
+	 */
+	public void warenkorbKaufen(Person p, Vector<Ware> warenkorb){
+		meinePersonen.warenkorbKaufen(p, warenkorb);
+	}
+	
+	/**
 	 * Methode mit der Waren in den Korb gelegt werden
 	 * @param menge wieviele Waren sollen gekauft werden?
 	 * @param ware welche Ware?
@@ -194,5 +206,13 @@ public class LagerVerwaltung {
 	 */
 	public WarenVerwaltung getMeineWarenVerwaltung(){
 		return this.meineWaren;
+	}
+	
+	public Rechnung getRechnung(){
+		return this.rechnung;
+	}
+	
+	public void setRechnung(Rechnung r){
+		this.rechnung = r;
 	}
 }
