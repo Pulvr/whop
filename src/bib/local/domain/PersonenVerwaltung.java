@@ -27,7 +27,7 @@ public class PersonenVerwaltung {
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs
 	// verantwortlich ist
-	private PersistenceManager pm = new FilePersistenceManager();
+	private FilePersistenceManager pm = new FilePersistenceManager();
 
 	/**
 	 * Methode zum Einlesen von Personendaten aus einer Datei.
@@ -35,25 +35,28 @@ public class PersonenVerwaltung {
 	 * @param datei Datei, die einzulesende Kundeninformationen enthält
 	 * @throws IOException
 	 */
-	public void liesDaten(String datei) throws IOException {
+	public void liesDaten(String datei) throws IOException  {
 		// PersistenzManager für Lesevorgänge öffnen
 		pm.openForReading(datei);
-
-		Person einePerson;
-		do {
-			// Personen-Objekt einlesen
-			einePerson = pm.ladePerson();
-			if (einePerson != null) {
-				//Person in Liste einfügen
-				try {
-					personEinfuegen(einePerson);
-				} catch (PersonExistiertBereitsException e1) {
-					// Kann hier eigentlich nicht auftreten,
-					// daher auch keine Fehlerbehandlung...
+		
+		try{
+			Person einePerson;
+			do {
+				// Personen-Objekt einlesen
+				einePerson = pm.ladePerson();
+				if (einePerson != null) {
+					//Person in Liste einfügen
+					try {
+						personEinfuegen(einePerson);
+					} catch (PersonExistiertBereitsException e1) {
+						// Kann hier eigentlich nicht auftreten,
+						// daher auch keine Fehlerbehandlung...
+					}
 				}
-			}
-		} while (einePerson != null);
-
+			} while (einePerson != null);
+		}catch (ClassNotFoundException e){
+			System.out.println(e.getMessage());
+		}
 		// Persistenz-Schnittstelle wieder schließen
 		pm.close();
 	}

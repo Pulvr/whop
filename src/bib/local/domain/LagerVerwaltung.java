@@ -42,11 +42,11 @@ public class LagerVerwaltung {
 		
 		// Warenbestand aus Datei einlesen
 		meineWaren = new WarenVerwaltung();
-		meineWaren.liesDaten(datei+"_W.txt");
+		meineWaren.liesDaten(datei+"_W.ser");
 		
 		// Kundenkartei aus Datei einlesen
 		meinePersonen = new PersonenVerwaltung();
-		meinePersonen.liesDaten(datei+"_P.txt");
+		meinePersonen.liesDaten(datei+"_P.ser");
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class LagerVerwaltung {
 	 * @throws IOException
 	 */
 	public void schreibeWaren() throws IOException {
-		meineWaren.schreibeDaten(datei+"_W.txt");
+		meineWaren.schreibeDaten(this.datei+"_W.ser");
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class LagerVerwaltung {
 	 * @throws IOException
 	 */
 	public void schreibePersonen() throws IOException {
-		meinePersonen.schreibeDaten(datei+"_P.txt");
+		meinePersonen.schreibeDaten(this.datei+"_P.ser");
 	}
 	
 	/**

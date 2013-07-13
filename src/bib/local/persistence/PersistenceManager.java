@@ -21,14 +21,14 @@ public interface PersistenceManager {
 	
 	public void openForWriting(String datenquelle) throws IOException;
 	
-	public boolean close();
+	public boolean close() throws IOException;
 
 	/**
 	 * Methode zum Einlesen der Warendaten aus einer externen Datenquelle.
 	 * 
 	 * @return Waren-Objekt, wenn Einlesen erfolgreich, false null
 	 */
-	public Ware ladeWare() throws IOException;
+	public Ware ladeWare() throws IOException, ClassNotFoundException;
 
 	/**
 	 * Methode zum Schreiben der Warendaten in eine externe Datenquelle.
@@ -44,7 +44,7 @@ public interface PersistenceManager {
 	 * 
 	 * @return Waren-Objekt, wenn Einlesen erfolgreich, false null
 	 */
-	public Person ladePerson() throws IOException;
+	public Person ladePerson() throws IOException, ClassNotFoundException;
 	
 	/**
 	 * Methode zum Schreiben der Personendaten in eine externe Datenquelle.

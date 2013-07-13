@@ -1,10 +1,16 @@
 package bib.local.valueobjects;
 
+import java.io.Serializable;
+
 /**
  * Klasse zur Repräsentation einzelner Waren.
  */
-public class Ware {
+public class Ware implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 918917690547978048L;
 	// Attribute zur Beschreibung einer Ware:
 	private String bezeichnung;
 	private int nummer; 

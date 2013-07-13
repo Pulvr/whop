@@ -1,12 +1,12 @@
 package bib.local.persistence;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -19,18 +19,19 @@ import bib.local.valueobjects.Ware;
  */
 public class FilePersistenceManager implements PersistenceManager {
 
-	private BufferedReader reader = null;
-	private PrintWriter writer = null;
+	private ObjectInputStream reader = null;
+	private ObjectOutputStream writer = null;
 	
-	public void openForReading(String datei) throws FileNotFoundException {
-		reader = new BufferedReader(new FileReader(datei));
+	public void openForReading(String datei) throws FileNotFoundException ,IOException{
+		reader = new ObjectInputStream(new FileInputStream(datei));
 	}
 
 	public void openForWriting(String datei) throws IOException {
-		writer = new PrintWriter(new BufferedWriter(new FileWriter(datei)));
+		writer = new ObjectOutputStream(new FileOutputStream(datei));
 	}
 
-	public boolean close() {
+	public boolean close() throws IOException{
+		
 		if (writer != null)
 			writer.close();
 		
@@ -55,26 +56,18 @@ public class FilePersistenceManager implements PersistenceManager {
 	 * 
 	 * @return Waren-Objekt, wenn Einlesen erfolgreich, false null
 	 */
-	public Ware ladeWare() throws IOException {
+	public Ware ladeWare() throws IOException,ClassNotFoundException {
 		// Titel einlesen
-		String bezeichnung = liesZeile();
-		if (bezeichnung == null) {
-			// keine Daten mehr vorhanden
+		
+		try{
+			Ware w = (Ware)reader.readObject();
+		
+			
+			// neues Waren-Objekt mit eingelesenen Daten anlegen und zurückgeben
+			return w;
+		} catch (EOFException exc){
 			return null;
 		}
-		// Nummer einlesen ...
-		String nummerString = liesZeile();
-		// ... und von String in int konvertieren
-		int nummer = Integer.parseInt(nummerString);
-		
-		String bestandString = liesZeile();
-		int bestand = Integer.parseInt(bestandString);
-		
-		String preisString = liesZeile();
-		float preis = Float.parseFloat(preisString);
-		
-		// neues Waren-Objekt mit eingelesenen Daten anlegen und zurückgeben
-		return new Ware(bezeichnung, nummer, bestand, preis);
 	}
 
 	/**
@@ -84,39 +77,28 @@ public class FilePersistenceManager implements PersistenceManager {
 	 * @return true, wenn Schreibvorgang erfolgreich,sonst false
 	 */
 	public boolean speichereWare(Ware w) throws IOException {
-		// Bezeichnung, Nummer, Bestand und Preis schreiben
-		schreibeZeile(w.getBezeichnung());
-		schreibeZeile(Integer.valueOf(w.getNummer()).toString());
-		schreibeZeile(Integer.valueOf(w.getBestand()).toString());
-		schreibeZeile(Float.valueOf(w.getPreis()).toString());
-		return true;
+		try{
+			// Bezeichnung, Nummer, Bestand und Preis schreiben
+			writer.writeObject(w);
+			writer.flush();
+			return true;
+		}catch(IOException e){
+			return false;
+		}
 	}
 
 	
 	/**
 	 * Methode zum einlesen von Personen aus einer externen Datei
 	 */
-	public Person ladePerson() throws IOException {
+	public Person ladePerson() throws IOException ,ClassNotFoundException{
 		// Name einlesen
-				String name = liesZeile();
-				if (name == null) {
-					// keine Daten mehr vorhanden
-					return null;
-				}
-				// Daten der Person einlesen ...
-				String nummernString = liesZeile();
-				int nummer = Integer.parseInt(nummernString);
-				String anrede = liesZeile();
-				String strasse = liesZeile();
-				String plz = liesZeile();
-				String wohnort = liesZeile();
-				String email = liesZeile();
-				String username = liesZeile();
-				String password = liesZeile();
-				String berechtigung = liesZeile();
-				if (berechtigung.equals("K")){
-					return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, false);
-				} else return new Person(nummer,name ,anrede ,strasse ,plz ,wohnort,email, username, password, true);
+		try{
+			Person p = (Person) reader.readObject();
+			return p;
+		}catch(EOFException e){
+			return null;
+		}
 	}
 	
 	/**
@@ -125,31 +107,27 @@ public class FilePersistenceManager implements PersistenceManager {
 	 * @param p Person die gespeichert wird
 	 */
 	public boolean speicherePerson(Person p) throws IOException {
-		schreibeZeile(p.getName());
-		schreibeZeile(Integer.valueOf(p.getNummer()).toString());
-		schreibeZeile(p.getAnrede());
-		schreibeZeile(p.getStrasse());
-		schreibeZeile(p.getPlz());
-		schreibeZeile(p.getWohnort());
-		schreibeZeile(p.getEmail());
-		schreibeZeile(p.getUsername());
-		schreibeZeile(p.getPassword());
-		schreibeZeile("K");
+		try{
+		writer.writeObject(p);
+		writer.flush();
 		return true;
+		}catch(IOException e){
+			return false;
+		}
 	}
 	
 	/*
 	 * Private Hilfsmethoden
 	 */
-	private String liesZeile() throws IOException {
-		if (reader != null)
-			return reader.readLine();
-		else
-			return "";
-	}
+//	private String liesZeile() throws IOException {
+//		if (reader != null)
+//			return reader.readLine();
+//		else
+//			return "";
+//	}
 
-	private void schreibeZeile(String daten) {
-		if (writer != null)
-			writer.println(daten);
-	}
+//	private void schreibeZeile(String daten) {
+//		if (writer != null)
+//			writer.println(daten);
+//	}
 }

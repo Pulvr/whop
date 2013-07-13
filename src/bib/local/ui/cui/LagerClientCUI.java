@@ -62,7 +62,7 @@ public class LagerClientCUI {
 		if (mitarbeiterAngemeldet) System.out.print("         \n  Personen ausgeben:  'l'");
 		System.out.print("         \n  Personen speichern:  'b'");
 		System.out.print("         \n  Waren suchen:  'f'");
-		System.out.print("         \n  Daten sichern:  's'");
+		System.out.print("         \n  Waren sichern:  's'");
 		System.out.print("		   \n  Waren in den Korb legen 'j'");
 		System.out.print("		   \n  Waren aus Korb entfernen 'z'");
 		System.out.print("         \n  Warenkorb leeren 'h'");

@@ -25,7 +25,7 @@ public class WarenVerwaltung {
 	private List<Ware> warenBestand = new Vector<Ware>();
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs verantwortlich ist
-	private PersistenceManager pm = new FilePersistenceManager();
+	private FilePersistenceManager pm = new FilePersistenceManager();
 	
 	private HashMap<String, Ware> warenObjekte = new HashMap<String, Ware>();
 
@@ -36,11 +36,13 @@ public class WarenVerwaltung {
 	 * @param datei Datei, die einzulesenden Warenbestand enthält
 	 * @throws IOException
 	 */
-	public void liesDaten(String datei) throws IOException {
+	public void liesDaten(String datei) throws IOException{
 		// PersistenzManager für Lesevorgänge öffnen
 		pm.openForReading(datei);
-
-		Ware eineWare;
+		
+		try{
+			Ware eineWare;
+			
 		do {
 			// Ware-Objekt einlesen
 			eineWare = pm.ladeWare();
@@ -54,11 +56,14 @@ public class WarenVerwaltung {
 				}
 			}
 		} while (eineWare != null);
-
+		} catch(ClassNotFoundException e){
+			e.getMessage();
+		} finally {
 		// Persistenz-Schnittstelle wieder schließen
-		pm.close();
+			pm.close();
+		}
 	}
-//
+
 	/**
 	 * Methode zum Schreiben der Warendaten in eine Datei.
 	 * 

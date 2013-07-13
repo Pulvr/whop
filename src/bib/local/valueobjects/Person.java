@@ -4,9 +4,14 @@
 
 package bib.local.valueobjects;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Person {
+public class Person implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4136988681207212891L;
 	private int nummer;
 	private String anrede="";
 	private String name="";
