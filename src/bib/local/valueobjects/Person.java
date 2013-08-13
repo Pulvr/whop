@@ -113,6 +113,10 @@ public class Person implements Serializable{
 		//u++;
 	}*/
 	
+	/**
+	 * Methode zum kaufen der Waren
+	 * @param warenkorb
+	 */
 	public void warenkorbKaufen(Vector<Ware> warenkorb){
 		for(int i = 0; i < warenkorb.size(); i++){
 			warenkorb.elementAt(i).setBestand(warenkorb.elementAt(i).getBestand()-1);

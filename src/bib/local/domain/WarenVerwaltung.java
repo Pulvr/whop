@@ -51,7 +51,6 @@ public class WarenVerwaltung {
 		
 		try{
 			Ware eineWare;
-			
 		do {
 			// Ware-Objekt einlesen
 			eineWare = pm.ladeWare();

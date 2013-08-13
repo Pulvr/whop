@@ -139,6 +139,11 @@ public class PersonenVerwaltung {
 		
 	}
 	
+	/**
+	 * Methode zum kaufen des Inhalts des Warenkorbs
+	 * @param p Person desssen Korb gekauft werden soll
+	 * @param warenkorb warenkorb dieser Person
+	 */
 	public void warenkorbKaufen(Person p, Vector<Ware> warenkorb){
 		p.warenkorbKaufen(warenkorb);
 		p.warenkorbLeeren();

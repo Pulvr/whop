@@ -54,19 +54,22 @@ public class LagerClientCUI {
 	private void gibMenueAus() {
 		if (!eingeloggt) System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
-		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware einfuegen: 'e'");
-		System.out.print("	       \n  Waren sortieren : 't'");
+		
+		if (mitarbeiterAngemeldet){ System.out.print("         \n  Person einfuegen: 'p'");
+		 System.out.print("         \n  Personen ausgeben:  'l'");
+		 System.out.print("         \n  Personen speichern:  'b'");
+		}
+		
+		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware EINFUEGEN: 'e'");
+		System.out.print("	       \n  Waren SORTIEREN : 't'");
 		if (mitarbeiterAngemeldet) System.out.print("         \n  WarenBestand ändern:  'c'");
-		System.out.print("         \n  Waren ausgeben:  'a'");
-		System.out.print("         \n  Person einfuegen: 'p'");
-		if (mitarbeiterAngemeldet) System.out.print("         \n  Personen ausgeben:  'l'");
-		System.out.print("         \n  Personen speichern:  'b'");
-		System.out.print("         \n  Waren suchen:  'f'");
-		System.out.print("         \n  Waren sichern:  's'");
-		System.out.print("		   \n  Waren in den Korb legen 'j'");
-		System.out.print("		   \n  Waren aus Korb entfernen 'z'");
-		System.out.print("         \n  Warenkorb leeren 'h'");
-		System.out.print("		   \n  Warenkorb anzeigen lassen 'o'");
+		System.out.print("         \n  Waren AUSGEBEN:  'a'");
+		System.out.print("         \n  Waren SUCHEN:  'f'");
+		if (mitarbeiterAngemeldet) System.out.print("         \n  Waren SICHERN:  's'");
+		System.out.print("		   \n  Waren in den Korb LEGEN: 'j'");
+		System.out.print("		   \n  Waren aus Korb ENTFERNEN: 'z'");
+		System.out.print("         \n  Warenkorb LEEREN 'h'");
+		System.out.print("		   \n  Warenkorb ANZEIGEN 'o'");
 		System.out.print("		   \n  Waren KAUFEN 'k'");
 		System.out.print("		   \n  WarenLog ausgeben 'd'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
@@ -171,19 +174,41 @@ public class LagerClientCUI {
 				String usr = liesEingabe();
 				System.out.print("Passwort > ");
 				String pw = liesEingabe();
+				System.out.print("Ist diese Person ein Mitarbeiter ? (j/n) > ");
+				String ma = liesEingabe();
 				boolean ok = false;
-				try{
-					lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, false);
-					ok = true;
-				}catch (PersonExistiertBereitsException e){
-					System.err.println(e.getMessage());
-					e.printStackTrace();
-				}
-				if (ok)
-					System.out.println("Einfügen ok");
-				else
-					System.out.println("Fehler beim Einfügen");
 				
+				if(!ma.equals("j")||!ma.equals("n")){
+					do{
+						System.out.println("kein j oder n mach nochmal > ");
+						ma = liesEingabe();
+					}while(!ma.equals("j")||!ma.equals("n"));
+				}else if(ma.equals("j")){
+					try{
+						lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, true);
+						ok = true;
+					}catch (PersonExistiertBereitsException e){
+						System.err.println(e.getMessage());
+						e.printStackTrace();
+					}
+					if (ok)
+						System.out.println("Einfügen ok");
+					else
+						System.out.println("Fehler beim Einfügen");
+				
+				}else if(ma.equals("n")){
+					try{
+						lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, false);
+						ok = true;
+					}catch (PersonExistiertBereitsException e){
+						System.err.println(e.getMessage());
+						e.printStackTrace();
+					}
+					if (ok)
+						System.out.println("Einfügen ok");
+					else
+						System.out.println("Fehler beim Einfügen");
+				}
 				
 			}
 			
@@ -192,7 +217,7 @@ public class LagerClientCUI {
 				einloggenAbfrage();
 				if(!user.getWarenkorb().isEmpty()){
 					System.out.println("Ihr Warenkorb beinhaltet: \n" + user.getWarenkorb());
-				} else System.out.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
+				} else System.err.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
 			}
 			
 			//GIB ALLE WAREN AUS
@@ -232,12 +257,12 @@ public class LagerClientCUI {
 					System.out.println("Waren wurden nach Bestand sortiert");
 					//Sortieren nach Preis funktioniert noch nicht ganz, da compare() eine int merhode ist und nicht mit float werten umgehen kann
 					//somit musste der float wert in einen int wert getypecastet werden dies führt aber zu Ungenauigkeiten
-				}else if(antwort.equals("p")){
+				} /* else if(antwort.equals("p")){
 					lag.sortiereDieWaren("p");
 					List<Ware> listeW = lag.gibAlleWaren();
 					gibWarenlisteAus(listeW);
 					System.out.println("Waren wurden nach Preis sortiert");
-				}
+				}*/
 				
 			//SUCHE NACH WAREN
 			}
@@ -260,7 +285,7 @@ public class LagerClientCUI {
 			// IN KORB LEGEN 
 			else if (line.equals("j")){
 				if(!eingeloggt) einloggenAbfrage();
-					System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du kaufen möchtest > ");
+					System.out.println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
 					String bezeichnung = liesEingabe();
 					System.out.println("\nZu bestellende Anzahl? > ");
 					String mengenString = liesEingabe();
@@ -286,7 +311,7 @@ public class LagerClientCUI {
 			//ENTFERNEN 
 			} else if(line.equals("z")){
 				einloggenAbfrage();
-				System.out.println("\nGib die exakte Bezeichnung des Artikels ein, den du aus dem Korb entfernen möchtest > ");
+				System.out.println("\nGib die exakte Bezeichnung der Ware ein, die du aus dem Korb entfernen möchtest > ");
 				String bezeichnung = liesEingabe();
 				System.out.println("\nZu entfernende Anzahl? > ");
 				String mengenString = liesEingabe();
@@ -308,11 +333,14 @@ public class LagerClientCUI {
 				}
 			//WARENKORB KAUFEN	
 			}else if(line.equals("k")){
-				lag.setRechnung(new Rechnung(user));
-				System.out.println(lag.getRechnung().toString());
-				lag.warenkorbKaufen(user, user.getWarenkorb());
-
-			 
+				if(user.getWarenkorb().isEmpty()){
+					System.err.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
+				}else {
+					lag.setRechnung(new Rechnung(user));
+					System.out.println(lag.getRechnung().toString());
+					lag.warenkorbKaufen(user, user.getWarenkorb());
+				}
+			//WARENLOG AUSGEBEN
 			}else if (line.equals("d")){
 				try{
 					System.out.print("Warenbezeichnung  > ");
