@@ -34,11 +34,11 @@ public class Ware implements Serializable{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return (bezeichnung + " " + preis + "€ / Auf Lager: " + bestand + " / \n");
+		return (bezeichnung + " " + preis + "€ / Noch auf Lager: " + bestand + " / \n");
 	}
 	
 	public String warenListe() {
-		return (nummer + " - " + bezeichnung + " / Preis: " + preis + "€ / Auf Lager: " + bestand + " / \n");
+		return (nummer + " - " + bezeichnung + " / Preis: " + preis + "€ / Noch auf Lager: " + bestand + " / \n");
 	}
 	
 	/**
@@ -48,13 +48,13 @@ public class Ware implements Serializable{
 	 * 
 	 * @see java.lang.Object#equals()
 	 */
-	/*public boolean equals(Object andereWare) {
+	public boolean equals(Object andereWare) {
 		if (andereWare instanceof Ware) 
 			return ((this.nummer == ((Ware) andereWare).nummer) 
 					&& (this.bezeichnung.equals(((Ware) andereWare).bezeichnung)));
 		else
 			return false;
-	}*/
+	}
 
 	
 	/*

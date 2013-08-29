@@ -61,10 +61,10 @@ public class Person implements Serializable{
 	
 	/**
 	 * Standard-Methode  von Object überschrieben
-	 * dient der einfachereren ausgabe der attribute der Person
+	 * dient der einfachereren Ausgabe der attribute der Person
 	 */
 	public String toString() {
-		return ("User: " + username + "\n" + anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
+		return ("User: " + username + " Nummer : "+nummer+" Passwort: "+password+"\n" + anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
 	}
 	
 	/*public void warenkorbAusgeben(Vector<Ware> warenkorb){
@@ -144,7 +144,7 @@ public class Person implements Serializable{
 			this.warenkorb.remove(w);
 	}
 	/**
-	 * Methode zum kompletten leeren des Warenkorbs
+	 * Methode zum kompletten leeren des Warenkorbs der Person
 	 */
 	public void warenkorbLeeren(){
 		this.warenkorb.removeAllElements();
