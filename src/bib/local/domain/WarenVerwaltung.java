@@ -33,6 +33,8 @@ public class WarenVerwaltung {
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs verantwortlich ist
 	private FilePersistenceManager pm = new FilePersistenceManager();
 	
+	//Der Warenbestand wird ebenfalls in einer Hashmap verwaltet dessen Key-Value Paar aus Bezeichnung der Ware
+	//(String) und der Ware selbst besteht
 	private HashMap<String, Ware> warenObjekte = new HashMap<String, Ware>();
 	private LogPersistenceManager logP = new LogPersistenceManager();
 	private File warenLog = new File("WAREN_LOG.txt");

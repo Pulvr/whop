@@ -22,6 +22,8 @@ public class PersonenVerwaltung {
 	// Verwaltung der Personen in einem Vector
 	private List<Person> personen = new Vector<Person>();
 	
+	//Ebenso werden die Personen in einer Hashmap verwaltet dessen Key-Value Paar aus der KundenNummer
+	//(Integer) und der Person selbst besteht
 	private HashMap<Integer, Person> personenObjekte = new HashMap<Integer, Person>();
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs

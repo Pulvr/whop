@@ -55,9 +55,10 @@ public class LagerClientCUI {
 		if (!eingeloggt) System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
 		
-		if (mitarbeiterAngemeldet){ System.out.print("         \n  Person einfuegen: 'p'");
-		 System.out.print("         \n  Personen ausgeben:  'l'");
-		 System.out.print("         \n  Personen speichern:  'b'");
+		if (mitarbeiterAngemeldet){
+			System.out.print("         \n  Person einfuegen: 'p'");
+			System.out.print("         \n  Personen ausgeben:  'l'");
+			System.out.print("         \n  Personen speichern:  'b'");
 		}
 		
 		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware EINFUEGEN: 'e'");
@@ -86,7 +87,13 @@ public class LagerClientCUI {
 			
 			// EINLOGGEN:
 			if (line.equals("i")){
-				if(!eingeloggt) einloggen();
+				if(!eingeloggt) {
+					System.out.print("Bitte geben Sie ihre Kundennummer ein > \n");
+					String knummer = this.liesEingabe();
+					System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
+					String passwort = liesEingabe();
+					einloggen(knummer,passwort);
+				}
 				else System.out.print("Sie sind bereits als " + user.getUsername() + " eingeloggt.");
 			}
 			// AUSLOGGEN:
@@ -102,7 +109,7 @@ public class LagerClientCUI {
 			if (line.equals("e")) { 
 				
 				// Liest die Eigenschaften der neuen Ware nacheinander ein
-				
+				einloggenAbfrage();
 				System.out.print("Warenbezeichnung  > ");
 				String bezeichnung = liesEingabe();
 				
@@ -135,6 +142,7 @@ public class LagerClientCUI {
 				
 			//WARENBESTAND ÄNDERN
 			}else if(line.equals("c")){
+				einloggenAbfrage();
 				try {
 					einloggenAbfrage();
 					System.out.print("Gib die exakte Bezeichnung des Artikels ein, dessen Bestand geändert werden soll >");
@@ -155,6 +163,7 @@ public class LagerClientCUI {
 			
 			//PERSON EINFÜGEN	
 			} else if (line.equals("p")) {
+				einloggenAbfrage();
 				System.out.print("Nummer > ");
 				String nr = liesEingabe();
 				int pNr = Integer.parseInt(nr);
@@ -228,17 +237,19 @@ public class LagerClientCUI {
 			
 			//GIB ALLE PERSONEN AUS
 			else if (line.equals("l") && mitarbeiterAngemeldet) {
+				einloggenAbfrage();
 				List<Person> listeP = lag.gibAllePersonen();
 				gibPersonenAus(listeP);
 			}
 			
 			//SORTIERE DIE WAREN
 			else if (line.equals("t")){
+				einloggenAbfrage();
 				System.out.println("Nach was soll sortiert werden?");
 				System.out.println("b = WarenBezeichnung");
 				System.out.println("n = WarenNummer");
 				System.out.println("e = WarenBestand");
-				System.out.println("p = WarenPreis");
+//				System.out.println("p = WarenPreis");
 				String antwort = liesEingabe();
 				if(antwort.equals("b")){
 					lag.sortiereDieWaren("b");
@@ -284,29 +295,29 @@ public class LagerClientCUI {
 			}
 			// IN KORB LEGEN 
 			else if (line.equals("j")){
-				if(!eingeloggt) einloggenAbfrage();
-					System.out.println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
-					String bezeichnung = liesEingabe();
-					System.out.println("\nZu bestellende Anzahl? > ");
-					String mengenString = liesEingabe();
-					int menge = Integer.parseInt(mengenString);
+				einloggenAbfrage();
+				System.out.println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
+				String bezeichnung = liesEingabe();
+				System.out.println("\nZu bestellende Anzahl? > ");
+				String mengenString = liesEingabe();
+				int menge = Integer.parseInt(mengenString);
 				
-				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
-						try {
-							lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
-							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
-									user.getWarenkorb());
-						} catch (BestellteMengeNegativException e) {
-							// TODO Auto-generated catch block
-							System.err.print(e.getMessage());
-						}
-					}else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
-					 System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+			if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
+					try {
+						lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
+						System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
+								user.getWarenkorb());
+					} catch (BestellteMengeNegativException e) {
+						// TODO Auto-generated catch block
+						System.err.print(e.getMessage());
 					}
-				} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-					System.err.println("Die Ware existiert nicht.");
-				} 
+				}else if(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge){
+				 System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
+				}
+			} else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
+				System.err.println("Die Ware existiert nicht.");
+			} 
 			
 			//ENTFERNEN 
 			} else if(line.equals("z")){
@@ -342,6 +353,7 @@ public class LagerClientCUI {
 				}
 			//WARENLOG AUSGEBEN
 			}else if (line.equals("d")){
+				einloggenAbfrage();
 				try{
 					System.out.print("Warenbezeichnung  > ");
 					String bezeichnung = liesEingabe();
@@ -410,7 +422,7 @@ public class LagerClientCUI {
 	private void einloggenAbfrage() throws IOException{
 		if(!eingeloggt){
 			System.out.println("\nBitte loggen Sie sich zunächst ein!\n");
-			this.einloggen();
+			//this.einloggen();
 		}
 	}
 	
@@ -424,19 +436,16 @@ public class LagerClientCUI {
 		else return false;
 	}
 	
-	private void einloggen() throws IOException{
+	public void einloggen(String knummer, String passwort) throws IOException{
 		// Angemeldete User geben ihre Kundennummer und ihr Passwort an, um sich einzuloggen
 		
-		System.out.print("Bitte geben Sie ihre Kundennummer ein > \n");
-		String knummer = this.liesEingabe();
 		int nummer = Integer.parseInt(knummer);
 		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(nummer)){
 			System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut > \n");
 			knummer = liesEingabe();
 			nummer = Integer.parseInt(knummer);
 		}
-		System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
-		String passwort = liesEingabe();
+		
 		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getPassword().equals(passwort)){
 			System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
 			passwort = liesEingabe();
