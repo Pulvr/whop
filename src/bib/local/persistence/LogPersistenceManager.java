@@ -18,7 +18,12 @@ import java.util.Vector;
 
 import bib.local.valueobjects.WarenLog;
 
-
+/**
+*Wenn der Bestand einer Ware geändert wird dann ist dies im Warenlog mit Datum zu sehen.
+*Die Daten werden extern in einer .txt gespeichert und mit einem Scanner werden einzeln die Zeilen eingelesen.
+*Der Scanner erkennt dass nach einem Absatz eine neue Ware beginnt
+* 
+*/
 public class LogPersistenceManager {
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");

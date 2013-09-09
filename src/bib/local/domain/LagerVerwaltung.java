@@ -36,8 +36,8 @@ public class LagerVerwaltung {
 	 * (Initialisierung des shops).
 	 * 
 	 * Namensmuster für Dateien:
-	 *   datei+"_B.txt" ist die Datei der Waren
-	 *   datei+"_P.txt" ist die Datei der Personen
+	 *   datei+"_B.ser" ist die Datei der Waren
+	 *   datei+"_P.ser" ist die Datei der Personen
 	 * 
 	 * @param datei
 	 * @throws IOException, z.B. wenn eine der Dateien nicht existiert.
@@ -100,8 +100,8 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum neusetzen des Bestands eines Artikels, bisher ohne addition oder subtraktion
-	 * @param w
+	 * Methode zum neusetzen des Bestands einer Ware, ohne Addition oder Subtraktion
+	 * @param w Die Ware
 	 * @param neuerBestand
 	 * @throws WareExistiertNichtException
 	 */
@@ -133,9 +133,9 @@ public class LagerVerwaltung {
 			 meineWaren.artikelSortieren(Sortierung.Nummer); 
 		 }else if (aufgabe.equals("e")){
 			 meineWaren.artikelSortieren(Sortierung.Bestand);
-		 }else if (aufgabe.equals("p")){
+		 }/*else if (aufgabe.equals("p")){
 			 meineWaren.artikelSortieren(Sortierung.Preis);
-		 }
+		 }*/
 	 }
 
 	/**
@@ -156,9 +156,9 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * den Warenkorb kaufen trololol
-	 * @param p
-	 * @param warenkorb
+	 * den Inhalt des Warenkorbs kaufen
+	 * @param p Die Person
+	 * @param warenkorb der Warenkorb der Person
 	 */
 	public void warenkorbKaufen(Person p, Vector<Ware> warenkorb){
 		meinePersonen.warenkorbKaufen(p, warenkorb);
@@ -176,10 +176,11 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode die Waren aus dem Korb entfernen kann
-	 * @param menge
-	 * @param ware
-	 * @param p
+	 * Methode die Waren aus dem Korb entfernen kann, sollte die angegebene Zahl die Anzahl der Waren im Korb übersteigen
+	 * wird die Anzahl dieser Ware im Korb auf 0 gesetzt anstatt ins negative zu gehen
+	 * @param menge Wieviele von der Ware entfernen
+	 * @param ware welche Ware soll entfernt werden
+	 * @param p Der Korb der Person
 	 * @throws BestellteMengeNegativException
 	 */
 	public void entferneAusWarenkorb(int menge, Ware ware, Person p)throws BestellteMengeNegativException{
@@ -194,6 +195,14 @@ public class LagerVerwaltung {
 		meinePersonen.warenkorbLeeren(p);
 	}
 	
+	/**
+	 * Gibt den Warenlog für eine Ware zurück mit einer Angabe wie weit der Log zurück liegen soll
+	 * @param bezeichnung Log für welche Ware?
+	 * @param daysInPast wieviele Tage soll der Log zurück liegen
+	 * @return den WarenLog
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public Vector<WarenLog> getWarenLog(String bezeichnung, int daysInPast)throws IOException,ParseException{
 		return meineWaren.getWarenLog(bezeichnung, daysInPast);
 	}
@@ -214,10 +223,17 @@ public class LagerVerwaltung {
 		return this.meineWaren;
 	}
 	
+	/**
+	 * Gibt die Rechnung die beim Kauf entsteht zurück
+	 * @return
+	 */
 	public Rechnung getRechnung(){
 		return this.rechnung;
 	}
-	
+	/**
+	 * Hiermit lässt sich die Rechnung für einen Kauf setzen
+	 * @param r die Rechnung
+	 */
 	public void setRechnung(Rechnung r){
 		this.rechnung = r;
 	}

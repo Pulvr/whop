@@ -28,6 +28,12 @@ public class LagerClientCUI {
 	private LagerVerwaltung lag;
 	private BufferedReader in;
 	
+	// Eingeloggten User festlegen
+	private Person user = new Person();
+		
+	// Ist jemand eingeloggt und ist es ein Mitarbeiter?
+	private boolean eingelogged = false;
+	private boolean mitarbeiterAngemeldet = false;
 	
 	public LagerClientCUI(String datei) throws IOException {
 		// die lag-Verwaltung erledigt die Aufgaben, 
@@ -39,20 +45,12 @@ public class LagerClientCUI {
 		
 	}
 	
-	// Eingeloggten User festlegen
-	public Person user = new Person();
-	
-	// Ist jemand eingeloggt und ist es ein Mitarbeiter?
-	public boolean eingeloggt = false;
-	public boolean mitarbeiterAngemeldet = false;
-
-
 	/* (non-Javadoc)
 	 * 
 	 * Interne (private) Methode zur Ausgabe des Menüs.
 	 */
 	private void gibMenueAus() {
-		if (!eingeloggt) System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
+		if (!eingelogged) System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
 		
 		if (mitarbeiterAngemeldet){
@@ -87,21 +85,32 @@ public class LagerClientCUI {
 			
 			// EINLOGGEN:
 			if (line.equals("i")){
-				if(!eingeloggt) {
+				if(!eingelogged) {
 					System.out.print("Bitte geben Sie ihre Kundennummer ein > \n");
-					String knummer = this.liesEingabe();
+					String nummer = this.liesEingabe();
+					int kNummer = Integer.parseInt(nummer);
+					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(kNummer)){
+						System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut > \n");
+						nummer = liesEingabe();
+						kNummer = Integer.parseInt(nummer);
+					}
 					System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
 					String passwort = liesEingabe();
-					einloggen(knummer,passwort);
+					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer).getPassword().equals(passwort)){
+						System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
+						passwort = liesEingabe();
+					}
+					
+					einloggen(kNummer);
 				}
 				else System.out.print("Sie sind bereits als " + user.getUsername() + " eingeloggt.");
 			}
 			// AUSLOGGEN:
-			if (line.equals("u") && eingeloggt){
+			if (line.equals("u") && eingelogged){
 				if(nachfragen("dich ausloggen möchtest")){
 					user = null;
 					System.out.print("Erfolgreich ausgeloggt.");
-					eingeloggt = false;
+					eingelogged = false;
 					mitarbeiterAngemeldet = false;
 				}
 			}
@@ -167,10 +176,10 @@ public class LagerClientCUI {
 				System.out.print("Nummer > ");
 				String nr = liesEingabe();
 				int pNr = Integer.parseInt(nr);
-				System.out.print("Name > ");
-				String name = liesEingabe();
 				System.out.print("Anrede > ");
 				String anr = liesEingabe();
+				System.out.print("ganzer Name > ");
+				String name = liesEingabe();
 				System.out.print("Straße > ");
 				String strasse = liesEingabe();
 				System.out.print("PLZ > ");
@@ -187,12 +196,11 @@ public class LagerClientCUI {
 				String ma = liesEingabe();
 				boolean ok = false;
 				
-				if(!ma.equals("j")||!ma.equals("n")){
-					do{
-						System.out.println("kein j oder n mach nochmal > ");
+				while(!ma.equals("j")&&!ma.equals("n")){
+						System.out.println("Bitte geben sie 'j' oder 'n' an > ");
 						ma = liesEingabe();
-					}while(!ma.equals("j")||!ma.equals("n"));
-				}else if(ma.equals("j")){
+					}
+				if(ma.equals("j")){
 					try{
 						lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, true);
 						ok = true;
@@ -287,13 +295,14 @@ public class LagerClientCUI {
 			}
 			else if (line.equals("s")) {
 				lag.schreibeWaren();
-				
+				System.out.println("Erfolgreich gesichert");
 			//SPEICHERE PERSONEN
 			}
 			else if (line.equals("b")) {
 				lag.schreibePersonen();
+				System.out.println("Erfolgreich gesichert");
 			}
-			// IN KORB LEGEN 
+			//IN KORB LEGEN 
 			else if (line.equals("j")){
 				einloggenAbfrage();
 				System.out.println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
@@ -306,8 +315,7 @@ public class LagerClientCUI {
 				if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 					try {
 						lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
-						System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
-								user.getWarenkorb());
+						System.out.println("\nIhr Warenkorb beinhaltet:\n" + user.getWarenkorb());
 					} catch (BestellteMengeNegativException e) {
 						// TODO Auto-generated catch block
 						System.err.print(e.getMessage());
@@ -329,16 +337,14 @@ public class LagerClientCUI {
 				int menge = Integer.parseInt(mengenString);
 				
 				if(lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
-					if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge){
 						try {
 							lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
-							System.out.println("\nIhr Warenkorb beinhaltet:\n" + 
-									user.getWarenkorb());
+							if(user.getWarenkorb().isEmpty()){
+								System.out.println("Ihr Warenkorb ist leer");
+							}else System.out.println("\nIhr Warenkorb beinhaltet:\n" + user.getWarenkorb());
 						} catch (BestellteMengeNegativException e) {
-							// TODO Auto-generated catch block
 							System.err.print(e.getMessage());
 						}
-					}
 				}else if(!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)){
 				 System.err.println("Die Ware existiert nicht.");
 				}
@@ -420,7 +426,7 @@ public class LagerClientCUI {
 	}
 	
 	private void einloggenAbfrage() throws IOException{
-		if(!eingeloggt){
+		if(!eingelogged){
 			System.out.println("\nBitte loggen Sie sich zunächst ein!\n");
 			//this.einloggen();
 		}
@@ -436,26 +442,30 @@ public class LagerClientCUI {
 		else return false;
 	}
 	
-	public void einloggen(String knummer, String passwort) throws IOException{
-		// Angemeldete User geben ihre Kundennummer und ihr Passwort an, um sich einzuloggen
+	private void einloggen(int knummer){
 		
-		int nummer = Integer.parseInt(knummer);
-		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(nummer)){
-			System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut > \n");
-			knummer = liesEingabe();
-			nummer = Integer.parseInt(knummer);
-		}
-		
-		while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getPassword().equals(passwort)){
-			System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
-			passwort = liesEingabe();
-		}
-		this.eingeloggt = true;
-		this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer);
+		this.eingelogged = true;
+		this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer);
 		if(this.user.getMitarbeiterberechtigung()) this.mitarbeiterAngemeldet = true;
 		System.out.print("\nErfolgreich eingeloggt!");
-		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(nummer).getUsername() + "!\n");
+		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getUsername() + "!\n");
 	}
+	
+//	public boolean getEingelogged(){
+//		return this.eingelogged;
+//	}
+//	
+//	public void setEingelogged(boolean log){
+//		this.eingelogged=log;
+//	}
+//	
+//	public Person getPerson(){
+//		return this.user;
+//	}
+//	
+//	public void setUser (Person p){
+//		this.user = p;
+//	}
 	
 	private void enterZumFortfahren() throws IOException{
 		System.out.println("\n		-> Zum Fortfahren bitte die Enter-Taste drücken.");

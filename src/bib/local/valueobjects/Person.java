@@ -64,7 +64,8 @@ public class Person implements Serializable{
 	 * dient der einfachereren Ausgabe der attribute der Person
 	 */
 	public String toString() {
-		return ("User: " + username + " Nummer : "+nummer+" Passwort: "+password+"\n" + anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\n\n");
+		return ("User: " + username + " Nummer : "+nummer+" Passwort: "+password+"\n" 
+					+ anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\nMitarbeiter : "+mitarbeiter+"\n\n");
 	}
 	
 	/*public void warenkorbAusgeben(Vector<Ware> warenkorb){

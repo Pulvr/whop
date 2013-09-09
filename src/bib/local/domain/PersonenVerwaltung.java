@@ -131,9 +131,15 @@ public class PersonenVerwaltung {
 			throw new BestellteMengeNegativException();
 		}
 	}
-	
+	/**
+	 * Von der Funktion her wie inWarenkorbLegen() nur werden die Waren entfernt
+	 * @param menge
+	 * @param ware
+	 * @param p
+	 * @throws BestellteMengeNegativException
+	 */
 	public void entferneAusWarenkorb(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
-		if((menge > 0) && (ware.getBestand() >= menge)){
+		if((menge > 0) ){
 			p.entferneAusWarenkorb(ware, menge);
 		} else if (menge < 0){
 			throw new BestellteMengeNegativException();

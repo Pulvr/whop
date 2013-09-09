@@ -2,7 +2,11 @@ package bib.local.valueobjects;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ * Ein WarenLog der anzeigt der Bestand von welcher Ware geändert wurde ... Mit Datum
+ * @author Florian
+ *
+ */
 public class WarenLog {
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");

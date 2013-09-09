@@ -46,27 +46,24 @@ import bib.local.valueobjects.Ware;
 public class SwingLagClientGUI extends JFrame {
 
   private LagerVerwaltung lag;
-  private LagerClientCUI cui;
   
   private JTextField titelFeld;
   private JTextField nummernFeld;
   private JTextField bestandsFeld;
   private JTextField preisFeld;
+  private JButton addButton;
   private JButton suchButton;
   private JButton loginButton;
+  private JButton logoutButton;
   private JTextField suchFeld;
   private JTextField kundenNummerInput;
   private JPasswordField passwortInput;
-//  private JList bookList;
   private JTable warenTable;
   private TableRowSorter<TableModel> sorter ;
   
-  // Eingeloggten User festlegen
-  public Person user = new Person();
-    
-  // Ist jemand eingeloggt und ist es ein Mitarbeiter?
-  public boolean eingeloggt = false;
-  public boolean mitarbeiterAngemeldet = false;
+  private boolean eingelogged = false;
+  private Person user = new Person();
+  private boolean mitarbeiterBerechtigung;
   
   public SwingLagClientGUI(String datei) throws IOException {
     super("ESHOP");
@@ -141,9 +138,12 @@ public class SwingLagClientGUI extends JFrame {
     panelRechts.add(new JLabel()); // Abstandhalter
     
     // Ausloggen-Button
-    JButton logoutButton = new JButton("Ausloggen");
+    logoutButton = new JButton("Ausloggen");
     logoutButton.addActionListener(new SearchListener());
     panelRechts.add(logoutButton);
+    if(getEingelogged()==false){
+    	logoutButton.setVisible(false);
+    }
 
     panelRechts.setBorder(BorderFactory.createTitledBorder("User"));
 
@@ -166,41 +166,13 @@ public class SwingLagClientGUI extends JFrame {
     panelLinks.add(bestandsFeld);
     panelLinks.add(new JLabel("Preis: "));
     preisFeld = new JTextField();
+    
     panelLinks.add(preisFeld);
     
     panelLinks.add(new JLabel());   // Abstandshalter
     
-    JButton addButton = new JButton("Einfügen");
-    addButton.addActionListener(new ActionListener() {      
-      @Override
-      public void actionPerformed(ActionEvent ae) {
-        String nummernString = nummernFeld.getText();
-        String titel = titelFeld.getText();
-        String bestandsString = bestandsFeld.getText();
-        String preisString = preisFeld.getText();
-        
-        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
-          JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
-        }else{
-          try {
-            int nummer = Integer.parseInt(nummernString);
-            int bestand = Integer.parseInt(bestandsString);
-            float preis = Float.parseFloat(preisString);
-            lag.fuegeWareEin(titel, nummer, bestand, preis);
-            updateList(lag.gibAlleWaren());
-            nummernFeld.setText("");
-            titelFeld.setText("");
-            bestandsFeld.setText("");
-            preisFeld.setText("");
-            
-          } catch (WareExistiertBereitsException|NumberFormatException e) {
-            // TODO Auto-generated catch block
-            JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
-            e.printStackTrace();
-          }
-        }
-      }
-    });
+    addButton = new JButton("Einfügen");
+    addButton.addActionListener(new AddListener());
     addButton.setPreferredSize(new Dimension(83,12));
     //addButton.setMaximumSize(new Dimension(10,10));
     panelLinks.add(addButton);  
@@ -233,16 +205,16 @@ public class SwingLagClientGUI extends JFrame {
       {
         try {
           DecimalFormat df = new DecimalFormat("#,##0.00");
-                    Number f1 = df.parse(s1);
-                    Number f2 = df.parse(s2);
-                    if(f1.floatValue() < f2.floatValue() || f1.floatValue() > f2.floatValue() ){
-                        return f1.floatValue() < f2.floatValue() ? -1 : 1;
-                    }
-                    return 0;
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return 0;
-                }
+          Number f1 = df.parse(s1);
+          Number f2 = df.parse(s2);
+          if(f1.floatValue() < f2.floatValue() || f1.floatValue() > f2.floatValue() ){
+        	  return f1.floatValue() < f2.floatValue() ? -1 : 1;
+          }
+          	return 0;
+          } catch (ParseException e) {
+        	  e.printStackTrace();
+        	  return 0;
+        }
       }
     });
     
@@ -262,7 +234,7 @@ public class SwingLagClientGUI extends JFrame {
     add(panelRechts, BorderLayout.EAST);
     this.setResizable(false);
     //this.setMinimumSize(new Dimension(700,350));
-    
+   
     // Menu aufbauen
     initMenu();
     
@@ -310,6 +282,34 @@ public class SwingLagClientGUI extends JFrame {
       e.printStackTrace();
     }
   }
+  class AddListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae) {
+	        String nummernString = nummernFeld.getText();
+	        String titel = titelFeld.getText();
+	        String bestandsString = bestandsFeld.getText();
+	        String preisString = preisFeld.getText();
+	        
+	        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
+	          JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
+	        }else{
+	          try {
+	            int nummer = Integer.parseInt(nummernString);
+	            int bestand = Integer.parseInt(bestandsString);
+	            float preis = Float.parseFloat(preisString);
+	            lag.fuegeWareEin(titel, nummer, bestand, preis);
+	            updateList(lag.gibAlleWaren());
+	            nummernFeld.setText("");
+	            titelFeld.setText("");
+	            bestandsFeld.setText("");
+	            preisFeld.setText("");
+	            
+	          } catch (WareExistiertBereitsException|NumberFormatException e) {
+	            JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
+	            e.printStackTrace();
+	          }
+	        }
+	      }
+  }
   
   class SearchListener implements ActionListener {
     @Override
@@ -332,22 +332,33 @@ public class SwingLagClientGUI extends JFrame {
       if(ae.getSource().equals(loginButton)){
         
         String nummer = kundenNummerInput.getText();
-        String passwort = passwortInput.getSelectedText();
+        int kNummer = Integer.parseInt(nummer);
+        String passwort = passwortInput.getText();
+        java.util.HashMap<Integer,Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
         
         if (nummer.equals("")||passwort.equals("")){
           JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
-        }else {
-          try {
-            cui.einloggen(nummer, passwort);
-          } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-          JOptionPane.showMessageDialog(null, "erfolgreich eingeloggt!");        
+        }else if (result.containsKey(kNummer)&&result.get(kNummer).getPassword().equals(passwort)){
+        	setEingelogged(true);
+			
+			
+          //if(user.getMitarbeiterberechtigung()) mitarbeiterAngemeldet = true;
+        	JOptionPane.showMessageDialog(null, "erfolgreich eingeloggt!");        
         }
       }
     }
   }
+  
+//  class LogoutListener implements ActionListener{
+//	  public void actionPerformed(ActionEvent ae){
+//		  if(ae.getSource().equals(logoutButton)){
+//			  if(cui.getEingelogged()==true && cui.getPerson()!=null){
+//				  cui.setEingelogged(false);
+//				  cui.setUser(null);
+//			  }
+//		  }
+//	  }
+//  }
   
   class FileMenu extends JMenu implements ActionListener {
     public FileMenu() {
@@ -385,5 +396,13 @@ public class SwingLagClientGUI extends JFrame {
     public HelpMenu() {
       super("Help");      
     }
+  }
+  
+  public boolean getEingelogged(){
+	  return eingelogged;
+  }
+  
+  public void setEingelogged(boolean log){
+	  eingelogged=log;
   }
 }

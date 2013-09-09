@@ -76,6 +76,7 @@ public class WarenVerwaltung {
 
 	/**
 	 * Methode zum Schreiben der Warendaten in eine Datei.
+	 * Ebenfalls wird der Warenlog gespeichert
 	 * 
 	 * @param datei Datei, in die der Warenbestand geschrieben werden soll
 	 * @throws IOException
@@ -101,7 +102,7 @@ public class WarenVerwaltung {
 	
 	/**
 	 * Methode, die eine Ware an das Ende der Warenliste einfügt.
-	 * 
+	 * Ebenfalls wird hier der Warenbestand in einen Vector und eine Hashmap gepackt
 	 * @param eineWare die einzufügende Ware
 	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
 	 */
@@ -182,14 +183,14 @@ public class WarenVerwaltung {
 		});
 		break;
 		
-		//Sortieren nach Preis geht noch nicht ganz wegen int typecast
-		case Preis:
-		Collections.sort(warenBestand, new Comparator<Ware>(){
-			public int compare(Ware w1, Ware w2){
-				return (int) (w1.getPreis() - w2.getPreis());
-			}
-		});
-		break;
+//		Sortieren nach Preis geht noch nicht ganz wegen int typecast
+//		case Preis:
+//		Collections.sort(warenBestand, new Comparator<Ware>(){
+//			public int compare(Ware w1, Ware w2){
+//				return (int) (w1.getPreis() - w2.getPreis());
+//			}
+//		});
+//		break;
 		}
 	}
 
@@ -202,7 +203,7 @@ public class WarenVerwaltung {
 		Bezeichnung,
 		Nummer,
 		Bestand,
-		Preis
+		//Preis
 	}
 	
 	
@@ -223,7 +224,14 @@ public class WarenVerwaltung {
 		HashMap<String, Ware> warenObjekteKopie = new HashMap<String, Ware>(warenObjekte);
 		return warenObjekteKopie;
 	}
-	
+	/**
+	 * Methode die den Warenlog zurück gibt
+	 * @param bezeichnung
+	 * @param daysInPast
+	 * @return
+	 * @throws ParseException
+	 * @throws IOException
+	 */
 	public Vector<WarenLog> getWarenLog(String bezeichnung, int daysInPast) throws ParseException, IOException{
 		return this.logP.readLog(this.warenLog, bezeichnung, daysInPast);
 	}
