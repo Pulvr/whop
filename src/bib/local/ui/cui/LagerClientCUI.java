@@ -70,7 +70,7 @@ public class LagerClientCUI {
 		System.out.print("         \n  Warenkorb LEEREN 'h'");
 		System.out.print("		   \n  Warenkorb ANZEIGEN 'o'");
 		System.out.print("		   \n  Waren KAUFEN 'k'");
-		System.out.print("		   \n  WarenLog ausgeben 'd'");
+		if (mitarbeiterAngemeldet) System.out.print("		   \n  WarenLog ausgeben 'd'");
 		System.out.println("         \n\n  Beenden:        'q'\n");
 		
 		System.out.print("> "); // Prompt

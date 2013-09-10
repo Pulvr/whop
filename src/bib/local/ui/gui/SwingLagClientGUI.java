@@ -62,8 +62,8 @@ public class SwingLagClientGUI extends JFrame {
   private TableRowSorter<TableModel> sorter ;
   
   private boolean eingelogged = false;
-  private Person user = new Person();
   private boolean mitarbeiterBerechtigung;
+  private Person user = new Person();
   
   public SwingLagClientGUI(String datei) throws IOException {
     super("ESHOP");
@@ -132,6 +132,11 @@ public class SwingLagClientGUI extends JFrame {
     loginButton = new JButton("Einloggen");
     loginButton.addActionListener(new LoginListener()); 
     panelRechts.add(loginButton);
+//    if(getEingelogged()==true){
+//    	loginButton.setVisible(false);
+//    }else if (getEingelogged()==false){
+//    	loginButton.setVisible(true);
+//    }
     
     panelRechts.add(new JLabel()); // Abstandhalter
     panelRechts.add(new JLabel()); // Abstandhalter
@@ -139,11 +144,13 @@ public class SwingLagClientGUI extends JFrame {
     
     // Ausloggen-Button
     logoutButton = new JButton("Ausloggen");
-    logoutButton.addActionListener(new SearchListener());
+    logoutButton.addActionListener(new LogoutListener());
     panelRechts.add(logoutButton);
-    if(getEingelogged()==false){
-    	logoutButton.setVisible(false);
-    }
+//    if(getEingelogged()==true){
+//    	logoutButton.setVisible(true);
+//    }else if (getEingelogged()==false){
+//    	logoutButton.setVisible(false);
+//    }
 
     panelRechts.setBorder(BorderFactory.createTitledBorder("User"));
 
@@ -282,6 +289,7 @@ public class SwingLagClientGUI extends JFrame {
       e.printStackTrace();
     }
   }
+  
   class AddListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae) {
 	        String nummernString = nummernFeld.getText();
@@ -339,26 +347,31 @@ public class SwingLagClientGUI extends JFrame {
         if (nummer.equals("")||passwort.equals("")){
           JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
         }else if (result.containsKey(kNummer)&&result.get(kNummer).getPassword().equals(passwort)){
+        	kundenNummerInput.setText("");
+        	passwortInput.setText("");
         	setEingelogged(true);
-			
-			
-          //if(user.getMitarbeiterberechtigung()) mitarbeiterAngemeldet = true;
-        	JOptionPane.showMessageDialog(null, "erfolgreich eingeloggt!");        
+			user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer);
+        	if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
+        	JOptionPane.showMessageDialog(null, "Erfolgreich Eingeloggt!");
+        	
         }
       }
     }
   }
   
-//  class LogoutListener implements ActionListener{
-//	  public void actionPerformed(ActionEvent ae){
-//		  if(ae.getSource().equals(logoutButton)){
-//			  if(cui.getEingelogged()==true && cui.getPerson()!=null){
-//				  cui.setEingelogged(false);
-//				  cui.setUser(null);
-//			  }
-//		  }
-//	  }
-//  }
+  class LogoutListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae){
+		  if(ae.getSource().equals(logoutButton)){
+			  if(getEingelogged()==true){
+				  setEingelogged(false);
+				  user = null;
+				  mitarbeiterBerechtigung = false;
+				  JOptionPane.showMessageDialog(null, "Erfolgreich Ausgeloggt!");
+				  
+			  }
+		  }
+	  }
+  }
   
   class FileMenu extends JMenu implements ActionListener {
     public FileMenu() {
@@ -403,6 +416,6 @@ public class SwingLagClientGUI extends JFrame {
   }
   
   public void setEingelogged(boolean log){
-	  eingelogged=log;
+	  this.eingelogged=log;
   }
 }
