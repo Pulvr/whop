@@ -66,6 +66,7 @@ public class SwingLagClientGUI extends JFrame {
   private JPasswordField passwortInput;
   private JTable warenTable;
   private TableRowSorter<TableModel> sorter ;
+  private JMenuItem logoutItem;
   
   private boolean eingelogged = false;
   private boolean mitarbeiterBerechtigung = false;
@@ -133,7 +134,7 @@ public class SwingLagClientGUI extends JFrame {
     }catch(IOException e){
     	e.getMessage();
     }
-    
+    warenkorbButton.addActionListener(new WarenkorbListener());
     panelUnten.add(warenkorbButton);
     panelUnten.setBorder(BorderFactory.createTitledBorder("WarenKorb krams"));
     
@@ -395,7 +396,7 @@ public class SwingLagClientGUI extends JFrame {
   
   class LogoutListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
-		  if(ae.getSource().equals(logoutButton)){
+		  if(ae.getSource().equals(logoutButton)||ae.getSource().equals(logoutItem)){
 			  if(getEingelogged()==true){
 				  setEingelogged(false);
 				  user = null;
@@ -408,17 +409,19 @@ public class SwingLagClientGUI extends JFrame {
 	  }
   }
   
-//  class UserListener implements ActionListener{
-//	  public void actionPerformed(ActionEvent ae){
-//		  if(ae.getSource().equals(userButton)){
-//			  if(user!=null){
-//				  JOptionPane.showMessageDialog(null, "Sie sind eingeloggt als " + user.getUsername());
-//			  }else{
-//				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt!");
-//			  }
-//		  }
-//	  }
-//  }
+  class WarenkorbListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae){
+		  if(ae.getSource().equals(warenkorbButton)){
+			  if(user==null){
+				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt");
+				  
+			  }else if(user.getWarenkorb().isEmpty()){
+				  JOptionPane.showMessageDialog(null, "ihr Warenkorb ist leer");
+			  
+			  }
+		  }
+	  }
+  }
   
   class FileMenu extends JMenu implements ActionListener {
     public FileMenu() {
@@ -459,9 +462,9 @@ public class SwingLagClientGUI extends JFrame {
 		  add(userItem);
 		  userItem.addActionListener(this);
 		  addSeparator();
-		  JMenuItem logoutItem = new JMenuItem("Ausloggen");
+		  logoutItem = new JMenuItem("Ausloggen");
 		  add(logoutItem);
-		  logoutItem.addActionListener(this);
+		  logoutItem.addActionListener(new LogoutListener());
 	  }
 	  public void actionPerformed (ActionEvent ae){
 		  if (ae.getActionCommand().equals("Eingeloggter User")){
@@ -476,8 +479,6 @@ public class SwingLagClientGUI extends JFrame {
 			  }
 			  JOptionPane.showMessageDialog(null, "Eingeloggter User : "+ user.getUsername() +"\n Mitarbeiter : " +mitarbeiter);
 			  }
-		  }else if(ae.getActionCommand().equals("Ausloggen")){
-			  
 		  }
 	  }
   }
