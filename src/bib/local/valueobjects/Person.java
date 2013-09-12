@@ -1,5 +1,6 @@
 /**
- * Personenklasse , Superklasse von Kunde und Mitarbeiter
+ * Personenklasse zum darstellen von Personen, manche mit Mitarbeiterberechtigung
+ * Jede Person hat einen eigenen Warenkorb um einzukaufen
  */
 
 package bib.local.valueobjects;

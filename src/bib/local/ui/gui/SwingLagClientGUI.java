@@ -4,14 +4,19 @@ package bib.local.ui.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Comparator;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,7 +38,6 @@ import javax.swing.table.TableRowSorter;
 
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
-import bib.local.ui.cui.LagerClientCUI;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
@@ -52,9 +56,11 @@ public class SwingLagClientGUI extends JFrame {
   private JTextField bestandsFeld;
   private JTextField preisFeld;
   private JButton addButton;
+  private JButton warenkorbButton;
   private JButton suchButton;
   private JButton loginButton;
   private JButton logoutButton;
+  //private JButton userButton;
   private JTextField suchFeld;
   private JTextField kundenNummerInput;
   private JPasswordField passwortInput;
@@ -62,8 +68,9 @@ public class SwingLagClientGUI extends JFrame {
   private TableRowSorter<TableModel> sorter ;
   
   private boolean eingelogged = false;
-  private boolean mitarbeiterBerechtigung;
-  private Person user = new Person();
+  private boolean mitarbeiterBerechtigung = false;
+
+  private static Person user ;
   
   public SwingLagClientGUI(String datei) throws IOException {
     super("ESHOP");
@@ -87,11 +94,13 @@ public class SwingLagClientGUI extends JFrame {
   private void initialize() {
     
     // Größe des Fensters festlegen
-    setSize(new Dimension(800, 400));
+    setSize(new Dimension(800, 450));
     setLayout(new BorderLayout());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     
+    // PANEL OBEN
+    // PANEL OBEN
     // PANEL OBEN
     
     JPanel panelOben = new JPanel();
@@ -110,6 +119,26 @@ public class SwingLagClientGUI extends JFrame {
     panelOben.add(suchButton);
     panelOben.setBorder(BorderFactory.createTitledBorder("Warensuche")); // Umrandung mit dem Titel "Suche"
     
+    //PANEL UNTEN
+    //PANEL UNTEN
+    //PANEL UNTEN
+    
+    JPanel panelUnten = new JPanel();
+    panelOben.setLayout(new GridLayout(1, 10));
+    
+    warenkorbButton = new JButton("Warenkorb");
+    try{
+    	Image img = ImageIO.read(getClass().getResource("/resources/warenkorb.png"));
+    	warenkorbButton.setIcon(new ImageIcon(img));
+    }catch(IOException e){
+    	e.getMessage();
+    }
+    
+    panelUnten.add(warenkorbButton);
+    panelUnten.setBorder(BorderFactory.createTitledBorder("WarenKorb krams"));
+    
+    // PANEL RECHTS
+    // PANEL RECHTS
     // PANEL RECHTS
     
     JPanel panelRechts = new JPanel();
@@ -121,8 +150,16 @@ public class SwingLagClientGUI extends JFrame {
     panelRechts.add(new JLabel("Kundennummer: "));
     panelRechts.add(kundenNummerInput);
     
-    // Passwort-Eingabe
+    // Passwort-Eingabe mit Keyadapter damit man im passwort Feld enter drücken kann zum einloggen
     passwortInput = new JPasswordField();
+    passwortInput.addKeyListener(new KeyAdapter(){
+    	public void keyPressed(KeyEvent e){
+    		int key = e.getKeyCode();
+    		if (key == KeyEvent.VK_ENTER){
+    			passwortInput.addActionListener(new LoginListener());
+    		}
+    	}
+    });
     panelRechts.add(new JLabel("Passwort: "));
     panelRechts.add(passwortInput);
     
@@ -132,12 +169,7 @@ public class SwingLagClientGUI extends JFrame {
     loginButton = new JButton("Einloggen");
     loginButton.addActionListener(new LoginListener()); 
     panelRechts.add(loginButton);
-//    if(getEingelogged()==true){
-//    	loginButton.setVisible(false);
-//    }else if (getEingelogged()==false){
-//    	loginButton.setVisible(true);
-//    }
-    
+
     panelRechts.add(new JLabel()); // Abstandhalter
     panelRechts.add(new JLabel()); // Abstandhalter
     panelRechts.add(new JLabel()); // Abstandhalter
@@ -146,16 +178,12 @@ public class SwingLagClientGUI extends JFrame {
     logoutButton = new JButton("Ausloggen");
     logoutButton.addActionListener(new LogoutListener());
     panelRechts.add(logoutButton);
-//    if(getEingelogged()==true){
-//    	logoutButton.setVisible(true);
-//    }else if (getEingelogged()==false){
-//    	logoutButton.setVisible(false);
-//    }
+
 
     panelRechts.setBorder(BorderFactory.createTitledBorder("User"));
 
-    
-    
+    // PANEL LINKS
+    // PANEL LINKS
     // PANEL LINKS
     
     JPanel panelLinks = new JPanel();
@@ -185,7 +213,6 @@ public class SwingLagClientGUI extends JFrame {
     panelLinks.add(addButton);  
     
     panelLinks.setBorder(BorderFactory.createTitledBorder("Einfügen"));
-
     
     
     // PANEL MITTE
@@ -239,6 +266,7 @@ public class SwingLagClientGUI extends JFrame {
     add(panelLinks, BorderLayout.WEST);
     add(panelMitte, BorderLayout.CENTER);
     add(panelRechts, BorderLayout.EAST);
+    add(panelUnten, BorderLayout.SOUTH);
     this.setResizable(false);
     //this.setMinimumSize(new Dimension(700,350));
    
@@ -250,10 +278,12 @@ public class SwingLagClientGUI extends JFrame {
 
   private void initMenu() {
     JMenu fileMenu = new FileMenu();
+    JMenu userMenu = new UserMenu();
     JMenu helpMenu = new HelpMenu();
     
     JMenuBar bar = new JMenuBar();
     bar.add(fileMenu);
+    bar.add(userMenu);
     bar.add(helpMenu);
     
     setJMenuBar(bar);
@@ -298,7 +328,7 @@ public class SwingLagClientGUI extends JFrame {
 	        String preisString = preisFeld.getText();
 	        
 	        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
-	          JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
+	          JOptionPane.showMessageDialog(null, "Alle Felder müssen ausgefüllt sein!");
 	        }else{
 	          try {
 	            int nummer = Integer.parseInt(nummernString);
@@ -329,6 +359,7 @@ public class SwingLagClientGUI extends JFrame {
           result = lag.gibAlleWaren();
         } else {
           result = lag.sucheNachBezeichnung(titel);
+          suchFeld.setText("");
         }
         updateList(result);
       }
@@ -337,7 +368,7 @@ public class SwingLagClientGUI extends JFrame {
   
   class LoginListener implements ActionListener{
     public void actionPerformed(ActionEvent ae){
-      if(ae.getSource().equals(loginButton)){
+      if(ae.getSource().equals(loginButton)||ae.getSource().equals(passwortInput)){
         
         String nummer = kundenNummerInput.getText();
         int kNummer = Integer.parseInt(nummer);
@@ -345,15 +376,18 @@ public class SwingLagClientGUI extends JFrame {
         java.util.HashMap<Integer,Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
         
         if (nummer.equals("")||passwort.equals("")){
-          JOptionPane.showMessageDialog(null, "Die Felder dürfen nicht leer sein!");
+          JOptionPane.showMessageDialog(null, "Es darf kein Feld leer sein!");
         }else if (result.containsKey(kNummer)&&result.get(kNummer).getPassword().equals(passwort)){
         	kundenNummerInput.setText("");
         	passwortInput.setText("");
         	setEingelogged(true);
 			user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer);
         	if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
-        	JOptionPane.showMessageDialog(null, "Erfolgreich Eingeloggt!");
-        	
+        	JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!");
+        }else if (result.containsKey(kNummer)&&!result.get(kNummer).getPassword().equals(passwort)){
+        	JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
+        }else {
+        	JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
         }
       }
     }
@@ -366,22 +400,35 @@ public class SwingLagClientGUI extends JFrame {
 				  setEingelogged(false);
 				  user = null;
 				  mitarbeiterBerechtigung = false;
-				  JOptionPane.showMessageDialog(null, "Erfolgreich Ausgeloggt!");
-				  
+				  JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Ausgeloggt!");
+			  }else{
+				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt!");
 			  }
 		  }
 	  }
   }
   
+//  class UserListener implements ActionListener{
+//	  public void actionPerformed(ActionEvent ae){
+//		  if(ae.getSource().equals(userButton)){
+//			  if(user!=null){
+//				  JOptionPane.showMessageDialog(null, "Sie sind eingeloggt als " + user.getUsername());
+//			  }else{
+//				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt!");
+//			  }
+//		  }
+//	  }
+//  }
+  
   class FileMenu extends JMenu implements ActionListener {
     public FileMenu() {
-      super("File");
+      super("Datei");
       
-      JMenuItem saveItem = new JMenuItem("Save");
+      JMenuItem saveItem = new JMenuItem("Speichern");
       add(saveItem);
       saveItem.addActionListener(this);
       addSeparator();
-      JMenuItem quitItem = new JMenuItem("Quit");
+      JMenuItem quitItem = new JMenuItem("Schließen");
       add(quitItem);
       quitItem.addActionListener(this);
       
@@ -389,7 +436,7 @@ public class SwingLagClientGUI extends JFrame {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-      if (ae.getActionCommand().equals("Save")) {
+      if (ae.getActionCommand().equals("Speichern")) {
         try {
           lag.schreibeWaren();
         } catch (IOException e) {
@@ -404,10 +451,50 @@ public class SwingLagClientGUI extends JFrame {
     }
   }
 
+  class UserMenu extends JMenu implements ActionListener {
+	  public UserMenu() {
+		  super("Benutzer");
+		  
+		  JMenuItem userItem = new JMenuItem("Eingeloggter User");
+		  add(userItem);
+		  userItem.addActionListener(this);
+		  addSeparator();
+		  JMenuItem logoutItem = new JMenuItem("Ausloggen");
+		  add(logoutItem);
+		  logoutItem.addActionListener(this);
+	  }
+	  public void actionPerformed (ActionEvent ae){
+		  if (ae.getActionCommand().equals("Eingeloggter User")){
+			  if (user==null){
+				  JOptionPane.showMessageDialog(null,"Sie sind nicht eingeloggt");
+			  }else{
+			  String mitarbeiter = null;
+			  if (mitarbeiterBerechtigung == true){
+				  mitarbeiter = "Ja ";
+			  }else{
+				  mitarbeiter = "Nein";
+			  }
+			  JOptionPane.showMessageDialog(null, "Eingeloggter User : "+ user.getUsername() +"\n Mitarbeiter : " +mitarbeiter);
+			  }
+		  }else if(ae.getActionCommand().equals("Ausloggen")){
+			  
+		  }
+	  }
+  }
 
-  class HelpMenu extends JMenu {
+  class HelpMenu extends JMenu implements ActionListener{
     public HelpMenu() {
-      super("Help");      
+      super("Hilfe");
+      
+      JMenuItem helpItem = new JMenuItem("Hilfe");
+      add(helpItem);
+      helpItem.addActionListener(this);
+    }
+    
+    public void actionPerformed (ActionEvent ae){
+    	if(ae.getActionCommand().equals("Hilfe")){
+    		JOptionPane.showMessageDialog(null, "Hier wird vielleicht bald eine Hilfe Funktion sein");
+    	}
     }
   }
   
