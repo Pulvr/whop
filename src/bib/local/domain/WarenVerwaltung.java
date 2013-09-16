@@ -116,6 +116,16 @@ public class WarenVerwaltung {
 	}
 	
 	/**
+	 * Methode zum löschen von Waren aus dem Bestand sodass sie keinen Eintrag mehr haben
+	 * @param eineWare
+	 */
+	public void entferneWare(Ware eineWare){
+		if(warenBestand.contains(eineWare)){
+			warenBestand.remove(eineWare);
+		}
+	}
+	
+	/**
 	 * Methode die den Bestand einer angegebenen Ware ändert 
 	 * @param w name der Ware
 	 * @param neuerBestand der Neue Bestand dieser Ware

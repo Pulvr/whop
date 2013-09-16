@@ -1,6 +1,7 @@
 package bib.local.valueobjects;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 /**
  * Klasse zur Repräsentation einzelner Waren.
@@ -34,11 +35,8 @@ public class Ware implements Serializable{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return (bezeichnung + " " + preis + "€ / Noch auf Lager: " + bestand + " / \n");
-	}
-	
-	public String warenListe() {
-		return (nummer + " - " + bezeichnung + " / Preis: " + preis + "€ / Noch auf Lager: " + bestand + " / \n");
+		DecimalFormat df = new DecimalFormat("#,##0.00");
+		return (bezeichnung + " " + df.format(preis) + "€ / Noch auf Lager: " + bestand +"\n");
 	}
 	
 	/**

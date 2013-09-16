@@ -2,6 +2,7 @@
 package bib.local.ui.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -9,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -37,6 +40,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import bib.local.domain.LagerVerwaltung;
+import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -136,7 +140,7 @@ public class SwingLagClientGUI extends JFrame {
     }
     warenkorbButton.addActionListener(new WarenkorbListener());
     panelUnten.add(warenkorbButton);
-    panelUnten.setBorder(BorderFactory.createTitledBorder("WarenKorb krams"));
+    panelUnten.setBorder(BorderFactory.createTitledBorder("Warenkorb"));
     
     // PANEL RECHTS
     // PANEL RECHTS
@@ -178,6 +182,7 @@ public class SwingLagClientGUI extends JFrame {
     // Ausloggen-Button
     logoutButton = new JButton("Ausloggen");
     logoutButton.addActionListener(new LogoutListener());
+    logoutButton.setVisible(false);
     panelRechts.add(logoutButton);
 
 
@@ -217,8 +222,11 @@ public class SwingLagClientGUI extends JFrame {
     
     
     // PANEL MITTE
+    // PANEL MITTE
+    // PANEL MITTE
     
     warenTable = new JTable(new WarenTableModel(lag.gibAlleWaren()));
+    // ein TableRowsorter damit der Inhalt der Tabelle korrekt sortiert werden kann
     sorter = new TableRowSorter<TableModel>(warenTable.getModel());
     
     sorter.setComparator(0,new Comparator<String>() {
@@ -252,13 +260,41 @@ public class SwingLagClientGUI extends JFrame {
         }
       }
     });
+   
+
     
     warenTable.setRowSorter(sorter);
-    //warenTable.setRowSelectionAllowed(false);
-    warenTable.setEnabled(false);
     
-    //warenTable.setAutoCreateRowSorter(true);
+    //ein Mouselistener um auf Doppelklicks zu reagieren
+    warenTable.addMouseListener(new MouseAdapter(){
+    	public void mouseClicked(MouseEvent e){
+    		if (e.getClickCount()==2){
+    			JTable target = (JTable)e.getSource();
+    			int row = target.getSelectedRow();
+    			int column = target.getSelectedColumn();
+    			java.util.HashMap<String,Ware> waren = lag.getMeineWarenVerwaltung().getWarenObjekte();
+    			if(getEingelogged()==false/*waren.containsKey(warenTable.getValueAt(row, column))*/){
+    				JOptionPane.showMessageDialog(null, "Loggen sie sich zuerst ein um Waren in den Korb zu legen");
+    			}else{
+    				Ware w = waren.get(warenTable.getValueAt(row, column));
+    				if(w.getBestand()>= 1)
+    				try {
+						lag.inWarenKorbLegen(1, w, user);
+						warenkorbButton.setBackground(Color.RED);
+						
+							
+					} catch (BestellteMengeNegativException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+    			}
+    			
+    		}
+    	}
+    });
+    
     JScrollPane panelMitte = new JScrollPane(warenTable);
+    
     
     
     
@@ -276,6 +312,7 @@ public class SwingLagClientGUI extends JFrame {
     
     setVisible(true);
   }
+  
 
   private void initMenu() {
     JMenu fileMenu = new FileMenu();
@@ -384,6 +421,8 @@ public class SwingLagClientGUI extends JFrame {
         	setEingelogged(true);
 			user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer);
         	if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
+        	logoutButton.setVisible(true);
+        	loginButton.setVisible(false);
         	JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!");
         }else if (result.containsKey(kNummer)&&!result.get(kNummer).getPassword().equals(passwort)){
         	JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
@@ -401,9 +440,9 @@ public class SwingLagClientGUI extends JFrame {
 				  setEingelogged(false);
 				  user = null;
 				  mitarbeiterBerechtigung = false;
+				  logoutButton.setVisible(false);
+				  loginButton.setVisible(true);
 				  JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Ausgeloggt!");
-			  }else{
-				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt!");
 			  }
 		  }
 	  }
@@ -418,6 +457,11 @@ public class SwingLagClientGUI extends JFrame {
 			  }else if(user.getWarenkorb().isEmpty()){
 				  JOptionPane.showMessageDialog(null, "ihr Warenkorb ist leer");
 			  
+			  }else{
+				  if(warenkorbButton.getBackground().equals(Color.RED)){
+					  warenkorbButton.setBackground(null);
+				  }
+				  JOptionPane.showMessageDialog(null, user.getWarenkorb());
 			  }
 		  }
 	  }
@@ -494,7 +538,7 @@ public class SwingLagClientGUI extends JFrame {
     
     public void actionPerformed (ActionEvent ae){
     	if(ae.getActionCommand().equals("Hilfe")){
-    		JOptionPane.showMessageDialog(null, "Hier wird vielleicht bald eine Hilfe Funktion sein");
+    		JOptionPane.showMessageDialog(null, "Doppelklicken sie auf den Titel der Ware die sie einkaufen möchten um diese in den Warenkorb zu legen");
     	}
     }
   }

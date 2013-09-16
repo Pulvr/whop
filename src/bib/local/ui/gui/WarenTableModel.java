@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+
 
 import bib.local.valueobjects.Ware;
 
@@ -42,4 +41,13 @@ public class WarenTableModel extends DefaultTableModel {
 		}
 		setDataVector(data, columnNames);
 	}
+	
+	@Override
+	/**
+	 * Klasse von javax.swing.JTable überschrieben um das editieren aller Zellen zu verbieten
+	 */
+    public boolean isCellEditable(int row, int column) {
+       return false;
+    }
 }
+

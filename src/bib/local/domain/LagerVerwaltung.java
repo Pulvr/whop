@@ -100,6 +100,14 @@ public class LagerVerwaltung {
 	}
 	
 	/**
+	 * Methode zum löschen von Waren aus dem Bestand
+	 * @param eineWare
+	 */
+	public void entferneWare(Ware eineWare){
+		meineWaren.entferneWare(eineWare);
+	}
+	
+	/**
 	 * Methode zum neusetzen des Bestands einer Ware, ohne Addition oder Subtraktion
 	 * @param w Die Ware
 	 * @param neuerBestand

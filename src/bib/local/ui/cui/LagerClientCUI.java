@@ -57,9 +57,10 @@ public class LagerClientCUI {
 			System.out.print("         \n  Person einfuegen: 'p'");
 			System.out.print("         \n  Personen ausgeben:  'l'");
 			System.out.print("         \n  Personen speichern:  'b'");
+
+			System.out.print("		   \n  Ware EINFUEGEN: 'e'");
+			System.out.print("		   \n Ware LÖSCHEN: 'y");
 		}
-		
-		if (mitarbeiterAngemeldet) System.out.print("		   \n  Ware EINFUEGEN: 'e'");
 		System.out.print("	       \n  Waren SORTIEREN : 't'");
 		if (mitarbeiterAngemeldet) System.out.print("         \n  WarenBestand ändern:  'c'");
 		System.out.print("         \n  Waren AUSGEBEN:  'a'");
@@ -149,12 +150,22 @@ public class LagerClientCUI {
 					System.out.println("Fehler beim Einfügen");
 			
 				
+			
+			}else if (line.equals("y")){
+				einloggenAbfrage();
+				System.out.print("Gib die exakte Bezeichnung der Ware ein, die gelöscht werden soll >");
+				String bezeichnung = liesEingabe();
+				
+				lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
+				
+				System.out.println("Der Eintrag im Warenbestand wurde gelöscht");
+				
 			//WARENBESTAND ÄNDERN
 			}else if(line.equals("c")){
-				einloggenAbfrage();
+				
 				try {
 					einloggenAbfrage();
-					System.out.print("Gib die exakte Bezeichnung des Artikels ein, dessen Bestand geändert werden soll >");
+					System.out.print("Gib die exakte Bezeichnung der Ware ein, dessen Bestand geändert werden soll >");
 					String bezeichnung = liesEingabe();
 					
 					System.out.print("neuer Bestand > ");
@@ -404,7 +415,7 @@ public class LagerClientCUI {
 			Iterator<Ware> iter = waren.iterator();
 			while (iter.hasNext()) {
 				Ware ware = iter.next();
-				System.out.println(ware.warenListe());
+				System.out.println(ware.toString());
 			}
 		}
 	}
