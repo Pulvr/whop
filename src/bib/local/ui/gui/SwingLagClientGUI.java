@@ -19,6 +19,7 @@ import java.util.Comparator;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -129,7 +130,7 @@ public class SwingLagClientGUI extends JFrame {
     //PANEL UNTEN
     
     JPanel panelUnten = new JPanel();
-    panelOben.setLayout(new GridLayout(1, 10));
+    panelOben.setLayout(new GridLayout(1, 5));
     
     warenkorbButton = new JButton("Warenkorb");
     try{
@@ -139,7 +140,13 @@ public class SwingLagClientGUI extends JFrame {
     	e.getMessage();
     }
     warenkorbButton.addActionListener(new WarenkorbListener());
+   
     panelUnten.add(warenkorbButton);
+    panelUnten.add(new JLabel());
+    panelUnten.add(new JLabel());
+    panelUnten.add(new JLabel());
+    panelUnten.add(new JLabel());
+    panelUnten.add(new JLabel("test"));
     panelUnten.setBorder(BorderFactory.createTitledBorder("Warenkorb"));
     
     // PANEL RECHTS
@@ -182,6 +189,7 @@ public class SwingLagClientGUI extends JFrame {
     // Ausloggen-Button
     logoutButton = new JButton("Ausloggen");
     logoutButton.addActionListener(new LogoutListener());
+    //wird erst wieder sichtbar wenn sich eine Person einloggt
     logoutButton.setVisible(false);
     panelRechts.add(logoutButton);
 
@@ -281,8 +289,10 @@ public class SwingLagClientGUI extends JFrame {
     				try {
 						lag.inWarenKorbLegen(1, w, user);
 						warenkorbButton.setBackground(Color.RED);
-						
-							
+//						if (warenkorbButton.getBackground().equals(Color.RED)){
+//							warenkorbButton.setBackground(Color.ORANGE);
+//							warenkorbButton.setBackground(Color.RED);
+//						}	
 					} catch (BestellteMengeNegativException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -367,7 +377,7 @@ public class SwingLagClientGUI extends JFrame {
 	        
 	        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
 	          JOptionPane.showMessageDialog(null, "Alle Felder müssen ausgefüllt sein!");
-	        }else{
+	        }else if (getEingelogged() == true){
 	          try {
 	            int nummer = Integer.parseInt(nummernString);
 	            int bestand = Integer.parseInt(bestandsString);
@@ -383,6 +393,8 @@ public class SwingLagClientGUI extends JFrame {
 	            JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
 	            e.printStackTrace();
 	          }
+	        }else {
+	        	JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
 	        }
 	      }
   }
@@ -421,6 +433,7 @@ public class SwingLagClientGUI extends JFrame {
         	setEingelogged(true);
 			user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer);
         	if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
+        	logoutItem.setVisible(true);
         	logoutButton.setVisible(true);
         	loginButton.setVisible(false);
         	JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!");
@@ -437,12 +450,15 @@ public class SwingLagClientGUI extends JFrame {
 	  public void actionPerformed(ActionEvent ae){
 		  if(ae.getSource().equals(logoutButton)||ae.getSource().equals(logoutItem)){
 			  if(getEingelogged()==true){
-				  setEingelogged(false);
-				  user = null;
-				  mitarbeiterBerechtigung = false;
-				  logoutButton.setVisible(false);
-				  loginButton.setVisible(true);
-				  JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Ausgeloggt!");
+				  int ok = JOptionPane.showConfirmDialog(null, "Sind sie sicher das sie sich ausloggen wollen?", "Ausloggen", JOptionPane.YES_NO_OPTION);
+				  if (ok == JOptionPane.YES_OPTION){
+					  setEingelogged(false);
+					  user = null;
+					  mitarbeiterBerechtigung = false;
+					  logoutItem.setVisible(false);
+					  logoutButton.setVisible(false);
+					  loginButton.setVisible(true);
+				  }
 			  }
 		  }
 	  }
@@ -461,7 +477,7 @@ public class SwingLagClientGUI extends JFrame {
 				  if(warenkorbButton.getBackground().equals(Color.RED)){
 					  warenkorbButton.setBackground(null);
 				  }
-				  JOptionPane.showMessageDialog(null, user.getWarenkorb());
+				  JOptionPane.showMessageDialog(null, user.getWarenkorb(),"Inhalt ihres Warenkorbs", JOptionPane.PLAIN_MESSAGE);
 			  }
 		  }
 	  }
@@ -502,11 +518,18 @@ public class SwingLagClientGUI extends JFrame {
 	  public UserMenu() {
 		  super("Benutzer");
 		  
-		  JMenuItem userItem = new JMenuItem("Eingeloggter User");
-		  add(userItem);
-		  userItem.addActionListener(this);
+		  JMenuItem actUserItem = new JMenuItem("Eingeloggter User");
+		  add(actUserItem);
+		  actUserItem.addActionListener(this);
+		  JMenuItem addUser = new JMenuItem("User hinzufügen");
+		  add(addUser);
+		  addUser.addActionListener(this);
+		  JMenuItem allUsers = new JMenuItem("Alle User ausgeben");
+		  add(allUsers);
+		  allUsers.addActionListener(this);
 		  addSeparator();
 		  logoutItem = new JMenuItem("Ausloggen");
+		  logoutItem.setVisible(false);
 		  add(logoutItem);
 		  logoutItem.addActionListener(new LogoutListener());
 	  }
@@ -523,6 +546,42 @@ public class SwingLagClientGUI extends JFrame {
 			  }
 			  JOptionPane.showMessageDialog(null, "Eingeloggter User : "+ user.getUsername() +"\n Mitarbeiter : " +mitarbeiter);
 			  }
+		  }else if (ae.getActionCommand().equals("User hinzufügen")){
+			  if (getEingelogged()==true){
+				  JTextField xField = new JTextField(5);
+			      JTextField yField = new JTextField(5);
+
+			      JPanel myPanel = new JPanel();
+			      myPanel.add(new JLabel("x:"));
+			      myPanel.add(xField);
+			      myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+			      myPanel.add(new JLabel("y:"));
+			      myPanel.add(yField);
+
+			      int result = JOptionPane.showConfirmDialog(null, myPanel, 
+			               "Please Enter X and Y Values", JOptionPane.OK_CANCEL_OPTION);
+			      if (result == JOptionPane.OK_OPTION) {
+			         System.out.println("x value: " + xField.getText());
+			         System.out.println("y value: " + yField.getText());
+			      }
+			  }else{
+				  JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
+			  }
+		  }else if (ae.getActionCommand().equals("Alle User ausgeben")){
+			  
+			  JTable personenTable = new JTable(new PersonenTableModel(lag.gibAllePersonen()));
+			  personenTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			  personenTable.getColumnModel().getColumn(0).setMinWidth(100);
+			  personenTable.getColumnModel().getColumn(1).setMinWidth(100);
+			  personenTable.getColumnModel().getColumn(2).setMinWidth(100);
+			  personenTable.getColumnModel().getColumn(3).setMinWidth(130);
+			  personenTable.getColumnModel().getColumn(4).setMinWidth(130);
+			  personenTable.getColumnModel().getColumn(5).setMinWidth(50);
+			  personenTable.getColumnModel().getColumn(6).setMinWidth(100);
+			  
+			  JScrollPane personenPanel = new JScrollPane(personenTable);
+			  
+			  JOptionPane.showMessageDialog(null, personenPanel,"Alle Personen", JOptionPane.PLAIN_MESSAGE);
 		  }
 	  }
   }

@@ -8,6 +8,7 @@ import java.util.Vector;
 import bib.local.domain.WarenVerwaltung.Sortierung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
+import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
@@ -102,8 +103,9 @@ public class LagerVerwaltung {
 	/**
 	 * Methode zum löschen von Waren aus dem Bestand
 	 * @param eineWare
+	 * @throws WareExistiertNichtException
 	 */
-	public void entferneWare(Ware eineWare){
+	public void entferneWare(Ware eineWare)throws WareExistiertNichtException{
 		meineWaren.entferneWare(eineWare);
 	}
 	
@@ -126,6 +128,16 @@ public class LagerVerwaltung {
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma) throws PersonExistiertBereitsException {
 		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw, ma);
 		meinePersonen.personEinfuegen(p);
+	}
+	
+	/**
+	 * Methode zum löschen einer Person
+	 * 
+	 * @param einePerson
+	 * @throws PersonExistiertNichtException
+	 */
+	public void personEntfernen(Person einePerson) throws PersonExistiertNichtException{
+		meinePersonen.personEntfernen(einePerson);
 	}
 	
 	/**

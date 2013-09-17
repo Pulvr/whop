@@ -10,6 +10,7 @@ import java.util.List;
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
+import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
@@ -55,11 +56,12 @@ public class LagerClientCUI {
 		
 		if (mitarbeiterAngemeldet){
 			System.out.print("         \n  Person einfuegen: 'p'");
+			System.out.print("		   \n  Person löschen: 'x'");
 			System.out.print("         \n  Personen ausgeben:  'l'");
 			System.out.print("         \n  Personen speichern:  'b'");
 
 			System.out.print("		   \n  Ware EINFUEGEN: 'e'");
-			System.out.print("		   \n Ware LÖSCHEN: 'y");
+			System.out.print("		   \n  Ware LÖSCHEN: 'y'");
 		}
 		System.out.print("	       \n  Waren SORTIEREN : 't'");
 		if (mitarbeiterAngemeldet) System.out.print("         \n  WarenBestand ändern:  'c'");
@@ -150,16 +152,20 @@ public class LagerClientCUI {
 					System.out.println("Fehler beim Einfügen");
 			
 				
-			
+			//WARE AUS DEM BESTAND LÖSCHEN
 			}else if (line.equals("y")){
-				einloggenAbfrage();
-				System.out.print("Gib die exakte Bezeichnung der Ware ein, die gelöscht werden soll >");
-				String bezeichnung = liesEingabe();
-				
-				lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
-				
-				System.out.println("Der Eintrag im Warenbestand wurde gelöscht");
-				
+				try {
+					einloggenAbfrage();
+					System.out.print("Gib die exakte Bezeichnung der Ware ein, die gelöscht werden soll >");
+					String bezeichnung = liesEingabe();
+					
+					lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
+					System.out.println("Der Eintrag im Warenbestand wurde gelöscht");
+				} catch (WareExistiertNichtException e) {
+					System.err.println(e.getMessage());
+					e.printStackTrace();
+				}
+		
 			//WARENBESTAND ÄNDERN
 			}else if(line.equals("c")){
 				
@@ -237,7 +243,20 @@ public class LagerClientCUI {
 					else
 						System.out.println("Fehler beim Einfügen");
 				}
-				
+			
+			//PERSON ENTFERNEN
+			}else if (line.equals("x")){
+				try {
+					einloggenAbfrage();
+					System.out.print("Gib die KUNDENNUMMER der Person ein, die gelöscht werden soll >");
+					String nummernString = liesEingabe();
+					int kNummer = Integer.parseInt(nummernString);
+					
+					lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer));
+					System.out.println("Die Person wurde entfernt");
+				}catch(PersonExistiertNichtException e){
+					System.err.println(e.getMessage());
+				}
 			}
 			
 			// WARENKORB AUSGEBEN LASSEN

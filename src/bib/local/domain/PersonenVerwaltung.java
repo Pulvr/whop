@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
+import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
@@ -73,6 +74,18 @@ public class PersonenVerwaltung {
 			personenObjekte.put(einePerson.getNummer(), einePerson);
 		} else {
 			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
+		}
+	}
+	/**
+	 * Methode zum löschen einer Person aus der Liste
+	 * @param einePerson
+	 * @throws PersonExistiertNichtException
+	 */
+	public void personEntfernen(Person einePerson) throws PersonExistiertNichtException{
+		if(personen.contains(einePerson)){
+			personen.remove(einePerson);
+		}else{
+			throw new PersonExistiertNichtException();
 		}
 	}
 	/**

@@ -119,10 +119,11 @@ public class WarenVerwaltung {
 	 * Methode zum löschen von Waren aus dem Bestand sodass sie keinen Eintrag mehr haben
 	 * @param eineWare
 	 */
-	public void entferneWare(Ware eineWare){
+	public void entferneWare(Ware eineWare)throws WareExistiertNichtException{
 		if(warenBestand.contains(eineWare)){
 			warenBestand.remove(eineWare);
-		}
+		}else
+			throw new WareExistiertNichtException();
 	}
 	
 	/**
@@ -131,7 +132,6 @@ public class WarenVerwaltung {
 	 * @param neuerBestand der Neue Bestand dieser Ware
 	 * @throws WareExistiertNichtException
 	 */
-	//throws ...
 	public void aendereBestand(Ware w, int neuerBestand)throws WareExistiertNichtException, IOException{
 		if(warenBestand.contains(w)){
 			w.setBestand(neuerBestand);
