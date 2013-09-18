@@ -65,7 +65,7 @@ public class Person implements Serializable{
 	 * dient der einfachereren Ausgabe der attribute der Person
 	 */
 	public String toString() {
-		return ("User: " + username + " Nummer : "+nummer +""
+		return ("User: " + username + " Nummer : "+nummer +" Passwort : " +password+" "
 					+ anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\nMitarbeiter : "+mitarbeiter+"\n\n");
 	}
 	

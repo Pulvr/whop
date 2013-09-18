@@ -25,7 +25,7 @@ public class PersonenVerwaltung {
 	
 	//Ebenso werden die Personen in einer Hashmap verwaltet dessen Key-Value Paar aus der KundenNummer
 	//(Integer) und der Person selbst besteht
-	private HashMap<Integer, Person> personenObjekte = new HashMap<Integer, Person>();
+	private HashMap<String, Person> personenObjekte = new HashMap<String, Person>();
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs
 	// verantwortlich ist
@@ -71,7 +71,7 @@ public class PersonenVerwaltung {
 	public void personEinfuegen(Person einePerson) throws PersonExistiertBereitsException{
 		if (!personen.contains(einePerson)){
 			personen.add(einePerson);
-			personenObjekte.put(einePerson.getNummer(), einePerson);
+			personenObjekte.put(einePerson.getUsername(), einePerson);
 		} else {
 			throw new PersonExistiertBereitsException(einePerson, " - in 'einfuegen()'");
 		}
@@ -123,8 +123,8 @@ public class PersonenVerwaltung {
 	 * Methode die die Personen als HashMap zurück gibt
 	 * @return Kopie der HashMap
 	 */
-	public HashMap<Integer, Person> getPersonenObjekte(){
-		HashMap<Integer, Person> personenObjekteKopie = new HashMap<Integer, Person>(personenObjekte);
+	public HashMap<String, Person> getPersonenObjekte(){
+		HashMap<String, Person> personenObjekteKopie = new HashMap<String, Person>(personenObjekte);
 		return personenObjekteKopie;
 	}
 	

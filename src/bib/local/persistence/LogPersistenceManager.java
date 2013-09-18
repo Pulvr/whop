@@ -106,9 +106,6 @@ public class LogPersistenceManager {
 		
 		warenLog.add(warenLogUebereinstimmendeBz.elementAt(warenLogUebereinstimmendeBz.size() - 1));
 		
-		
-		
 		return warenLog;
 	}
-
 }

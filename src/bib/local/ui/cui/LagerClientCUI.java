@@ -89,22 +89,21 @@ public class LagerClientCUI {
 			// EINLOGGEN:
 			if (line.equals("i")){
 				if(!eingelogged) {
-					System.out.print("Bitte geben Sie ihre Kundennummer ein > \n");
-					String nummer = this.liesEingabe();
-					int kNummer = Integer.parseInt(nummer);
-					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(kNummer)){
-						System.out.print("Es existiert kein User mit dieser Nummer. Bitte versuchen Sie es erneut > \n");
-						nummer = liesEingabe();
-						kNummer = Integer.parseInt(nummer);
+					System.out.print("Bitte geben Sie ihren UserNamen ein > \n");
+					String userName = this.liesEingabe();
+					
+					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(userName)){
+						System.out.print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
+						userName = liesEingabe();
 					}
 					System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
 					String passwort = liesEingabe();
-					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer).getPassword().equals(passwort)){
+					while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getPassword().equals(passwort)){
 						System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
 						passwort = liesEingabe();
 					}
 					
-					einloggen(kNummer);
+					einloggen(userName);
 				}
 				else System.out.print("Sie sind bereits als " + user.getUsername() + " eingeloggt.");
 			}
@@ -389,8 +388,9 @@ public class LagerClientCUI {
 				}
 			//WARENLOG AUSGEBEN
 			}else if (line.equals("d")){
-				einloggenAbfrage();
+				
 				try{
+					einloggenAbfrage();
 					System.out.print("Warenbezeichnung  > ");
 					String bezeichnung = liesEingabe();
 					
@@ -418,6 +418,7 @@ public class LagerClientCUI {
 			}
 		} catch (NumberFormatException e){
 				System.err.println(e.getMessage());
+				e.getStackTrace();
 		}
 		
 	}
@@ -458,7 +459,21 @@ public class LagerClientCUI {
 	private void einloggenAbfrage() throws IOException{
 		if(!eingelogged){
 			System.out.println("\nBitte loggen Sie sich zunächst ein!\n");
-			//this.einloggen();
+			System.out.println("Geben sie ihren UserNamen an > \n");
+			String userName = this.liesEingabe();
+			
+			while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(userName)){
+				System.out.print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
+				userName = liesEingabe();
+			}
+			System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
+			String passwort = liesEingabe();
+			while(!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getPassword().equals(passwort)){
+				System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
+				passwort = liesEingabe();
+			}
+			
+			einloggen(userName);
 		}
 	}
 	
@@ -472,13 +487,13 @@ public class LagerClientCUI {
 		else return false;
 	}
 	
-	private void einloggen(int knummer){
+	private void einloggen(String userName){
 		
 		this.eingelogged = true;
-		this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer);
+		this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
 		if(this.user.getMitarbeiterberechtigung()) this.mitarbeiterAngemeldet = true;
 		System.out.print("\nErfolgreich eingeloggt!");
-		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(knummer).getUsername() + "!\n");
+		System.out.print("\nWilkommen, " + lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getUsername() + "!\n");
 	}
 	
 //	public boolean getEingelogged(){
