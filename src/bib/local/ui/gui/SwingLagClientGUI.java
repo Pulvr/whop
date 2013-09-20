@@ -47,7 +47,9 @@ import bib.local.domain.exceptions.BestellteMengeNegativException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
+import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.valueobjects.Person;
+import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
 
 /**
@@ -64,22 +66,28 @@ public class SwingLagClientGUI extends JFrame {
   private JTextField nummernFeld;
   private JTextField bestandsFeld;
   private JTextField preisFeld;
+  
   private JButton addButton;
   private JButton warenkorbButton;
   private JButton kaufenButton;
   private JButton suchButton;
   private JButton loginButton;
   private JButton logoutButton;
+  
   private JLabel userLabel;
   private JTextField suchFeld;
   private JTextField userNameInput;
   private JPasswordField passwortInput;
   private JTable warenTable;
   private TableRowSorter<TableModel> sorter;
+  
   private JMenuItem logoutItem;
   private JMenuItem addUserItem;
   private JMenuItem delUserItem;
   private JMenuItem allUsersItem;
+  
+  private JMenuItem bestandsItem;
+  private JMenuItem delWareItem;
   
   private boolean eingelogged = false;
   private boolean mitarbeiterBerechtigung = false;
@@ -126,10 +134,7 @@ public class SwingLagClientGUI extends JFrame {
     			}
     		}else if (result == JOptionPane.NO_OPTION){
     			dispose();
-    		}else {
-    			//do Nothing
     		}
-    		
     	}
     });
     
@@ -160,7 +165,7 @@ public class SwingLagClientGUI extends JFrame {
     JPanel panelUnten = new JPanel();
     panelOben.setLayout(new GridLayout(1, 5));
     
-    //WarenkorbButton mit passendem warenkorb als Bild
+    //WarenkorbButton mit passendem Warenkorb als Bild
     warenkorbButton = new JButton("Warenkorb");
     try{
     	Image img = ImageIO.read(getClass().getResource("/resources/warenkorb.png"));
@@ -171,11 +176,10 @@ public class SwingLagClientGUI extends JFrame {
     warenkorbButton.addActionListener(new WarenkorbListener());
    
     kaufenButton = new JButton ("KAUFEN");
-    kaufenButton.setPreferredSize(new Dimension(115,33));
+    kaufenButton.setPreferredSize(warenkorbButton.getPreferredSize()); //damit er die gleiche größe hat wie der warenkorbButton
+    kaufenButton.addActionListener(new KaufenListener());
     
     panelUnten.add(warenkorbButton);
-    panelUnten.add(new JLabel());
-    panelUnten.add(new JLabel());
     panelUnten.add(kaufenButton);
     panelUnten.setBorder(BorderFactory.createTitledBorder("Warenkorb"));
     
@@ -282,22 +286,25 @@ public class SwingLagClientGUI extends JFrame {
     				JOptionPane.showMessageDialog(null, "Loggen Sie sich bitte zuerst ein!");
     			}else{
     				if(column==1){
-    				//getValueAt(row,1) die 1 damit er immer die bezeichnung nimmt und keinen Nullpointer wirft
-    				Ware w = waren.get(warenTable.getValueAt(row, 1));
-    				if(w.getBestand()>= 1)
-    				try {
-						lag.inWarenKorbLegen(1, w, user);
-						warenkorbButton.setBackground(Color.RED);
-	
-    				} catch (BestellteMengeNegativException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+    					//getValueAt(row,1) die 1 damit er immer die bezeichnung nimmt und keinen Nullpointer wirft
+    					Ware w = waren.get(warenTable.getValueAt(row, 1));
+    					String mengenString = JOptionPane.showInputDialog("Wieviele von : \""+w.getBezeichnung()+"\" wollen sie bestellen");
+    					int menge = Integer.parseInt(mengenString);
+    				if(w.getBestand()>= menge)
+    					try {
+    						lag.inWarenKorbLegen(menge, w, user);
+    						warenkorbButton.setBackground(Color.RED);
+    						
+    					} catch (BestellteMengeNegativException e1) {
+    						JOptionPane.showMessageDialog(null, "Die Menge darf nicht negativ sein!","ERROR",JOptionPane.ERROR_MESSAGE);
+    						
+    					}else{
+    						JOptionPane.showMessageDialog(null, "Ihre Anfrage übersteigt den vorhandenen Bestand","ERROR",JOptionPane.ERROR_MESSAGE);
+    					}
     				}else if(column==2){
     					
     				}
     			}
-    			
     		}
     	}
     });
@@ -311,7 +318,6 @@ public class SwingLagClientGUI extends JFrame {
     add(panelRechts, BorderLayout.EAST);
     add(panelUnten, BorderLayout.SOUTH);
     this.setResizable(false);
-    //this.setMinimumSize(new Dimension(700,350));
    
     // Menu aufbauen
     initMenu();
@@ -319,7 +325,7 @@ public class SwingLagClientGUI extends JFrame {
     setVisible(true);
   }
   /**
-   * Nimmt die waranTabe und macht Spalten sortierbar
+   * Nimmt die waranTabe und macht die Spalten sortierbar
    * @param table
    */
   public void tableSorter(JTable table){
@@ -360,18 +366,19 @@ public class SwingLagClientGUI extends JFrame {
   private void initMenu() {
     JMenu fileMenu = new FileMenu();
     JMenu userMenu = new UserMenu();
+    JMenu wareMenu = new WarenMenu();
     JMenu helpMenu = new HelpMenu();
     
     JMenuBar bar = new JMenuBar();
     bar.add(fileMenu);
     bar.add(userMenu);
+    bar.add(wareMenu);
     bar.add(helpMenu);
     
     setJMenuBar(bar);
   }
   
   private void updateList(java.util.List<Ware> waren) {
-    // Code für den Einsatz einer JTable
     WarenTableModel btm = (WarenTableModel) warenTable.getModel();
     btm.updateDataVector(waren);
     //Da das sortieren sonst nicht mehr funktionieren würde hier noch einmal den sorter definieren
@@ -400,86 +407,94 @@ public class SwingLagClientGUI extends JFrame {
 	        String preisString = preisFeld.getText();
 	        
 	        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
-	          JOptionPane.showMessageDialog(null, "Alle Felder müssen ausgefüllt sein!");
+	        	JOptionPane.showMessageDialog(null, "Alle Felder müssen ausgefüllt sein!");
 	        }else if (getEingelogged() == true && getMitarbeiterBerechtigung() == true){
-	          try {
-	            int nummer = Integer.parseInt(nummernString);
-	            int bestand = Integer.parseInt(bestandsString);
+	        	try {
+	        		//Falls iregendwo ein minus auftaucht wird es einfach mit nichts ersetzt
+	        		String realNummernString = nummernString.replace("-", "");
+	        		String realBestandsString = bestandsString.replace("-", "");
+	        		int nummer = Integer.parseInt(realNummernString);
+	        		int bestand = Integer.parseInt(realBestandsString);
 	            
-	            //wenn der String ein Komma findet wird es mit einem Punkt ersetzt da sonst eine NumberformatException geworfen wird
-	            String realPreisString = preisString.replace(",",".");
+	        		//wenn der String ein Komma findet wird es mit einem Punkt ersetzt da sonst eine NumberformatException geworfen wird
+	        		String realPreisString = preisString.replace(",",".");
+	        		String finalPreisString = realPreisString.replace("-", "");
 	            
-	            float preis = Float.valueOf(realPreisString);
-	            lag.fuegeWareEin(titel, nummer, bestand, preis);
-	            updateList(lag.gibAlleWaren());
-	            nummernFeld.setText("");
-	            titelFeld.setText("");
-	            bestandsFeld.setText("");
-	            preisFeld.setText("");
-	            
-	          } catch (WareExistiertBereitsException|NumberFormatException e) {
-	            JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
-	            e.printStackTrace();
-	          }
+		            float preis = Float.valueOf(finalPreisString);
+		            lag.fuegeWareEin(titel, nummer, bestand, preis);
+		            updateList(lag.gibAlleWaren());
+		            nummernFeld.setText("");
+		            titelFeld.setText("");
+		            bestandsFeld.setText("");
+		            preisFeld.setText("");
+		            
+	        	} catch (WareExistiertBereitsException|NumberFormatException e) {
+	        		JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
+	        		e.printStackTrace();
+	        	}
 	        }else if (getEingelogged()==true &&getMitarbeiterBerechtigung()==false){
 	        	JOptionPane.showMessageDialog(null, "Ihnen fehlen die nötigen Berechtigungen für diese Aktion");
 	        }else {
 	        	JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
 	        }
-	      }
+	  }
   }
   
   class SearchListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
-      if (ae.getSource().equals(suchButton)) {
-        java.util.List<Ware> result;
-        String titel = suchFeld.getText();
-        if (titel.equals("")) {
-          result = lag.gibAlleWaren();
-        } else {
-          result = lag.sucheNachBezeichnung(titel);
-          suchFeld.setText("");
-        }
-        updateList(result);
-      }
+    	if (ae.getSource().equals(suchButton)) {
+    		java.util.List<Ware> result;
+    		String titel = suchFeld.getText();
+    		if (titel.equals("")) {
+    			result = lag.gibAlleWaren();
+    		} else {
+    			result = lag.sucheNachBezeichnung(titel);
+    			suchFeld.setText("");
+    		}
+    		updateList(result);
+    	}
     }
   }
   
   class LoginListener implements ActionListener{
-    public void actionPerformed(ActionEvent ae){
-      if(ae.getSource().equals(loginButton)||ae.getSource().equals(passwortInput)){
+	  public void actionPerformed(ActionEvent ae){
+		  if(ae.getSource().equals(loginButton)||ae.getSource().equals(passwortInput)){
         
-        String userName = userNameInput.getText();
+			  String userName = userNameInput.getText();
+			  //andere Methoden haben keine Wirkung gezeigt darum sind wir bei .getText() geblieben
+			  String passwort = passwortInput.getText();
+			  java.util.HashMap<String,Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
         
-        String passwort = passwortInput.getText();
-        java.util.HashMap<String,Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
-        
-        if (passwort.equals("")||userName.equals("")){
-          JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
-        }else if (result.containsKey(userName)&&result.get(userName).getPassword().equals(passwort)){
-        	userNameInput.setText("");
-        	passwortInput.setText("");
-        	setEingelogged(true);
-			user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
-        	if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
-        	if(getMitarbeiterBerechtigung()==true){
-        		allUsersItem.setVisible(true);
-        		addUserItem.setVisible(true);
-        		delUserItem.setVisible(true);
-        	}
-        	logoutItem.setVisible(true);
-        	logoutButton.setVisible(true);
-        	loginButton.setVisible(false);
-        	userLabel.setText(" "+user.getUsername());
-        	JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen "+ user.getUsername()+" !");
-        }else if (result.containsKey(userName)&&!result.get(userName).getPassword().equals(passwort)){
-        	JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
-        }else {
-        	JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
-        }
-      }
-    }
+			  if (passwort.equals("")||userName.equals("")){
+				  JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
+    	   }else if (result.containsKey(userName)&&result.get(userName).getPassword().equals(passwort)){
+    		   userNameInput.setText("");
+    		   passwortInput.setText("");
+    		   setEingelogged(true);
+    		   user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
+    		   if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
+    		   //Falls ein Mitarbeiter eingeloggt ist werden stehen mehr Optionen zur Verfügung
+    		   if(getMitarbeiterBerechtigung()==true){
+    			   allUsersItem.setVisible(true);
+    			   addUserItem.setVisible(true);
+    			   delUserItem.setVisible(true);
+        		
+    			   bestandsItem.setVisible(true);
+    			   delWareItem.setVisible(true);
+    		   }
+    		   logoutItem.setVisible(true);
+    		   logoutButton.setVisible(true);
+    		   loginButton.setVisible(false);
+    		   userLabel.setText(" "+user.getUsername());
+    		   JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen "+ user.getUsername()+" !");
+    	   }else if (result.containsKey(userName)&&!result.get(userName).getPassword().equals(passwort)){
+    		   JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
+    	   }else {
+    		   JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
+    	   }
+		  }
+	  }
   }
   
   class LogoutListener implements ActionListener{
@@ -494,8 +509,12 @@ public class SwingLagClientGUI extends JFrame {
 					  userLabel.setText(" nicht eingeloggt");
 					  addUserItem.setVisible(false);
 		        	  delUserItem.setVisible(false);
-					  allUsersItem.setVisible(false);
-					  logoutItem.setVisible(false);
+		        	  allUsersItem.setVisible(false);
+		        	  
+		        	  bestandsItem.setVisible(false);
+		        	  delUserItem.setVisible(false);
+		        	  
+		        	  logoutItem.setVisible(false);
 					  logoutButton.setVisible(false);
 					  loginButton.setVisible(true);
 				  }
@@ -507,17 +526,39 @@ public class SwingLagClientGUI extends JFrame {
   class WarenkorbListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
 		  if(ae.getSource().equals(warenkorbButton)){
-			  if(user==null){
+			  if(getEingelogged()==false){
 				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt");
 				  
 			  }else if(user.getWarenkorb().isEmpty()){
-				  JOptionPane.showMessageDialog(null, "ihr Warenkorb ist leer");
+				  JOptionPane.showMessageDialog(null, "Ihr Warenkorb ist leer\n\nDoppelklicken sie auf die Ware die sie kaufen \nmöchten um sie in den Warenkorb zu legen");
 			  
 			  }else{
 				  if(warenkorbButton.getBackground().equals(Color.RED)){
 					  warenkorbButton.setBackground(null);
 				  }
 				  JOptionPane.showMessageDialog(null, user.getWarenkorb(),"Inhalt ihres Warenkorbs", JOptionPane.PLAIN_MESSAGE);
+			  }
+		  }
+	  }
+  }
+  
+  class KaufenListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae){
+		  if (ae.getSource().equals(kaufenButton)){
+			  if(getEingelogged()==false){
+				  JOptionPane.showMessageDialog(null, "Sie sind nicht eingeloggt");
+			  }else if(user.getWarenkorb().isEmpty()){
+				  JOptionPane.showMessageDialog(null, "Ihr Warenkorb ist leer\n\nDoppelklicken sie auf die Ware die sie kaufen \nmöchten um sie in den Warenkorb zu legen");
+			  }else{
+				  int result = JOptionPane.showConfirmDialog(null, "Sind sie sicher das sie diese Waren kaufen möchten?", "Meldung",  JOptionPane.YES_NO_OPTION);
+				  if (result == JOptionPane.YES_OPTION ){
+					  lag.setRechnung(new Rechnung(user));
+					  JOptionPane.showMessageDialog(null,lag.getRechnung().toString(),"Ihr Einkauf",JOptionPane.PLAIN_MESSAGE);
+					  lag.warenkorbKaufen(user, user.getWarenkorb());
+					  warenkorbButton.setBackground(null); //Falls man direkt kauft ohne vorher in den Korb zu gucken wird der Hintergrund wieder auf null gesetzt
+					  //Warentable wird nach dem Kauf aktualisiert
+					  updateList(lag.gibAlleWaren());
+				  }
 			  }
 		  }
 	  }
@@ -578,8 +619,8 @@ public class SwingLagClientGUI extends JFrame {
 	  }
 	  public void actionPerformed (ActionEvent ae){
 		  if (ae.getActionCommand().equals("Eingeloggter User")){
-			  if (user==null){
-				  JOptionPane.showMessageDialog(null,"Sie sind nicht eingeloggt");
+			  if (getEingelogged()==false){
+				  JOptionPane.showMessageDialog(null,"Sie sind nicht eingeloggt, bitte loggen sie sich zuerst ein");
 			  }else{
 			  String mitarbeiter = null;
 			  if (getMitarbeiterBerechtigung() == true){
@@ -590,7 +631,7 @@ public class SwingLagClientGUI extends JFrame {
 			  JOptionPane.showMessageDialog(null, "Eingeloggter User : "+ user.getUsername() +"\nMitarbeiter : " +mitarbeiter);
 			  }
 		  }else if (ae.getActionCommand().equals("User hinzufügen")){
-			  if (getEingelogged()== true&&getMitarbeiterBerechtigung()==true){
+				  //Felder zur Eingabe der Daten
 				  JTextField nrField = new JTextField();
 			      JTextField nameField = new JTextField();
 			      JTextField strField = new JTextField();
@@ -600,73 +641,73 @@ public class SwingLagClientGUI extends JFrame {
 			      JTextField userNameField = new JTextField();
 			      JPasswordField passwordField = new JPasswordField();
 			      
-			     
+			      //Da es sich nur um Herr oder Frau handeln kann eine ComboBox
 			      JComboBox<String> herrfrauCombo = new JComboBox<String>();
 				  herrfrauCombo.addItem("Herr");
 				  herrfrauCombo.addItem("Frau");
 			      
+			      //Zum Panel hinzufügen
+			      JPanel addPersonPanel = new JPanel();
+			      addPersonPanel.setLayout(new GridLayout(10,2)); //Panel bekommt ein GridLayout
+			      addPersonPanel.add(new JLabel("Nummer:"));
+			      addPersonPanel.add(nrField);
+			      addPersonPanel.add(herrfrauCombo);
+			      addPersonPanel.add(new JLabel()); // Platzhalter
+			      addPersonPanel.add(new JLabel("Name:"));
+			      addPersonPanel.add(nameField);
+			      addPersonPanel.add(new JLabel("Straße :"));
+			      addPersonPanel.add(strField);
+			      addPersonPanel.add(new JLabel("Postleitzahl:"));
+			      addPersonPanel.add(plzField);
+			      addPersonPanel.add(new JLabel("Ort:"));
+			      addPersonPanel.add(ortField);
+			      addPersonPanel.add(new JLabel("E-Mail:"));
+			      addPersonPanel.add(eMailField);
+			      addPersonPanel.add(new JLabel("UserName:"));
+			      addPersonPanel.add(userNameField);
+			      addPersonPanel.add(new JLabel("Passwort:"));
+			      addPersonPanel.add(passwordField);
 			      
-			      JPanel myPanel = new JPanel();
-			      myPanel.setLayout(new GridLayout(10,2));
-			      myPanel.add(new JLabel("Nummer:"));
-			      myPanel.add(nrField);
-			      myPanel.add(herrfrauCombo);
-			      myPanel.add(new JLabel()); // Platzhalter
-			      myPanel.add(new JLabel("Name:"));
-			      myPanel.add(nameField);
-			      myPanel.add(new JLabel("Straße :"));
-			      myPanel.add(strField);
-			      myPanel.add(new JLabel("Postleitzahl:"));
-			      myPanel.add(plzField);
-			      myPanel.add(new JLabel("Ort:"));
-			      myPanel.add(ortField);
-			      myPanel.add(new JLabel("E-Mail:"));
-			      myPanel.add(eMailField);
-			      myPanel.add(new JLabel("UserName:"));
-			      myPanel.add(userNameField);
-			      myPanel.add(new JLabel("Passwort:"));
-			      myPanel.add(passwordField);
-
-			      int result = JOptionPane.showConfirmDialog(null, myPanel,"Geben sie die Daten der Person an", JOptionPane.OK_CANCEL_OPTION);
+			      //Der Panel wird in einem JoptionPane dargestellt
+			      int result = JOptionPane.showConfirmDialog(null, addPersonPanel,"Geben sie die Daten der Person an", JOptionPane.OK_CANCEL_OPTION);
 			      if (result == JOptionPane.OK_OPTION) {
-			    	  String nummernString = nrField.getText();
-			    	  int nr = Integer.parseInt(nummernString);
-			    	  
-			    	  String anrede = (String) herrfrauCombo.getSelectedItem();
-			    	  
-			          try {
-						lag.fuegePersonEin(nr, nameField.getText(), anrede, strField.getText(), plzField.getText(), ortField.getText(), 
-								eMailField.getText(), userNameField.getText(), passwordField.getText(), false);
-						JOptionPane.showMessageDialog(null, "Person erfolgreich eingefügt!");
-			          } catch (PersonExistiertBereitsException e) {
-			        	  JOptionPane.showMessageDialog(null, "Diese Person existiert bereits!");
-			        	  e.printStackTrace();
-			          }
+			    	  //Sollte eins der Felder leer sein wird eine Exception geworfen also vorher checken
+			    	  if(nrField.getText().equals("")||nameField.getText().equals("")||strField.getText().equals("")||plzField.getText().equals("")||
+			    			  ortField.getText().equals("")||eMailField.getText().equals("")||userNameField.getText().equals("")||passwordField.getText().equals("")){
+			    		  JOptionPane.showMessageDialog(null, "Keins der Felder darf leer sein");
+			    	  }else{
+			    		  try {
+			    			  String nummernString = nrField.getText();
+				    		  String realNummernString = nummernString.replace("-", "");
+				    		  //auch hier wird ein minus mit nichts ersetzt
+				    		  int nr = Integer.parseInt(realNummernString);
+				    		  //Die Auswahl (Herr/Frau) wird im anreden String gespeichert
+				    		  String anrede = (String) herrfrauCombo.getSelectedItem();
+			    			  lag.fuegePersonEin(nr, nameField.getText(), anrede, strField.getText(), plzField.getText(), ortField.getText(), 
+			    					  eMailField.getText(), userNameField.getText(), passwordField.getText(), false); 
+			    			  		  //Am ende ein false damit man sich nicht als mitarbeiter hinzufügen kann
+			    			  JOptionPane.showMessageDialog(null, "Person erfolgreich eingefügt!");
+			    		  } catch (PersonExistiertBereitsException |NumberFormatException e) {
+			    			  JOptionPane.showMessageDialog(null, "Diese Person existiert bereits oder sie haben Text bei der PersonenNummer angegeben!","Error",JOptionPane.ERROR_MESSAGE);
+			    		  }
+			    	  }
 			      }
-			  }else{
-				  JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
-			  }
-			  
-			  
 		  }else if (ae.getActionCommand().equals("User entfernen")){
 			  //Personen werden mit der personEntfernen Methode gelöscht
-			  //Dies geschieht mit der Hilfe eines JOptionPane.showInputDialog
-			  if (getEingelogged()== true&&getMitarbeiterBerechtigung()==true){
-				  String userName = JOptionPane.showInputDialog(null, "Geben sie den UserNamen der zu entfernenden Person ein",JOptionPane.OK_CANCEL_OPTION);
+			  //Dies geschieht mit der Hilfe eines JOptionPane.showInputDialog 
 				  try {
-					  lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName));
-					  JOptionPane.showMessageDialog(null, "Erfolgreich gelöscht");
+					  String userName = JOptionPane.showInputDialog(null, "Geben sie den UserNamen der zu entfernenden Person ein",JOptionPane.OK_CANCEL_OPTION);
+					  if(userName!= null){
+						  lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName));
+						  JOptionPane.showMessageDialog(null, "Erfolgreich gelöscht");
+					  }
 				  } catch (PersonExistiertNichtException e) {
-					  JOptionPane.showMessageDialog(null, "Diese Person existiert nicht !");
+					  JOptionPane.showMessageDialog(null, "Diese Person existiert nicht !","ERROR",JOptionPane.ERROR_MESSAGE);
 				  }
-			  }else{
-				  JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
-			  }
-			  
 			  
 		  }else if (ae.getActionCommand().equals("Alle User ausgeben")){
 			  //Alle user werden in einer JTable ausgegeben die sortierbar ist
-			  if (getEingelogged()== true&&getMitarbeiterBerechtigung()==true){
+			  
 			  JTable personenTable = new JTable(new PersonenTableModel(lag.gibAllePersonen()));
 			  //Notwendig da der JOpionPane sonst viel zu klein wäre
 			  personenTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -678,7 +719,8 @@ public class SwingLagClientGUI extends JFrame {
 			  personenTable.getColumnModel().getColumn(5).setMinWidth(50);
 			  personenTable.getColumnModel().getColumn(6).setMinWidth(100);
 			  personenTable.setPreferredScrollableViewportSize(new Dimension(700,200));
-		
+		      
+			  //Auch diese Tabelle soll sortierbar sein also ein extra TableRowSorter für diese Tabelle
 			  TableRowSorter<TableModel> personenSorter = new TableRowSorter<TableModel>(personenTable.getModel());
 			  personenSorter.setComparator(0,new Comparator<String>() {
 			      public int compare (String s1, String s2)
@@ -692,27 +734,83 @@ public class SwingLagClientGUI extends JFrame {
 			  JScrollPane personenPanel = new JScrollPane(personenTable);
 			  
 			  JOptionPane.showMessageDialog(null, personenPanel,"Alle Personen", JOptionPane.PLAIN_MESSAGE);
-			  }else{
-				  JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
-			  }
+			  
 		  }
 	  }
   }
 
+  class WarenMenu extends JMenu implements ActionListener{
+	  public WarenMenu(){
+		  super ("Waren");
+		  
+		  bestandsItem = new JMenuItem("Bestand ändern");
+		  bestandsItem.setVisible(false);
+		  add (bestandsItem);
+		  bestandsItem.addActionListener(this);
+		  
+		  delWareItem = new JMenuItem("Ware löschen");
+		  delWareItem.setVisible(false);
+		  add(delWareItem);
+		  delWareItem.addActionListener(this);
+	  }
+	  
+	  public void actionPerformed (ActionEvent ae){
+		  if(ae.getActionCommand().equals("Bestand ändern")){
+			  JTextField warenFeld = new JTextField();
+			  JTextField bestandsFeld = new JTextField();
+			  
+			  JPanel setBestandPanel = new JPanel();
+			  setBestandPanel.setLayout(new GridLayout(2,2));
+			  setBestandPanel.add(new JLabel("Bezeichnung"));
+			  setBestandPanel.add(warenFeld);
+			  setBestandPanel.add(new JLabel("neuer Bestand"));
+			  setBestandPanel.add(bestandsFeld);
+			  
+			  int result = JOptionPane.showConfirmDialog(null,setBestandPanel,"Bestand einer Ware ändern", JOptionPane.OK_CANCEL_OPTION);
+			  if (result == JOptionPane.OK_OPTION){
+				  if(warenFeld.getText().equals("")||bestandsFeld.getText().equals("")){
+					  JOptionPane.showMessageDialog(null, "Es darf Kein Feld leer sein");
+				  }else{
+					  String bestandsString = bestandsFeld.getText();
+					  int bestand = Integer.parseInt(bestandsString);
+					  try {
+						lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(warenFeld.getText()), bestand);
+						updateList(lag.gibAlleWaren());
+						JOptionPane.showMessageDialog(null, "Bestand erfolgreich geändert !");
+					} catch (WareExistiertNichtException | IOException e) {
+						
+						e.printStackTrace();
+					}
+				  }
+			  }
+		  }else{
+			  String bezeichnung = JOptionPane.showInputDialog(null, "Geben sie den Namen der zu löschenden Ware ein",JOptionPane.OK_CANCEL_OPTION);
+			  if (bezeichnung!=null){
+				  try {
+					  lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
+				  } catch (WareExistiertNichtException e) {
+					  JOptionPane.showMessageDialog(null, "Diese Ware existiert nicht!","ERROR",JOptionPane.ERROR_MESSAGE);
+					  e.printStackTrace();
+				  }
+			  }
+		  }
+	  }
+  }
+  
   class HelpMenu extends JMenu implements ActionListener{
-    public HelpMenu() {
-      super("Hilfe");
+	  public HelpMenu() {
+		  super("Hilfe");
       
-      JMenuItem helpItem = new JMenuItem("Hilfe");
-      add(helpItem);
-      helpItem.addActionListener(this);
-    }
+		  JMenuItem helpItem = new JMenuItem("Hilfe");
+		  add(helpItem);
+		  helpItem.addActionListener(this);
+	  }
     
-    public void actionPerformed (ActionEvent ae){
-    	if(ae.getActionCommand().equals("Hilfe")){
-    		JOptionPane.showMessageDialog(null, "Doppelklicken sie auf den Titel der Ware die sie einkaufen möchten um diese in den Warenkorb zu legen");
-    	}
-    }
+	  public void actionPerformed (ActionEvent ae){
+		  if(ae.getActionCommand().equals("Hilfe")){
+			  JOptionPane.showMessageDialog(null, "Doppelklicken sie auf den Titel der Ware die sie einkaufen möchten um diese in den Warenkorb zu legen");
+		  }
+	  }
   }
   
   public boolean getEingelogged(){

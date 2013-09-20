@@ -22,7 +22,7 @@ import bib.local.valueobjects.WarenLog;
  * zur Suche nach Waren, zum Einfügen neuer Waren 
  * und zum Speichern des Bestands.
  * 
- * @author Maik
+ * 
  */
 public class LagerVerwaltung {
 	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind

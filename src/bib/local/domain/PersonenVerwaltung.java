@@ -16,7 +16,7 @@ import bib.local.valueobjects.Ware;
 /**
  * Klasse zur Verwaltung von Personen (noch ohne Mitarbeiter und Kunden).
  * 
- * @author Maik
+ * 
  */
 public class PersonenVerwaltung {
 

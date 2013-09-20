@@ -54,6 +54,8 @@ public class LagerClientCUI {
 		if (!eingelogged) System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
 		else System.out.print("\nBefehle:\n \n  Ausloggen: 'u'\n");
 		
+		//wird nur ausgegeben wenn ein Mitarbeiter angemeldet ist, 
+		//man kann trotzdem drauf zugreifen nur wird man dann gebeten sich einzuloggen
 		if (mitarbeiterAngemeldet){
 			System.out.print("         \n  Person einfuegen: 'p'");
 			System.out.print("		   \n  Person löschen: 'x'");
@@ -80,10 +82,15 @@ public class LagerClientCUI {
 		System.out.flush(); // ohne NL ausgeben
 	}
 
-	// Vergleicht eingegebenen Buchstaben mit Menüpunkten und führt den gewünschten Befehl aus
+	/**
+	 * Die Eingabe wird verarbeitet
+	 * @param line die eingabe
+	 * @throws IOException
+	 */
 	
 	private void verarbeiteEingabe(String line) throws IOException {
 		
+		//Die ganze eingabe ist mit einem try catch -NumberFormatException umgeben
 		try{
 			
 			// EINLOGGEN:
@@ -125,22 +132,38 @@ public class LagerClientCUI {
 				String bezeichnung = liesEingabe();
 				
 				System.out.print("Warennummer > ");
-					String nummer = liesEingabe();
-					int bNr = Integer.parseInt(nummer);
+				String nummernString = liesEingabe();
+				int nummer = Integer.parseInt(nummernString);
+				
+				while (nummer<0){
+					System.out.println("Die WarenNummer darf nicht negativ sein!");
+					nummernString = liesEingabe();
+					nummer = Integer.parseInt(nummernString);
+				}
 				
 				System.out.print("Bestand > ");
-					String bstd = liesEingabe();
-					int bestand = Integer.parseInt(bstd);
+				String bestandsString = liesEingabe();
+				int bestand = Integer.parseInt(bestandsString);
+				while (bestand<0){
+					System.out.println("Der Bestand darf nicht negativ sein!");
+					bestandsString = liesEingabe();
+					bestand = Integer.parseInt(bestandsString);
+				}
 					
 				System.out.print("Preis > ");
-					String preisString = liesEingabe();
-					float preis = Float.parseFloat(preisString);
+				String preisString = liesEingabe();
+				float preis = Float.parseFloat(preisString);
+				while (preis<0){
+					System.out.println("Der Preis darf nicht negativ sein!");
+					preisString = liesEingabe();
+					preis = Float.parseFloat(preisString);
+				}
 	
 				boolean ok = false;	
 				try {
-					lag.fuegeWareEin(bezeichnung, bNr, bestand, preis);
+					lag.fuegeWareEin(bezeichnung, nummer, bestand, preis);
 					ok = true;
-					} catch (WareExistiertBereitsException e) {
+				} catch (WareExistiertBereitsException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();
 				}
@@ -190,8 +213,13 @@ public class LagerClientCUI {
 			} else if (line.equals("p")) {
 				einloggenAbfrage();
 				System.out.print("Nummer > ");
-				String nr = liesEingabe();
-				int pNr = Integer.parseInt(nr);
+				String nummernString = liesEingabe();
+				int personenNummer = Integer.parseInt(nummernString);
+				while (personenNummer<0){
+					System.out.println("Die PersonenNummer darf nicht negativ sein!");
+					nummernString = liesEingabe();
+					personenNummer = Integer.parseInt(nummernString);
+				}
 				System.out.print("Anrede > ");
 				String anr = liesEingabe();
 				System.out.print("ganzer Name > ");
@@ -218,7 +246,7 @@ public class LagerClientCUI {
 					}
 				if(ma.equals("j")){
 					try{
-						lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, true);
+						lag.fuegePersonEin(personenNummer, name, anr, strasse, plz, ort, email, usr, pw, true);
 						ok = true;
 					}catch (PersonExistiertBereitsException e){
 						System.err.println(e.getMessage());
@@ -231,7 +259,7 @@ public class LagerClientCUI {
 				
 				}else if(ma.equals("n")){
 					try{
-						lag.fuegePersonEin(pNr, name, anr, strasse, plz, ort, email, usr, pw, false);
+						lag.fuegePersonEin(personenNummer, name, anr, strasse, plz, ort, email, usr, pw, false);
 						ok = true;
 					}catch (PersonExistiertBereitsException e){
 						System.err.println(e.getMessage());
@@ -243,15 +271,14 @@ public class LagerClientCUI {
 						System.out.println("Fehler beim Einfügen");
 				}
 			
-			//PERSON ENTFERNEN
+			//PERSON LÖSCHEN
 			}else if (line.equals("x")){
 				try {
 					einloggenAbfrage();
-					System.out.print("Gib die KUNDENNUMMER der Person ein, die gelöscht werden soll >");
-					String nummernString = liesEingabe();
-					int kNummer = Integer.parseInt(nummernString);
+					System.out.print("Gib den UserNamen der Person ein, die gelöscht werden soll >");
+					String userName = liesEingabe();
 					
-					lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(kNummer));
+					lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName));
 					System.out.println("Die Person wurde entfernt");
 				}catch(PersonExistiertNichtException e){
 					System.err.println(e.getMessage());
@@ -405,7 +432,7 @@ public class LagerClientCUI {
 					e.printStackTrace();
 				}
 				
-			//LEEREN	
+			//LEEREN
 			}else if(line.equals("h")){
 				einloggenAbfrage();
 				if (!user.getWarenkorb().isEmpty()){
@@ -413,14 +440,27 @@ public class LagerClientCUI {
 						lag.warenkorbLeeren(user);
 						System.out.println("Der Warenkorb wurde geleert.");
 					}
+				}else System.out.println("Ihr Warenkorb enthält keine Artikel.");
+			//Automatisches Speichern vorm schließen
+			}else if (line.equals("q")){
+				System.out.println("wollen sie vor dem beenden speichern (j/n)?");
+				String yesOrNo = liesEingabe();
+				while(!yesOrNo.equals("j")&&!yesOrNo.equals("n")){
+						System.out.println("Bitte geben sie 'j' oder 'n' an > ");
+						yesOrNo = liesEingabe();
+					}
+				if(yesOrNo.equals("j")){
+					lag.schreibePersonen();
+					lag.schreibeWaren();
+					System.out.println("Erfolgreich gespeichert, bis zum nächsten mal!");
+				}else{
+					System.out.println("Erfolgreich beendet ohne zu speichern");
 				}
-				else System.out.println("Ihr Warenkorb enthält keine Artikel.");
 			}
-		} catch (NumberFormatException e){
-				System.err.println(e.getMessage());
-				e.getStackTrace();
-		}
-		
+		}catch (NumberFormatException e){
+			System.err.println(e.getMessage());
+			e.getStackTrace();
+		}	
 	}
 	
 	/* (non-Javadoc)

@@ -63,9 +63,11 @@ public class Person implements Serializable{
 	/**
 	 * Standard-Methode  von Object überschrieben
 	 * dient der einfachereren Ausgabe der attribute der Person
+	 * Natürlich sollte im normalfall das Passwort nicht mit ausgegeben werden, da
+	 * wir aber sonst den wert nicht erkennen können haben wir ihn uns mit ausgeben lassen
 	 */
 	public String toString() {
-		return ("User: " + username + " Nummer : "+nummer +" Passwort : " +password+" "
+		return ("User: " + username + " Nummer : "+nummer +" Passwort : " +password+"\n"
 					+ anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\nMitarbeiter : "+mitarbeiter+"\n\n");
 	}
 	
