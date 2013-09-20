@@ -10,7 +10,7 @@ import java.util.Vector;
 
 public class Person implements Serializable{
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4136988681207212891L;
 	private int nummer;
@@ -46,11 +46,11 @@ public class Person implements Serializable{
 	
 	
 	/**
-	 * Standard-Methode von Object überschrieben.
+	 * Standard-Methode von Object Ã¼berschrieben.
 	 * Methode dient Vergleich von zwei Personen-Objekten anhand ihrer Werte,
 	 * d.h. nummer und name.
 	 * 
-	 * @see java.lang.Object#equals()
+	 *
 	 */
 	public boolean equals(Object anderePerson){
 		if (anderePerson instanceof Person)
@@ -61,10 +61,10 @@ public class Person implements Serializable{
 	}
 	
 	/**
-	 * Standard-Methode  von Object überschrieben
+	 * Standard-Methode  von Object ï¿½berschrieben
 	 * dient der einfachereren Ausgabe der attribute der Person
-	 * Natürlich sollte im normalfall das Passwort nicht mit ausgegeben werden, da
-	 * wir aber sonst den wert nicht erkennen können haben wir ihn uns mit ausgeben lassen
+	 * Natï¿½rlich sollte im normalfall das Passwort nicht mit ausgegeben werden, da
+	 * wir aber sonst den wert nicht erkennen kï¿½nnen haben wir ihn uns mit ausgeben lassen
 	 */
 	public String toString() {
 		return ("User: " + username + " Nummer : "+nummer +" Passwort : " +password+"\n"
@@ -84,7 +84,7 @@ public class Person implements Serializable{
 	
 	
 	/*public void schreibeWarenkorb(Vector<Ware> warenkorb) {
-		// PersistenzManager für Schreibvorgänge öffnen
+		// PersistenzManager fï¿½r Schreibvorgï¿½nge ï¿½ffnen
 		if (!warenkorb.isEmpty()) {
 			int anzahl = 1;
 			Iterator<Ware> iter = warenkorb.iterator();
@@ -98,7 +98,7 @@ public class Person implements Serializable{
 			}
 		}			
 		
-		// Persistenz-Schnittstelle wieder schließen
+		// Persistenz-Schnittstelle wieder schlieï¿½en
 		//pm.close();
 	}
 	
@@ -129,7 +129,7 @@ public class Person implements Serializable{
 	}
 	
 	/**
-	 * methode zum hinzufügen von Waren in den Warenkorb
+	 * methode zum hinzufï¿½gen von Waren in den Warenkorb
 	 * @param w
 	 * @param menge
 	 */

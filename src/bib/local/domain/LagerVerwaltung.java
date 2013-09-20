@@ -18,14 +18,14 @@ import bib.local.valueobjects.WarenLog;
 
 /**
  * Klasse zur Verwaltung eines (sehr einfachen) Lagers.
- * Bietet Methoden zum Zurückgeben aller Waren im Bestand, 
- * zur Suche nach Waren, zum Einfügen neuer Waren 
+ * Bietet Methoden zum Zurï¿½ckgeben aller Waren im Bestand, 
+ * zur Suche nach Waren, zum Einfï¿½gen neuer Waren 
  * und zum Speichern des Bestands.
  * 
  * 
  */
 public class LagerVerwaltung {
-	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind
+	// Prï¿½fix fï¿½r Namen der Dateien, in der die Lagerdaten gespeichert sind
 	private String datei = "";
 	
 	private WarenVerwaltung meineWaren;
@@ -36,7 +36,7 @@ public class LagerVerwaltung {
 	 * Konstruktor, der die Basisdaten (Waren, Personen) aus Dateien einliest
 	 * (Initialisierung des shops).
 	 * 
-	 * Namensmuster für Dateien:
+	 * Namensmuster fï¿½r Dateien:
 	 *   datei+"_B.ser" ist die Datei der Waren
 	 *   datei+"_P.ser" ist die Datei der Personen
 	 * 
@@ -56,7 +56,7 @@ public class LagerVerwaltung {
 	}
 
 	/**
-	 * Methode, die eine Liste aller im Bestand befindlichen Waren zurückgibt.
+	 * Methode, die eine Liste aller im Bestand befindlichen Waren zurï¿½ckgibt.
 	 * 
 	 * @return Liste aller Waren im Lager
 	 */
@@ -77,7 +77,7 @@ public class LagerVerwaltung {
 
 	/**
 	 * Methode zum Suchen von Waren anhand der Bezeichnung. Es wird eine Liste von Waren
-	 * zurückgegeben, die alle Waren mit exakt übereinstimmender Bezeichnung enthält.
+	 * zurï¿½ckgegeben, die alle Waren mit exakt ï¿½bereinstimmender Bezeichnung enthï¿½lt.
 	 * 
 	 * @param bezeichnung Bezeichnung der gesuchten Ware
 	 * @return Liste der gefundenen Waren (evtl. leer)
@@ -88,8 +88,8 @@ public class LagerVerwaltung {
 	}
 
 	/**
-	 * Methode zum Einfügen einer neuen Ware in den Bestand. 
-	 * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht geändert.
+	 * Methode zum Einfï¿½gen einer neuen Ware in den Bestand. 
+	 * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht geï¿½ndert.
 	 * 
 	 * @param bezeichnung Bezeichnung des Ware
 	 * @param nummer Nummer der Waren
@@ -101,7 +101,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum löschen von Waren aus dem Bestand
+	 * Methode zum lï¿½schen von Waren aus dem Bestand
 	 * @param eineWare
 	 * @throws WareExistiertNichtException
 	 */
@@ -120,9 +120,9 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum Einfügen einer Person in eine Liste
+	 * Methode zum EinfÃ¼gen einer Person in eine Liste
 	 * 
-	 * @param Daten der Person
+	 *
 	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
 	 */
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma) throws PersonExistiertBereitsException {
@@ -131,7 +131,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum löschen einer Person
+	 * Methode zum lï¿½schen einer Person
 	 * 
 	 * @param einePerson
 	 * @throws PersonExistiertNichtException
@@ -196,7 +196,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode die Waren aus dem Korb entfernen kann, sollte die angegebene Zahl die Anzahl der Waren im Korb übersteigen
+	 * Methode die Waren aus dem Korb entfernen kann, sollte die angegebene Zahl die Anzahl der Waren im Korb ï¿½bersteigen
 	 * wird die Anzahl dieser Ware im Korb auf 0 gesetzt anstatt ins negative zu gehen
 	 * @param menge Wieviele von der Ware entfernen
 	 * @param ware welche Ware soll entfernt werden
@@ -216,9 +216,9 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt den Warenlog für eine Ware zurück mit einer Angabe wie weit der Log zurück liegen soll
-	 * @param bezeichnung Log für welche Ware?
-	 * @param daysInPast wieviele Tage soll der Log zurück liegen
+	 * Gibt den Warenlog fï¿½r eine Ware zurï¿½ck mit einer Angabe wie weit der Log zurï¿½ck liegen soll
+	 * @param bezeichnung Log fï¿½r welche Ware?
+	 * @param daysInPast wieviele Tage soll der Log zurï¿½ck liegen
 	 * @return den WarenLog
 	 * @throws IOException
 	 * @throws ParseException
@@ -228,7 +228,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt die PersonenVerwaltung zurück
+	 * Gibt die PersonenVerwaltung zurï¿½ck
 	 * @return
 	 */
 	public PersonenVerwaltung getMeinePersonenVerwaltung(){
@@ -236,7 +236,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt die WarenVerwaltung zurück
+	 * Gibt die WarenVerwaltung zurï¿½ck
 	 * @return
 	 */
 	public WarenVerwaltung getMeineWarenVerwaltung(){
@@ -244,14 +244,14 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt die Rechnung die beim Kauf entsteht zurück
+	 * Gibt die Rechnung die beim Kauf entsteht zurï¿½ck
 	 * @return
 	 */
 	public Rechnung getRechnung(){
 		return this.rechnung;
 	}
 	/**
-	 * Hiermit lässt sich die Rechnung für einen Kauf setzen
+	 * Hiermit lï¿½sst sich die Rechnung fï¿½r einen Kauf setzen
 	 * @param r die Rechnung
 	 */
 	public void setRechnung(Rechnung r){
