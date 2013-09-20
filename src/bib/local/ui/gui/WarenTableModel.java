@@ -36,7 +36,7 @@ public class WarenTableModel extends DefaultTableModel {
 			warenVector.add(w.getBezeichnung());
 			warenVector.add(w.getBestand()+"");
 			DecimalFormat df = new DecimalFormat("#,##0.00");
-			warenVector.add(df.format((w.getPreis()))+" €");
+			warenVector.add(df.format((w.getPreis()))+" â‚¬");
 			data.add(warenVector);
 		}
 		setDataVector(data, columnNames);
@@ -44,7 +44,7 @@ public class WarenTableModel extends DefaultTableModel {
 	
 	@Override
 	/**
-	 * Klasse von javax.swing.JTable überschrieben um das editieren aller Zellen zu verbieten
+	 * Klasse von javax.swing.JTable Ã¼berschrieben um das editieren aller Zellen zu verbieten
 	 */
     public boolean isCellEditable(int row, int column) {
        return false;
