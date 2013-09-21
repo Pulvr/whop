@@ -687,8 +687,10 @@ public class SwingLagClientGUI extends JFrame {
 			    					  eMailField.getText(), userNameField.getText(), passwordField.getText(), false); 
 			    			  		  //Am ende ein false damit man sich nicht als mitarbeiter hinzufügen kann
 			    			  JOptionPane.showMessageDialog(null, "Person erfolgreich eingefügt!");
-			    		  } catch (PersonExistiertBereitsException |NumberFormatException e) {
-			    			  JOptionPane.showMessageDialog(null, "Diese Person existiert bereits oder sie haben Text bei der PersonenNummer angegeben!","Error",JOptionPane.ERROR_MESSAGE);
+			    		  } catch (NumberFormatException e) {
+			    			  JOptionPane.showMessageDialog(null, " Die PersonenNummer darf nicht aus Text bestehen","Error",JOptionPane.ERROR_MESSAGE);
+			    		  } catch (PersonExistiertBereitsException e1){
+			    			  JOptionPane.showMessageDialog(null, "Diese Person existiert bereits ","Error",JOptionPane.ERROR_MESSAGE);
 			    		  }
 			    	  }
 			      }
