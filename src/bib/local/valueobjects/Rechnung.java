@@ -45,7 +45,7 @@ public class Rechnung {
 		output += "*-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-* \n";
 		for(int i = 0; i < p.getWarenkorb().size(); i++){
 			output += p.getWarenkorb().elementAt(i)+"\n";
-			this.gSumme += p.getWarenkorb().elementAt(i).getPreis();
+			this.gSumme += p.getWarenkorb().elementAt(i).getRechnungsPreis();
 		}
 		output += "Gesamtpreis: " + df.format(this.gSumme) + "€";
 		

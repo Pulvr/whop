@@ -122,8 +122,13 @@ public class Person implements Serializable{
 	 * @param warenkorb
 	 */
 	public void warenkorbKaufen(Vector<Ware> warenkorb){
-		for(int i = 0; i < warenkorb.size(); i++){
-			warenkorb.elementAt(i).setBestand(warenkorb.elementAt(i).getBestand()-1);
+		for (int i = 0; i < warenkorb.size(); i++) {
+		    int einheiten = 1;
+		    if (warenkorb.elementAt(i) instanceof MassengutWare) {
+		        MassengutWare mw = (MassengutWare) warenkorb.elementAt(i);
+		        einheiten = mw.getPackungsGroesse();
+		    }
+			warenkorb.elementAt(i).setBestand(warenkorb.elementAt(i).getBestand() - einheiten);
 		}
 		this.warenkorbLeeren();
 	}
@@ -133,8 +138,16 @@ public class Person implements Serializable{
 	 * @param w
 	 * @param menge
 	 */
-	public void inWarenKorbLegen(Ware w, int menge){
-		for(int i = 0; i < menge; i++)
+	public void inWarenKorbLegen(Ware w, int menge) {
+	    int einheiten = 1;
+	    if (w instanceof MassengutWare) {
+	        MassengutWare mw = (MassengutWare) w;
+	        einheiten = mw.getPackungsGroesse();
+	    }
+	    // Sollte die Menge kein vielfaches der Packungsgröße sein,
+	    // wird Math.floor() verwendet um sicherzustellen,
+	    // dass dem Kunden nicht eine Packung zu viel aufgebucht wird.
+        for(int i = 0; i < Math.floor(menge / einheiten); i++)
 			this.warenkorb.add(w);
 	}
 	

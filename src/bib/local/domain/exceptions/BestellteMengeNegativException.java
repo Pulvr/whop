@@ -8,7 +8,7 @@ package bib.local.domain.exceptions;
 public class BestellteMengeNegativException extends Exception {
 	
 	public BestellteMengeNegativException(){
-		super("Die bestellte Menge ist negativ.");
+		super("Die Menge darf nicht negativ sein!");
 	}
 
 }

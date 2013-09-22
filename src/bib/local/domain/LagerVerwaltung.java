@@ -8,10 +8,12 @@ import java.util.Vector;
 
 import bib.local.domain.WarenVerwaltung.Sortierung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
+import bib.local.domain.exceptions.NichtVielfachesVonPackGroesseException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
+import bib.local.valueobjects.MassengutWare;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
@@ -88,19 +90,24 @@ public class LagerVerwaltung {
 		return meineWaren.sucheWaren(bezeichnung); 
 	}
 
-	/**
-	 * Methode zum Einf�gen einer neuen Ware in den Bestand. 
-	 * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht ge�ndert.
-	 * 
-	 * @param bezeichnung Bezeichnung des Ware
-	 * @param nummer Nummer der Waren
-	 * @throws WareExistiertBereitsException wenn die Ware bereits existiert
-	 */
-	public void fuegeWareEin(String bezeichnung, int nummer, int bestand, float preis) throws WareExistiertBereitsException {
-		Ware w = new Ware(bezeichnung, nummer,  bestand, preis);
-		meineWaren.wareEinfuegen(w);
-	}
-	
+    /**
+     * Methode zum Einf�gen einer neuen Ware in den Bestand. 
+     * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht ge�ndert.
+     * 
+     * @param bezeichnung Bezeichnung des Ware
+     * @param nummer Nummer der Waren
+     * @throws WareExistiertBereitsException wenn die Ware bereits existiert
+     */
+    public void fuegeWareEin(String bezeichnung, int nummer, int bestand, float preis, int packungsGroesse) throws WareExistiertBereitsException {
+        Ware w = null;
+        if (packungsGroesse > 1) {
+            w = new MassengutWare(bezeichnung, nummer,  bestand, preis, packungsGroesse);
+        } else {
+            w = new Ware(bezeichnung, nummer,  bestand, preis);
+        }
+        meineWaren.wareEinfuegen(w);
+    }
+    
 	/**
 	 * Methode zum l�schen von Waren aus dem Bestand
 	 * @param eineWare
@@ -192,7 +199,7 @@ public class LagerVerwaltung {
 	 * @param p welche Person?
 	 * @throws BestellteMengeNegativException
 	 */
-	public void inWarenKorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
+	public void inWarenKorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException, NichtVielfachesVonPackGroesseException {
 		meinePersonen.inWarenkorbLegen(menge, ware, p);
 	}
 	

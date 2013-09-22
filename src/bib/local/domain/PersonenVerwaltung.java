@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import bib.local.domain.exceptions.BestellteMengeNegativException;
+import bib.local.domain.exceptions.NichtVielfachesVonPackGroesseException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.persistence.FilePersistenceManager;
@@ -137,8 +138,10 @@ public class PersonenVerwaltung {
 	 * @param p welche Person?
 	 * @throws BestellteMengeNegativException
 	 */
-	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException{
-		if((menge > 0) && (ware.getBestand() >= menge)){
+	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException, NichtVielfachesVonPackGroesseException {
+	    if (!ware.checkBestellmengeGueltig(menge)) {
+	        throw new NichtVielfachesVonPackGroesseException();
+	    } else if ((menge > 0) && (ware.getBestand() >= menge)) {
 			p.inWarenKorbLegen(ware, menge);
 		} else if (menge < 0) {
 			throw new BestellteMengeNegativException();

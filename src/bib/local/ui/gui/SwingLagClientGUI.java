@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Comparator;
 
@@ -24,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,6 +46,7 @@ import javax.swing.table.TableRowSorter;
 
 import bib.local.domain.LagerVerwaltung;
 import bib.local.domain.exceptions.BestellteMengeNegativException;
+import bib.local.domain.exceptions.NichtVielfachesVonPackGroesseException;
 import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
@@ -62,6 +65,8 @@ public class SwingLagClientGUI extends JFrame {
 
   private LagerVerwaltung lag;
   
+  private JPanel panelLinks;
+  
   private JTextField titelFeld;
   private JTextField nummernFeld;
   private JTextField bestandsFeld;
@@ -77,6 +82,7 @@ public class SwingLagClientGUI extends JFrame {
   private JLabel userLabel;
   private JTextField suchFeld;
   private JTextField userNameInput;
+  private JFormattedTextField packungsGroesseFeld;
   private JPasswordField passwortInput;
   private JTable warenTable;
   private TableRowSorter<TableModel> sorter;
@@ -99,7 +105,7 @@ public class SwingLagClientGUI extends JFrame {
     
     // Windows-Fenster und -Buttondesign:
     try {
-       UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       SwingUtilities.updateComponentTreeUI(this);
     } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException e) {
       e.printStackTrace();
@@ -237,23 +243,30 @@ public class SwingLagClientGUI extends JFrame {
     // PANEL LINKS
     // PANEL LINKS
     
-    JPanel panelLinks = new JPanel();
+    panelLinks = new JPanel();
     panelLinks.setLayout(new GridLayout(11, 1));
+    // Panel ausblenden bis der Benutzer sich eingeloggt hat
+    panelLinks.setVisible(false);
     
     // Eingabe-Felder für Nummer, Titel, Bestand und Preis der Ware
-    panelLinks.add(new JLabel("Nummer: "));
+    panelLinks.add(new JLabel("Nummer:"));
     nummernFeld = new JTextField();
     panelLinks.add(nummernFeld);
-    panelLinks.add(new JLabel("Titel: "));
+    panelLinks.add(new JLabel("Titel:"));
     titelFeld = new JTextField();
     panelLinks.add(titelFeld);
-    panelLinks.add(new JLabel("Bestand: "));
+    panelLinks.add(new JLabel("Bestand:"));
     bestandsFeld = new JTextField();
     panelLinks.add(bestandsFeld);
-    panelLinks.add(new JLabel("Preis: "));
+    panelLinks.add(new JLabel("Preis:"));
     preisFeld = new JTextField();
-    
     panelLinks.add(preisFeld);
+    
+    panelLinks.add(new JLabel("Pack.Größe:"));
+    // JFormattedTextField mit NumberFormat für Ganzzahlen benutzen um zu verhindern, dass Buchstaben akzeptiert wird.
+    packungsGroesseFeld = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    packungsGroesseFeld.setText("1");
+    panelLinks.add(packungsGroesseFeld);
     
     panelLinks.add(new JLabel());   // Abstandshalter
     
@@ -282,28 +295,33 @@ public class SwingLagClientGUI extends JFrame {
     			int row = target.getSelectedRow();
     			int column = target.getSelectedColumn();
     			java.util.HashMap<String,Ware> waren = lag.getMeineWarenVerwaltung().getWarenObjekte();
-    			if(getEingelogged()==false){
+    			if (getEingelogged() == false) {
     				JOptionPane.showMessageDialog(null, "Loggen Sie sich bitte zuerst ein!");
-    			}else{
-    				if(column==1){
+    			} else {
+    				if (column == 1) {
     					//getValueAt(row,1) die 1 damit er immer die bezeichnung nimmt und keinen Nullpointer wirft
     					Ware w = waren.get(warenTable.getValueAt(row, 1));
-    					String mengenString = JOptionPane.showInputDialog("Wieviele von : \""+w.getBezeichnung()+"\" wollen sie bestellen");
-    					int menge = Integer.parseInt(mengenString);
-    				if(w.getBestand()>= menge)
+    					String mengenString = JOptionPane.showInputDialog("Wieviele von : \"" + w.getBezeichnung() + "\" wollen sie bestellen");
+    					int menge = 0;
     					try {
-    						lag.inWarenKorbLegen(menge, w, user);
-    						warenkorbButton.setBackground(Color.RED);
-    						
-    					} catch (BestellteMengeNegativException e1) {
-    						JOptionPane.showMessageDialog(null, "Die Menge darf nicht negativ sein!","ERROR",JOptionPane.ERROR_MESSAGE);
-    						
-    					}else{
-    						JOptionPane.showMessageDialog(null, "Ihre Anfrage übersteigt den vorhandenen Bestand","ERROR",JOptionPane.ERROR_MESSAGE);
+    					    menge = Integer.parseInt(mengenString);
+    					} catch (NumberFormatException ex) {
+    					    ex.printStackTrace();
     					}
-    				}else if(column==2){
     					
-    				}
+                        if(menge == 0) {
+                            JOptionPane.showMessageDialog(null, "Bitte geben Sie eine gültige Menge an", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        } else if (w.getBestand() >= menge) {
+        					try {
+        						lag.inWarenKorbLegen(menge, w, user);
+        						warenkorbButton.setBackground(Color.RED);
+        					} catch (NichtVielfachesVonPackGroesseException | BestellteMengeNegativException ex) {
+        						JOptionPane.showMessageDialog(null, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        					}
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Ihre Anfrage übersteigt den vorhandenen Bestand", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
     			}
     		}
     	}
@@ -405,6 +423,7 @@ public class SwingLagClientGUI extends JFrame {
 	        String titel = titelFeld.getText();
 	        String bestandsString = bestandsFeld.getText();
 	        String preisString = preisFeld.getText();
+	        String packungsGroesseString = packungsGroesseFeld.getText();
 	        
 	        if(nummernString.equals("")||titel.equals("")||bestandsString.equals("")||preisString.equals("")){
 	        	JOptionPane.showMessageDialog(null, "Alle Felder müssen ausgefüllt sein!");
@@ -415,18 +434,20 @@ public class SwingLagClientGUI extends JFrame {
 	        		String realBestandsString = bestandsString.replace("-", "");
 	        		int nummer = Integer.parseInt(realNummernString);
 	        		int bestand = Integer.parseInt(realBestandsString);
+	        		int packungsGroesse = Integer.valueOf(packungsGroesseString);
 	            
 	        		//wenn der String ein Komma findet wird es mit einem Punkt ersetzt da sonst eine NumberformatException geworfen wird
 	        		String realPreisString = preisString.replace(",",".");
 	        		String finalPreisString = realPreisString.replace("-", "");
 	            
 		            float preis = Float.valueOf(finalPreisString);
-		            lag.fuegeWareEin(titel, nummer, bestand, preis);
+		            lag.fuegeWareEin(titel, nummer, bestand, preis, packungsGroesse);
 		            updateList(lag.gibAlleWaren());
 		            nummernFeld.setText("");
 		            titelFeld.setText("");
 		            bestandsFeld.setText("");
 		            preisFeld.setText("");
+		            packungsGroesseFeld.setText("1");
 		            
 	        	} catch (WareExistiertBereitsException|NumberFormatException e) {
 	        		JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
@@ -457,45 +478,50 @@ public class SwingLagClientGUI extends JFrame {
     }
   }
   
-  class LoginListener implements ActionListener{
-	  public void actionPerformed(ActionEvent ae){
-		  if(ae.getSource().equals(loginButton)||ae.getSource().equals(passwortInput)){
-        
-			  String userName = userNameInput.getText();
-			  //andere Methoden haben keine Wirkung gezeigt darum sind wir bei .getText() geblieben
-			  String passwort = passwortInput.getText();
-			  java.util.HashMap<String,Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
-        
-			  if (passwort.equals("")||userName.equals("")){
-				  JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
-    	   }else if (result.containsKey(userName)&&result.get(userName).getPassword().equals(passwort)){
-    		   userNameInput.setText("");
-    		   passwortInput.setText("");
-    		   setEingelogged(true);
-    		   user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
-    		   if(user.getMitarbeiterberechtigung()) mitarbeiterBerechtigung = true;
-    		   //Falls ein Mitarbeiter eingeloggt ist werden stehen mehr Optionen zur Verfügung
-    		   if(getMitarbeiterBerechtigung()==true){
-    			   allUsersItem.setVisible(true);
-    			   addUserItem.setVisible(true);
-    			   delUserItem.setVisible(true);
-        		
-    			   bestandsItem.setVisible(true);
-    			   delWareItem.setVisible(true);
-    		   }
-    		   logoutItem.setVisible(true);
-    		   logoutButton.setVisible(true);
-    		   loginButton.setVisible(false);
-    		   userLabel.setText(" "+user.getUsername());
-    		   JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen "+ user.getUsername()+" !");
-    	   }else if (result.containsKey(userName)&&!result.get(userName).getPassword().equals(passwort)){
-    		   JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
-    	   }else {
-    		   JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
-    	   }
-		  }
-	  }
-  }
+    class LoginListener implements ActionListener {
+        public void actionPerformed(ActionEvent ae) {
+            if (ae.getSource().equals(loginButton) || ae.getSource().equals(passwortInput)) {
+
+                String userName = userNameInput.getText();
+                // andere Methoden haben keine Wirkung gezeigt darum sind wir
+                // bei .getText() geblieben
+                String passwort = passwortInput.getText();
+                java.util.HashMap<String, Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
+
+                if (passwort.equals("") || userName.equals("")) {
+                    JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
+                } else if (result.containsKey(userName) && result.get(userName).getPassword().equals(passwort)) {
+                    userNameInput.setText("");
+                    passwortInput.setText("");
+                    setEingelogged(true);
+                    user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
+                    if (user.getMitarbeiterberechtigung())
+                        mitarbeiterBerechtigung = true;
+                    // Falls ein Mitarbeiter eingeloggt ist werden stehen mehr
+                    // Optionen zur Verfügung
+                    if (getMitarbeiterBerechtigung() == true) {
+                        allUsersItem.setVisible(true);
+                        addUserItem.setVisible(true);
+                        delUserItem.setVisible(true);
+
+                        bestandsItem.setVisible(true);
+                        delWareItem.setVisible(true);
+                    }
+                    logoutItem.setVisible(true);
+                    logoutButton.setVisible(true);
+                    loginButton.setVisible(false);
+                    // Einfügen-panel sichtbar machen sobald der Benutzer eingeloggt ist.
+                    panelLinks.setVisible(true);
+                    userLabel.setText(" " + user.getUsername());
+                    JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen " + user.getUsername() + " !");
+                } else if (result.containsKey(userName) && !result.get(userName).getPassword().equals(passwort)) {
+                    JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
+                }
+            }
+        }
+    }
   
   class LogoutListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
@@ -517,6 +543,7 @@ public class SwingLagClientGUI extends JFrame {
 		        	  logoutItem.setVisible(false);
 					  logoutButton.setVisible(false);
 					  loginButton.setVisible(true);
+					  panelLinks.setVisible(false);
 				  }
 			  }
 		  }

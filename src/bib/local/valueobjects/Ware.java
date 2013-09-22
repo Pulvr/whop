@@ -34,10 +34,27 @@ public class Ware implements Serializable{
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString() {
-		DecimalFormat df = new DecimalFormat("#,##0.00");
-		return (bezeichnung + " " + df.format(preis) + "€ / Noch auf Lager: " + bestand +"\n");
-	}
+    public String toString() {
+        return toString(true);
+    }
+    
+    /**
+     * Standard-Methode von Object überschrieben.
+     * Methode wird immer automatisch aufgerufen, wenn ein Waren-Objekt als String
+     * benutzt wird (z.B. in println(Ware);)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    public String toString(boolean mitNeuerZeile) {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        String ausgabe = bezeichnung + " " + df.format(preis) + "€ / Noch auf Lager: " + bestand;
+        if (mitNeuerZeile) {
+            // += bedeutet das selbe wie: ausgabe = ausgabe + "\n"
+            ausgabe += "\n";
+        }
+        return ausgabe;
+        
+    }
 	
 	/**
 	 * Standard-Methode von Object überschrieben.
@@ -70,12 +87,20 @@ public class Ware implements Serializable{
 	public int getBestand() {
 		return this.bestand;
 	}
-	
-	public float getPreis(){
-		return this.preis;
-	}
+    
+    public float getPreis(){
+        return this.preis;
+    }
+    
+    public float getRechnungsPreis(){
+        return getPreis();
+    }
 	
 	public void setBestand(int bestand){
 		this.bestand = bestand;
 	}
+    
+    public boolean checkBestellmengeGueltig(int menge) {
+        return true;
+    }
 }
