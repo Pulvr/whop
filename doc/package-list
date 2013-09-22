@@ -1,0 +1,7 @@
+bib.local.domain
+bib.local.domain.exceptions
+bib.local.persistence
+bib.local.ui.cui
+bib.local.ui.gui
+bib.local.ui.gui.tableModels
+bib.local.valueobjects
