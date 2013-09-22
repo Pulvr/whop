@@ -12,16 +12,20 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- *
  * Realisierung einer Schnittstelle zur persistenten Speicherung von
  * Daten in Dateien.
- * @see bib.local.persistence.PersistenceManager
+ * 
+ * Das Speichern ist serialisiert
+ * 
+ * @author Florian
  */
 public class FilePersistenceManager implements PersistenceManager {
-
+	
+	//Object Streams zum lesen und speichern
 	private ObjectInputStream reader = null;
 	private ObjectOutputStream writer = null;
 	
+	//Streams werden mit diesen Methoden geöffnet
 	public void openForReading(String datei) throws FileNotFoundException ,IOException{
 		reader = new ObjectInputStream(new FileInputStream(datei));
 	}
@@ -30,11 +34,14 @@ public class FilePersistenceManager implements PersistenceManager {
 		writer = new ObjectOutputStream(new FileOutputStream(datei));
 	}
 
+	/**
+	 * Methode um writer und reader zu schließen
+	 */
 	public boolean close() throws IOException{
 		
-		if (writer != null)
+		if (writer != null){
 			writer.close();
-		
+		}
 		if (reader != null) {
 			try {
 				reader.close();
@@ -45,24 +52,20 @@ public class FilePersistenceManager implements PersistenceManager {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
 	/**
 	 * Methode zum Einlesen der Warendaten aus einer externen Datenquelle.
-	 * Das Verfügbarkeitsattribut ist in der Datenquelle (Datei) als "t" oder "f"
-	 * codiert abgelegt.
+	 * Die Dateien sind serialisiert
 	 * 
-	 * @return Waren-Objekt, wenn Einlesen erfolgreich, false null
+	 * @return Waren-Objekt, wenn Einlesen erfolgreich, sonst null
 	 */
 	public Ware ladeWare() throws IOException,ClassNotFoundException {
 		// Titel einlesen
 		
 		try{
 			Ware w = (Ware)reader.readObject();
-		
-			
 			// neues Waren-Objekt mit eingelesenen Daten anlegen und zurückgeben
 			return w;
 		} catch (EOFException exc){
@@ -78,7 +81,7 @@ public class FilePersistenceManager implements PersistenceManager {
 	 */
 	public boolean speichereWare(Ware w) throws IOException {
 		try{
-			// Bezeichnung, Nummer, Bestand und Preis schreiben
+			// Bezeichnung, Nummer, Bestand, Preis und packungsgröße(falls vorhanden) schreiben
 			writer.writeObject(w);
 			writer.flush();
 			return true;
@@ -90,6 +93,8 @@ public class FilePersistenceManager implements PersistenceManager {
 	
 	/**
 	 * Methode zum einlesen von Personen aus einer externen Datei
+	 * 
+	 * @return p eine Person , wenn erfolgreich , sonst null
 	 */
 	public Person ladePerson() throws IOException ,ClassNotFoundException{
 		// Name einlesen
@@ -105,6 +110,7 @@ public class FilePersistenceManager implements PersistenceManager {
 	 * Methode zum speichern von Personen in einer externen Datei
 	 * 
 	 * @param p Person die gespeichert wird
+	 * @return true, wenn erfolgreich ,sonst false
 	 */
 	public boolean speicherePerson(Person p) throws IOException {
 		try{
@@ -116,18 +122,4 @@ public class FilePersistenceManager implements PersistenceManager {
 		}
 	}
 	
-	/*
-	 * Private Hilfsmethoden
-	 */
-//	private String liesZeile() throws IOException {
-//		if (reader != null)
-//			return reader.readLine();
-//		else
-//			return "";
-//	}
-
-//	private void schreibeZeile(String daten) {
-//		if (writer != null)
-//			writer.println(daten);
-//	}
 }

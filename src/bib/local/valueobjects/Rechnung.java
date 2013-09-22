@@ -3,24 +3,19 @@ package bib.local.valueobjects;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.Vector;
+
 /**
  * Ein RechnungsObjekt wird ausgegeben wenn der Inhalt des Warenkorbs gekauft wird
  * @author Florian
  *
  */
-
 public class Rechnung {
 	
-	//private GregorianCalendar gcal = new GregorianCalendar();
+	
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-	private Date date;
+	
 	private String dateStr;
-	
-	private String rechnungsNr;
-	
+
 	private float gSumme = 0.0F;
 	
 

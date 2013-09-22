@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -36,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -51,18 +54,19 @@ import bib.local.domain.exceptions.PersonExistiertBereitsException;
 import bib.local.domain.exceptions.PersonExistiertNichtException;
 import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
+import bib.local.ui.gui.tableModels.PersonenTableModel;
+import bib.local.ui.gui.tableModels.WarenTableModel;
 import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
 
 /**
- * Klasse für sehr einfache graphische Benutzungsschnittstelle (GUI)
- * für den eshop. 
+ * Der Eshop in einer gui version, sollte alles das können was die gui auch kann
  *
  * @version 7 (Swing-GUI)
  */
 public class SwingLagClientGUI extends JFrame {
-
+  //Die LagerVerwaltung und alle Attribute die global verfügbar sein müssen
   private LagerVerwaltung lag;
   
   private JPanel panelLinks;
@@ -71,10 +75,13 @@ public class SwingLagClientGUI extends JFrame {
   private JTextField nummernFeld;
   private JTextField bestandsFeld;
   private JTextField preisFeld;
+  private JTextField packungsGroesseFeld;
   
   private JButton addButton;
   private JButton warenkorbButton;
   private JButton kaufenButton;
+  private JButton ausKorbEntfernenButton;
+  private JButton warenkorbLeerenButton;
   private JButton suchButton;
   private JButton loginButton;
   private JButton logoutButton;
@@ -82,18 +89,19 @@ public class SwingLagClientGUI extends JFrame {
   private JLabel userLabel;
   private JTextField suchFeld;
   private JTextField userNameInput;
-  private JFormattedTextField packungsGroesseFeld;
+  
   private JPasswordField passwortInput;
   private JTable warenTable;
   private TableRowSorter<TableModel> sorter;
   
   private JMenuItem logoutItem;
-  private JMenuItem addUserItem;
   private JMenuItem delUserItem;
+  private JMenuItem upgradeItem;
   private JMenuItem allUsersItem;
   
   private JMenuItem bestandsItem;
   private JMenuItem delWareItem;
+  private JMenuItem warenlogItem;
   
   private boolean eingelogged = false;
   private boolean mitarbeiterBerechtigung = false;
@@ -129,8 +137,8 @@ public class SwingLagClientGUI extends JFrame {
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new WindowAdapter(){
     	public void windowClosing(WindowEvent we){
-    		int result = JOptionPane.showConfirmDialog(null, "Möchten sie speichern bevor sie beenden?", "Speichern?", JOptionPane.YES_NO_CANCEL_OPTION);
-    		if (result == JOptionPane.YES_OPTION){
+    		int result = JOptionPane.showConfirmDialog(null, "Vor dem Beenden muss gespeichert werden", "Speichern?", JOptionPane.OK_CANCEL_OPTION);
+    		if (result == JOptionPane.OK_OPTION){
     			try{
     				lag.schreibePersonen();
     				lag.schreibeWaren();
@@ -138,8 +146,6 @@ public class SwingLagClientGUI extends JFrame {
     			}catch (IOException e){
     				System.out.println(e.getMessage());
     			}
-    		}else if (result == JOptionPane.NO_OPTION){
-    			dispose();
     		}
     	}
     });
@@ -179,14 +185,30 @@ public class SwingLagClientGUI extends JFrame {
     }catch(IOException e){
     	e.getMessage();
     }
+    warenkorbButton.setPreferredSize(new Dimension(155,33));
     warenkorbButton.addActionListener(new WarenkorbListener());
    
+    //Kaufenbutton um die waren zu kaufen
     kaufenButton = new JButton ("KAUFEN");
-    kaufenButton.setPreferredSize(warenkorbButton.getPreferredSize()); //damit er die gleiche größe hat wie der warenkorbButton
+    kaufenButton.setPreferredSize(new Dimension(155,33)); //damit er die gleiche größe hat wie der warenkorbButton
     kaufenButton.addActionListener(new KaufenListener());
+    
+    //einzelne oder mehrere Waren aus dem Korb entfernen
+    ausKorbEntfernenButton = new JButton("Ware aus Korb entfernen");
+    ausKorbEntfernenButton.setPreferredSize(new Dimension(155,33));
+    ausKorbEntfernenButton.setVisible(false);
+    ausKorbEntfernenButton.addActionListener(new AusKorbEntfernenListener());
+    
+    //Button um den ganzen Korb zu leeren
+    warenkorbLeerenButton = new JButton("Warenkorb Leeren");
+    warenkorbLeerenButton.setPreferredSize(new Dimension(155,33));
+    warenkorbLeerenButton.setVisible(false);
+    warenkorbLeerenButton.addActionListener(new KorbLeerenListener());
     
     panelUnten.add(warenkorbButton);
     panelUnten.add(kaufenButton);
+    panelUnten.add(ausKorbEntfernenButton);
+    panelUnten.add(warenkorbLeerenButton);
     panelUnten.setBorder(BorderFactory.createTitledBorder("Warenkorb"));
     
     // PANEL RECHTS
@@ -244,7 +266,7 @@ public class SwingLagClientGUI extends JFrame {
     // PANEL LINKS
     
     panelLinks = new JPanel();
-    panelLinks.setLayout(new GridLayout(11, 1));
+    panelLinks.setLayout(new GridLayout(12, 1));
     // Panel ausblenden bis der Benutzer sich eingeloggt hat
     panelLinks.setVisible(false);
     
@@ -263,8 +285,7 @@ public class SwingLagClientGUI extends JFrame {
     panelLinks.add(preisFeld);
     
     panelLinks.add(new JLabel("Pack.Größe:"));
-    // JFormattedTextField mit NumberFormat für Ganzzahlen benutzen um zu verhindern, dass Buchstaben akzeptiert wird.
-    packungsGroesseFeld = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    packungsGroesseFeld = new JTextField();
     packungsGroesseFeld.setText("1");
     panelLinks.add(packungsGroesseFeld);
     
@@ -291,40 +312,46 @@ public class SwingLagClientGUI extends JFrame {
     warenTable.addMouseListener(new MouseAdapter(){
     	public void mouseClicked(MouseEvent e){
     		if (e.getClickCount()==2){
+    			//Wo wurde geklickt
     			JTable target = (JTable)e.getSource();
     			int row = target.getSelectedRow();
-    			int column = target.getSelectedColumn();
     			java.util.HashMap<String,Ware> waren = lag.getMeineWarenVerwaltung().getWarenObjekte();
     			if (getEingelogged() == false) {
     				JOptionPane.showMessageDialog(null, "Loggen Sie sich bitte zuerst ein!");
     			} else {
-    				if (column == 1) {
-    					//getValueAt(row,1) die 1 damit er immer die bezeichnung nimmt und keinen Nullpointer wirft
-    					Ware w = waren.get(warenTable.getValueAt(row, 1));
-    					String mengenString = JOptionPane.showInputDialog("Wieviele von : \"" + w.getBezeichnung() + "\" wollen sie bestellen");
+    				//getValueAt(row,1) die 1 damit er immer die bezeichnung nimmt und keinen Nullpointer wirft
+    				Ware w = waren.get(warenTable.getValueAt(row, 1));
+    				//InputDialog und parsen um zu bekommen wieviele
+    				String mengenString = JOptionPane.showInputDialog("Wieviele von : \"" + w.getBezeichnung() + "\" wollen sie bestellen");
+    				if (mengenString!=null){
     					int menge = 0;
     					try {
-    					    menge = Integer.parseInt(mengenString);
+    						menge = Integer.parseInt(mengenString);
     					} catch (NumberFormatException ex) {
-    					    ex.printStackTrace();
+    						ex.printStackTrace();
     					}
     					
-                        if(menge == 0) {
-                            JOptionPane.showMessageDialog(null, "Bitte geben Sie eine gültige Menge an", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        } else if (w.getBestand() >= menge) {
-        					try {
-        						lag.inWarenKorbLegen(menge, w, user);
-        						warenkorbButton.setBackground(Color.RED);
-        					} catch (NichtVielfachesVonPackGroesseException | BestellteMengeNegativException ex) {
-        						JOptionPane.showMessageDialog(null, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        					}
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Ihre Anfrage übersteigt den vorhandenen Bestand", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
+    					if(menge == 0) {
+    						JOptionPane.showMessageDialog(null, "Bitte geben Sie eine gültige Menge an", "ERROR", JOptionPane.ERROR_MESSAGE);
+    					} else if (w.getBestand() >= menge) {
+    						try {
+    							//in den korb des users legen
+    							lag.inWarenKorbLegen(menge, w, user);
+    							warenkorbButton.setBackground(Color.RED);
+    							//nun werdn die korb leeren buttons sichtbar , da der korb inhalt hat
+    							ausKorbEntfernenButton.setVisible(true);
+    							warenkorbLeerenButton.setVisible(true);
+    						} catch (NichtVielfachesVonPackGroesseException | BestellteMengeNegativException ex) {
+    							JOptionPane.showMessageDialog(null, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+    						}
+    					}else if (w.getBestand()<menge){
+        					JOptionPane.showMessageDialog(null, "Ihre Anfrage übersteigt den vorhandenen Bestand", "ERROR", JOptionPane.ERROR_MESSAGE);
+        				}
+    				} 
     			}
     		}
     	}
+    	
     });
     
     JScrollPane panelMitte = new JScrollPane(warenTable);
@@ -380,7 +407,9 @@ public class SwingLagClientGUI extends JFrame {
 		  }
 	  });
   }
-  
+  /**
+   * Initialisiert die MenüLeiste
+   */
   private void initMenu() {
     JMenu fileMenu = new FileMenu();
     JMenu userMenu = new UserMenu();
@@ -395,7 +424,10 @@ public class SwingLagClientGUI extends JFrame {
     
     setJMenuBar(bar);
   }
-  
+  /**
+   * um die warentable zu aktualisieren
+   * @param waren die waren damit die warentable die neuesten daten bekommt
+   */
   private void updateList(java.util.List<Ware> waren) {
     WarenTableModel btm = (WarenTableModel) warenTable.getModel();
     btm.updateDataVector(waren);
@@ -417,6 +449,11 @@ public class SwingLagClientGUI extends JFrame {
     }
   }
   
+  /**
+   * Der Addlistener fügt neue Waren hinzu, sollte die PaketGröße mehr als 1 betragen handelt es sich um einen massengutartikel
+   * @author Florian
+   *
+   */
   class AddListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae) {
 	        String nummernString = nummernFeld.getText();
@@ -432,97 +469,121 @@ public class SwingLagClientGUI extends JFrame {
 	        		//Falls iregendwo ein minus auftaucht wird es einfach mit nichts ersetzt
 	        		String realNummernString = nummernString.replace("-", "");
 	        		String realBestandsString = bestandsString.replace("-", "");
-	        		int nummer = Integer.parseInt(realNummernString);
-	        		int bestand = Integer.parseInt(realBestandsString);
-	        		int packungsGroesse = Integer.valueOf(packungsGroesseString);
-	            
+	        		String realpackungsGroesseString = packungsGroesseString.replace("-", "");
+	        		int nummer = Integer.valueOf(realNummernString);
+	        		int bestand = Integer.valueOf(realBestandsString);
+	        		int packungsGroesse = Integer.valueOf(realpackungsGroesseString);
+	        		
 	        		//wenn der String ein Komma findet wird es mit einem Punkt ersetzt da sonst eine NumberformatException geworfen wird
 	        		String realPreisString = preisString.replace(",",".");
 	        		String finalPreisString = realPreisString.replace("-", "");
-	            
 		            float preis = Float.valueOf(finalPreisString);
+		            
+		            if(checkWarenNummer(lag.gibAlleWaren(),nummer)==false){
+		    			  JOptionPane.showMessageDialog(null, "Diese Nummer ist vergeben! ","Error",JOptionPane.ERROR_MESSAGE);
+		    		}else{
 		            lag.fuegeWareEin(titel, nummer, bestand, preis, packungsGroesse);
 		            updateList(lag.gibAlleWaren());
 		            nummernFeld.setText("");
 		            titelFeld.setText("");
 		            bestandsFeld.setText("");
 		            preisFeld.setText("");
+		            //wenn die packungsgröße 1 ist handelt es sich nicht um einen massengutware , 
+		            //da mehr waren als massengutwaren eingefügt werden bietet es sich an den Text auf 1 zu setzen
 		            packungsGroesseFeld.setText("1");
-		            
-	        	} catch (WareExistiertBereitsException|NumberFormatException e) {
-	        		JOptionPane.showMessageDialog(null, "Nummer, Bestand und Preis müssen aus Zahlen bestehen");
+		    		}
+	        	} catch (NumberFormatException e) {
+	        		JOptionPane.showMessageDialog(null, "Nummer, Bestand ,PackungsGröße und Preis müssen aus Zahlen bestehen");
 	        		e.printStackTrace();
+	        	}catch (WareExistiertBereitsException e1){
+	        		JOptionPane.showMessageDialog(null, e1.getMessage(),"ERROR", JOptionPane.ERROR_MESSAGE);
 	        	}
-	        }else if (getEingelogged()==true &&getMitarbeiterBerechtigung()==false){
-	        	JOptionPane.showMessageDialog(null, "Ihnen fehlen die nötigen Berechtigungen für diese Aktion");
-	        }else {
-	        	JOptionPane.showMessageDialog(null, "Bitte loggen sie sich zuerst ein");
 	        }
 	  }
   }
-  
+  /**
+   * Der Searchlistener gibt die gesuchte Ware in einer List aus, 
+   * sollte der suchenbutton ohne inhalt im textfeld gedrückt werden dann wird 
+   * der aktuelle warenTable ausgegeben
+   * @author Florian
+   *
+   */
   class SearchListener implements ActionListener {
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-    	if (ae.getSource().equals(suchButton)) {
-    		java.util.List<Ware> result;
-    		String titel = suchFeld.getText();
-    		if (titel.equals("")) {
-    			result = lag.gibAlleWaren();
-    		} else {
-    			result = lag.sucheNachBezeichnung(titel);
-    			suchFeld.setText("");
-    		}
-    		updateList(result);
-    	}
-    }
+	  @Override
+	  public void actionPerformed(ActionEvent ae) {
+		  if (ae.getSource().equals(suchButton)) {
+			  java.util.List<Ware> result;
+			  String titel = suchFeld.getText();
+			  if (titel.equals("")) {
+				  result = lag.gibAlleWaren();
+			  } else {
+				  result = lag.sucheNachBezeichnung(titel);
+				  suchFeld.setText("");
+			  }
+			  updateList(result);
+		  }
+	  }
+  }
+  /**
+   * Der LoginListener überprüft ob der User vorhanden ist, ob er ein Mitarbeiter ist
+   * Viele Funktionen werden nur als Mitarbeiter zugänglich
+   * @author Florian
+   *
+   */
+  class LoginListener implements ActionListener {
+	  public void actionPerformed(ActionEvent ae) {
+		  if (ae.getSource().equals(loginButton) || ae.getSource().equals(passwortInput)) {
+			  
+			  String userName = userNameInput.getText();
+			  // andere Methoden haben keine Wirkung gezeigt darum sind wir
+			  // bei .getText() geblieben
+			  String passwort = passwortInput.getText();
+			  java.util.HashMap<String, Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
+			  
+			  if (passwort.equals("") || userName.equals("")) {
+				  JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
+			  } else if (result.containsKey(userName) && result.get(userName).getPassword().equals(passwort)) {
+				  userNameInput.setText("");
+				  passwortInput.setText("");
+				  setEingelogged(true);
+				  user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
+				  if (user.getMitarbeiterberechtigung())
+					  mitarbeiterBerechtigung = true;
+				  // Falls ein Mitarbeiter eingeloggt ist werden stehen mehr
+				  // Optionen zur Verfügung
+				  if (getMitarbeiterBerechtigung() == true) {
+					  allUsersItem.setVisible(true);
+					  delUserItem.setVisible(true);
+					  upgradeItem.setVisible(true);
+					  
+					  bestandsItem.setVisible(true);
+					  delWareItem.setVisible(true);
+					  warenlogItem.setVisible(true);
+					  
+					// Einfügen-panel sichtbar machen sobald der Benutzer eingeloggt ist.
+					  panelLinks.setVisible(true);
+				  }
+				  logoutItem.setVisible(true);
+				  logoutButton.setVisible(true);
+				  loginButton.setVisible(false);
+				  
+				  userLabel.setText(" " + user.getUsername());
+				  JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen " + user.getUsername() + " !");
+			  } else if (result.containsKey(userName) && !result.get(userName).getPassword().equals(passwort)) {
+				  JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
+			  } else {
+				  JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
+			  }
+		  }
+	  }
   }
   
-    class LoginListener implements ActionListener {
-        public void actionPerformed(ActionEvent ae) {
-            if (ae.getSource().equals(loginButton) || ae.getSource().equals(passwortInput)) {
-
-                String userName = userNameInput.getText();
-                // andere Methoden haben keine Wirkung gezeigt darum sind wir
-                // bei .getText() geblieben
-                String passwort = passwortInput.getText();
-                java.util.HashMap<String, Person> result = lag.getMeinePersonenVerwaltung().getPersonenObjekte();
-
-                if (passwort.equals("") || userName.equals("")) {
-                    JOptionPane.showMessageDialog(null, "es darf kein Feld leer sein!");
-                } else if (result.containsKey(userName) && result.get(userName).getPassword().equals(passwort)) {
-                    userNameInput.setText("");
-                    passwortInput.setText("");
-                    setEingelogged(true);
-                    user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
-                    if (user.getMitarbeiterberechtigung())
-                        mitarbeiterBerechtigung = true;
-                    // Falls ein Mitarbeiter eingeloggt ist werden stehen mehr
-                    // Optionen zur Verfügung
-                    if (getMitarbeiterBerechtigung() == true) {
-                        allUsersItem.setVisible(true);
-                        addUserItem.setVisible(true);
-                        delUserItem.setVisible(true);
-
-                        bestandsItem.setVisible(true);
-                        delWareItem.setVisible(true);
-                    }
-                    logoutItem.setVisible(true);
-                    logoutButton.setVisible(true);
-                    loginButton.setVisible(false);
-                    // Einfügen-panel sichtbar machen sobald der Benutzer eingeloggt ist.
-                    panelLinks.setVisible(true);
-                    userLabel.setText(" " + user.getUsername());
-                    JOptionPane.showMessageDialog(null, "Sie haben sich erfolgreich Eingeloggt!\nHerzlich willkommen " + user.getUsername() + " !");
-                } else if (result.containsKey(userName) && !result.get(userName).getPassword().equals(passwort)) {
-                    JOptionPane.showMessageDialog(null, "Inkorrektes Passwort, bitte überprüfen sie ihre Angabe");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Es existiert kein Kunde mit dieser Nummer, bitte überprüfen sie ihre Angabe");
-                }
-            }
-        }
-    }
-  
+  /**
+   * Wenn sich ein User eingeloggt hat wird der LogoutButton sichtbar
+   * Wenn sich dieser User dann ausloggt werden viele Funktionen nicht zugänglich
+   * @author Florian
+   *
+   */
   class LogoutListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
 		  if(ae.getSource().equals(logoutButton)||ae.getSource().equals(logoutItem)){
@@ -533,12 +594,13 @@ public class SwingLagClientGUI extends JFrame {
 					  user = null;
 					  mitarbeiterBerechtigung = false;
 					  userLabel.setText(" nicht eingeloggt");
-					  addUserItem.setVisible(false);
 		        	  delUserItem.setVisible(false);
 		        	  allUsersItem.setVisible(false);
+		        	  upgradeItem.setVisible(false);
 		        	  
 		        	  bestandsItem.setVisible(false);
-		        	  delUserItem.setVisible(false);
+		        	  delWareItem.setVisible(false);
+		        	  warenlogItem.setVisible(false);
 		        	  
 		        	  logoutItem.setVisible(false);
 					  logoutButton.setVisible(false);
@@ -549,7 +611,11 @@ public class SwingLagClientGUI extends JFrame {
 		  }
 	  }
   }
-  
+  /**
+   * Zeigt den Inhalt des Warenkorbs an wenn der warenkorbButton gedrückt wird und gibt den Inhalt des Korbs aus
+   * @author Florian
+   *
+   */
   class WarenkorbListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
 		  if(ae.getSource().equals(warenkorbButton)){
@@ -569,6 +635,11 @@ public class SwingLagClientGUI extends JFrame {
 	  }
   }
   
+  /**
+   * Überprüft ob der Kaufen Button gedrückt wurde und verarbeitet die Anfrage entsprechend
+   * @author Florian
+   *
+   */
   class KaufenListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
 		  if (ae.getSource().equals(kaufenButton)){
@@ -580,41 +651,124 @@ public class SwingLagClientGUI extends JFrame {
 				  int result = JOptionPane.showConfirmDialog(null, "Sind sie sicher das sie diese Waren kaufen möchten?", "Meldung",  JOptionPane.YES_NO_OPTION);
 				  if (result == JOptionPane.YES_OPTION ){
 					  lag.setRechnung(new Rechnung(user));
-					  JOptionPane.showMessageDialog(null,lag.getRechnung().toString(),"Ihr Einkauf",JOptionPane.PLAIN_MESSAGE);
+					  JTextArea textArea = new JTextArea(lag.getRechnung().toString());
+					  JScrollPane rechnungsScrollPane = new JScrollPane(textArea);  
+					  textArea.setLineWrap(true);  
+					  textArea.setWrapStyleWord(true); 
+					  rechnungsScrollPane.setPreferredSize( new Dimension( 500, 500 ) );
+					  JOptionPane.showMessageDialog(null,rechnungsScrollPane,"Ihr Einkauf",JOptionPane.PLAIN_MESSAGE);
 					  lag.warenkorbKaufen(user, user.getWarenkorb());
 					  warenkorbButton.setBackground(null); //Falls man direkt kauft ohne vorher in den Korb zu gucken wird der Hintergrund wieder auf null gesetzt
 					  //Warentable wird nach dem Kauf aktualisiert
+					  ausKorbEntfernenButton.setVisible(false);
+					  warenkorbLeerenButton.setVisible(false);
 					  updateList(lag.gibAlleWaren());
 				  }
 			  }
 		  }
 	  }
   }
+  /**
+   * Methode zum entfernen von Waren aus dem Korb
+   * @author Florian
+   *
+   */
+  class AusKorbEntfernenListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae){
+		  if(ae.getSource().equals(ausKorbEntfernenButton)){
+			  
+			  JTextField dieWare = new JTextField();
+			  JTextField menge = new JTextField();
+			  
+			  JPanel ausKorbEntfernenPanel = new JPanel();
+			  ausKorbEntfernenPanel.setLayout(new GridLayout(2,2));
+			  ausKorbEntfernenPanel.add(new JLabel("Welche Ware ?"));
+			  ausKorbEntfernenPanel.add(dieWare);
+			  ausKorbEntfernenPanel.add(new JLabel("wieviele ?"));
+			  ausKorbEntfernenPanel.add(menge);
+			  
+			  int result = JOptionPane.showConfirmDialog(null,ausKorbEntfernenPanel,"Ware aus Korb entfernen", JOptionPane.OK_CANCEL_OPTION);
+			  if (result == JOptionPane.OK_OPTION){
+				  if(dieWare.getText().equals("")||menge.getText().equals("")){
+					  JOptionPane.showMessageDialog(null, "Es darf Kein Feld leer sein");
+				  }else{
+					  String mengenString = menge.getText();
+					  int mengeZahl = Integer.parseInt(mengenString);
+					  try {
+						lag.entferneAusWarenkorb(mengeZahl, lag.getMeineWarenVerwaltung().getWarenObjekte().get(dieWare.getText()), user);
+						if (user.getWarenkorb().isEmpty()){
+							warenkorbLeerenButton.setVisible(false);
+							ausKorbEntfernenButton.setVisible(false);
+							warenkorbButton.setBackground(null);
+						}
+					  } catch (BestellteMengeNegativException e) {
+						  JOptionPane.showMessageDialog(null, e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+						
+					  }
+					  updateList(lag.gibAlleWaren());
+					  JOptionPane.showMessageDialog(null, "Erfolgreich aus Korb entfernt");
+					
+				  }
+			  }
+		  }
+	  }
+  }
+  /**
+   * Erscheint wenn Waren im Korb sind und leert den gesamten Korb auf nachfrage
+   * @author Florian
+   *
+   */
+  class KorbLeerenListener implements ActionListener{
+	  public void actionPerformed(ActionEvent ae){
+		  if(ae.getSource().equals(warenkorbLeerenButton)){
+			 int result = JOptionPane.showConfirmDialog(null, "wollen sie ihren Warenkorb leeren?","Meldung",JOptionPane.OK_CANCEL_OPTION);
+			 if (result == JOptionPane.OK_OPTION){
+				 lag.warenkorbLeeren(user);
+				 JOptionPane.showMessageDialog(null, "Erfolgreich geleert");
+				 warenkorbLeerenButton.setVisible(false);
+				 ausKorbEntfernenButton.setVisible(false);
+				 warenkorbButton.setBackground(null);
+			 }
+		  }
+	  }
+  }
   
+  /**
+   * Das Filemenu erlaubt das manuelle Speichern der Personen und Waren
+   * @author Florian
+   *
+   */
   class FileMenu extends JMenu implements ActionListener {
-    public FileMenu() {
-      super("Datei");
+	  public FileMenu() {
+		  super("Datei");
+		  
+		  JMenuItem saveItem = new JMenuItem("Speichern");
+		  add(saveItem);
+		  saveItem.addActionListener(this);
       
-      JMenuItem saveItem = new JMenuItem("Speichern");
-      add(saveItem);
-      saveItem.addActionListener(this);
-      
-    }
+	  }
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-      if (ae.getActionCommand().equals("Speichern")) {
-        try {
-          lag.schreibeWaren();
-          lag.schreibePersonen();
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      } 
-    }
+	  @Override
+	  public void actionPerformed(ActionEvent ae) {
+		  if (ae.getActionCommand().equals("Speichern")) {
+			  try {
+				  lag.schreibeWaren();
+				  lag.schreibePersonen();
+			  } catch (IOException e) {
+				  // TODO Auto-generated catch block
+				  e.printStackTrace();
+			  }
+		  } 
+	  }
   }
 
+  /**
+   * Das UserMenu hat Funktionen zum User hinzufügen ,User entfernen, alle user ausgeben und ausloggen
+   * ausloggen greift auf den LogoutListener zu
+   * Eingeloggter User zeig ebenfalls an ob ein Mitarbeiter eingeloggt ist oder nicht
+   * @author Florian
+   *
+   */
   class UserMenu extends JMenu implements ActionListener {
 	  public UserMenu() {
 		  super("Benutzer");
@@ -623,10 +777,14 @@ public class SwingLagClientGUI extends JFrame {
 		  add(actUserItem);
 		  actUserItem.addActionListener(this);
 		  
-		  addUserItem = new JMenuItem("User hinzufügen");
-		  addUserItem.setVisible(false);
+		  JMenuItem	addUserItem = new JMenuItem("User hinzufügen");
 		  add(addUserItem);
 		  addUserItem.addActionListener(this);
+		  
+		  upgradeItem = new JMenuItem("User befördern!");
+		  add(upgradeItem);
+		  upgradeItem.setVisible(false);
+		  upgradeItem.addActionListener(this);
 		  
 		  delUserItem = new JMenuItem ("User entfernen");
 		  delUserItem.setVisible(false);
@@ -650,6 +808,7 @@ public class SwingLagClientGUI extends JFrame {
 				  JOptionPane.showMessageDialog(null,"Sie sind nicht eingeloggt, bitte loggen sie sich zuerst ein");
 			  }else{
 			  String mitarbeiter = null;
+			  //auf Mitarbeiter überprüfen
 			  if (getMitarbeiterBerechtigung() == true){
 				  mitarbeiter = "Ja ";
 			  }else{
@@ -708,12 +867,18 @@ public class SwingLagClientGUI extends JFrame {
 				    		  String realNummernString = nummernString.replace("-", "");
 				    		  //auch hier wird ein minus mit nichts ersetzt
 				    		  int nr = Integer.parseInt(realNummernString);
+				    		  
+				    		  if(checkPersonNummer(lag.gibAllePersonen(),nr)==false){
+				    			  JOptionPane.showMessageDialog(null, "Diese Nummer ist vergeben! ","Error",JOptionPane.ERROR_MESSAGE);
+				    		  }else{
+				    		  
 				    		  //Die Auswahl (Herr/Frau) wird im anreden String gespeichert
 				    		  String anrede = (String) herrfrauCombo.getSelectedItem();
 			    			  lag.fuegePersonEin(nr, nameField.getText(), anrede, strField.getText(), plzField.getText(), ortField.getText(), 
 			    					  eMailField.getText(), userNameField.getText(), passwordField.getText(), false); 
-			    			  		  //Am ende ein false damit man sich nicht als mitarbeiter hinzufügen kann
+			    			  //Am ende ein false damit man sich nicht als mitarbeiter hinzufügen kann
 			    			  JOptionPane.showMessageDialog(null, "Person erfolgreich eingefügt!");
+				    		  }
 			    		  } catch (NumberFormatException e) {
 			    			  JOptionPane.showMessageDialog(null, " Die PersonenNummer darf nicht aus Text bestehen","Error",JOptionPane.ERROR_MESSAGE);
 			    		  } catch (PersonExistiertBereitsException e1){
@@ -721,6 +886,17 @@ public class SwingLagClientGUI extends JFrame {
 			    		  }
 			    	  }
 			      }
+		  }else if (ae.getActionCommand().equals("User befördern!")){
+			  String userName = JOptionPane.showInputDialog(null, "Geben sie an wer Mitarbeiterrechte bekommen soll",JOptionPane.OK_CANCEL_OPTION);
+			  if(userName!=null){
+				  try{
+					  Person p = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
+					  lag.personBefördern(p);
+					  JOptionPane.showMessageDialog(null, p.getUsername()+" hat nun Mitarbeiterrechte");
+				  }catch(PersonExistiertNichtException e){
+					  JOptionPane.showMessageDialog(null, "Diese Person existiert nicht !","ERROR",JOptionPane.ERROR_MESSAGE);
+				  }
+			  }
 		  }else if (ae.getActionCommand().equals("User entfernen")){
 			  //Personen werden mit der personEntfernen Methode gelöscht
 			  //Dies geschieht mit der Hilfe eines JOptionPane.showInputDialog 
@@ -767,7 +943,12 @@ public class SwingLagClientGUI extends JFrame {
 		  }
 	  }
   }
-
+  /**
+   * WarenMenu ist ein Menu mit dem man den Bestand von Waren ändern, Waren löschen und den Bestandslog für eine Datei ausgeben kann
+   * 
+   * @author Florian
+   *
+   */
   class WarenMenu extends JMenu implements ActionListener{
 	  public WarenMenu(){
 		  super ("Waren");
@@ -781,51 +962,108 @@ public class SwingLagClientGUI extends JFrame {
 		  delWareItem.setVisible(false);
 		  add(delWareItem);
 		  delWareItem.addActionListener(this);
+		  
+		  warenlogItem = new JMenuItem("Bestandslog für eine Datei ausgeben");
+		  warenlogItem.setVisible(false);
+		  add(warenlogItem);
+		  warenlogItem.addActionListener(this);
+		  
 	  }
 	  
 	  public void actionPerformed (ActionEvent ae){
 		  if(ae.getActionCommand().equals("Bestand ändern")){
-			  JTextField warenFeld = new JTextField();
-			  JTextField bestandsFeld = new JTextField();
+			  //Panel mit eingabeFeldern erstellen
+			  JTextField warenField = new JTextField();
+			  JTextField bestandsField = new JTextField();
 			  
 			  JPanel setBestandPanel = new JPanel();
 			  setBestandPanel.setLayout(new GridLayout(2,2));
 			  setBestandPanel.add(new JLabel("Bezeichnung"));
-			  setBestandPanel.add(warenFeld);
+			  setBestandPanel.add(warenField);
 			  setBestandPanel.add(new JLabel("neuer Bestand"));
-			  setBestandPanel.add(bestandsFeld);
+			  setBestandPanel.add(bestandsField);
 			  
+			  //Wessen Bestand soll geändert werden mit OK_CANCEL option
 			  int result = JOptionPane.showConfirmDialog(null,setBestandPanel,"Bestand einer Ware ändern", JOptionPane.OK_CANCEL_OPTION);
 			  if (result == JOptionPane.OK_OPTION){
-				  if(warenFeld.getText().equals("")||bestandsFeld.getText().equals("")){
+				  if(warenField.getText().equals("")||bestandsField.getText().equals("")){
 					  JOptionPane.showMessageDialog(null, "Es darf Kein Feld leer sein");
 				  }else{
-					  String bestandsString = bestandsFeld.getText();
+					  //Parsen
+					  String bestandsString = bestandsField.getText();
 					  int bestand = Integer.parseInt(bestandsString);
 					  try {
-						lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(warenFeld.getText()), bestand);
-						updateList(lag.gibAlleWaren());
-						JOptionPane.showMessageDialog(null, "Bestand erfolgreich geändert !");
-					} catch (WareExistiertNichtException | IOException e) {
-						
-						e.printStackTrace();
-					}
+						  //Bestand der angegebenen Ware ändern
+						  lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(warenField.getText()), bestand);
+						  updateList(lag.gibAlleWaren());
+						  JOptionPane.showMessageDialog(null, "Bestand erfolgreich geändert !");
+					  } catch (IOException e) {
+						  JOptionPane.showMessageDialog(null, e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+					  } catch (WareExistiertNichtException e1){
+						  JOptionPane.showMessageDialog(null, e1.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+					  }
 				  }
 			  }
-		  }else{
+		  }else if (ae.getActionCommand().equals("Ware löschen")){
+			  //Ware löschen wird mit einem InputDialog geregelt
 			  String bezeichnung = JOptionPane.showInputDialog(null, "Geben sie den Namen der zu löschenden Ware ein",JOptionPane.OK_CANCEL_OPTION);
+			  //Wenn eine Bezeichnung angegeben wurde wird die Datei gelöscht
 			  if (bezeichnung!=null){
 				  try {
 					  lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
 				  } catch (WareExistiertNichtException e) {
-					  JOptionPane.showMessageDialog(null, "Diese Ware existiert nicht!","ERROR",JOptionPane.ERROR_MESSAGE);
-					  e.printStackTrace();
+					  JOptionPane.showMessageDialog(null, e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+				  }
+			  }
+		  }else{
+			  //Panel für Bestandslog abfrage
+			  JTextField bezeichnungsField = new JTextField();
+			  JTextField tagesField = new JTextField();
+			  
+			  JPanel warenlogPanel = new JPanel();
+			  warenlogPanel.setLayout(new GridLayout(2,2));
+			  warenlogPanel.add(new JLabel("Welche ware?"));
+			  warenlogPanel.add(bezeichnungsField);
+			  warenlogPanel.add(new JLabel("wieviele Tage in der Vergangenheit?"));
+			  warenlogPanel.add(tagesField);
+			  
+			  //Nachfragen für welche Ware
+			  int result = JOptionPane.showConfirmDialog(null,warenlogPanel,"Bestandslog einer Ware ausgeben", JOptionPane.OK_CANCEL_OPTION);
+			  if (result == JOptionPane.OK_OPTION){
+				  if(bezeichnungsField.getText().equals("")||tagesField.getText().equals("")){
+					  JOptionPane.showMessageDialog(null, "Es darf Kein Feld leer sein");
+				  }else{
+					  //Parsen
+					  String bezeichnung = bezeichnungsField.getText();
+					  String tagesString = tagesField.getText();
+					  int tage = Integer.parseInt(tagesString);
+					  
+					  //Die textArea mit Vorkommnissen von Bestandsänderungen füllen
+					  JTextArea textArea = new JTextArea();
+					  try {
+						  for (int i = 0; i < lag.getWarenLog(bezeichnung, tage).size(); i++) {
+							  textArea.append(lag.getWarenLog(bezeichnung,tage).elementAt(i).toString());
+						  }
+					  } catch (IOException | ParseException e) {
+						  JOptionPane.showMessageDialog(null, e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+					  }
+					  JScrollPane warenlogScrollPane = new JScrollPane(textArea);  
+					  textArea.setLineWrap(true);  
+					  textArea.setWrapStyleWord(true); 
+					  warenlogScrollPane.setPreferredSize( new Dimension( 500, 500 ) );
+					
+					  JOptionPane.showMessageDialog(null,warenlogScrollPane,"Warenlog",JOptionPane.PLAIN_MESSAGE);
+					  
 				  }
 			  }
 		  }
 	  }
   }
-  
+  /**
+   * eine sehr unausgereifte HilfeFunktion
+   * @author Florian
+   *
+   */
   class HelpMenu extends JMenu implements ActionListener{
 	  public HelpMenu() {
 		  super("Hilfe");
@@ -841,15 +1079,44 @@ public class SwingLagClientGUI extends JFrame {
 		  }
 	  }
   }
-  
-  public boolean getEingelogged(){
+  //Accessor Methoden für die gui
+  private boolean getEingelogged(){
 	  return eingelogged;
   }
-  public boolean getMitarbeiterBerechtigung(){
+  private boolean getMitarbeiterBerechtigung(){
 	  return mitarbeiterBerechtigung;
   }
   
-  public void setEingelogged(boolean log){
+  private void setEingelogged(boolean log){
 	  this.eingelogged=log;
+  }
+  /*(non-javadoc)
+   * private Methode um auf nummernvergabe zu prüfen, ist eine nummer vergeben muss eine nicht vorhandene angegeben werden
+   * Für Waren
+   */
+  private boolean checkWarenNummer(List<Ware> waren, int nummer){
+  	Iterator<Ware> iter = waren.iterator();
+  	while (iter.hasNext()){
+  		Ware ware = iter.next();
+  		if(ware.getNummer() == nummer){
+  			return false;
+  		}
+  	}
+  	return true;
+  }
+  
+  /*(non-javadoc)
+   * private Methode um auf nummernvergabe zu prüfen, ist eine nummer vergeben muss eine nicht vorhandene angegeben werden
+   * Für Personen
+   */
+  private boolean checkPersonNummer(List<Person> personen,int nummer){
+  	Iterator<Person> iter = personen.iterator();
+  	while (iter.hasNext()){
+  		Person person = iter.next();
+  		if(person.getNummer() == nummer){
+  			return false;
+  		}
+  	}
+  	return true;
   }
 }

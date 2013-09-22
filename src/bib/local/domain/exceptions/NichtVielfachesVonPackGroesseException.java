@@ -1,8 +1,8 @@
 package bib.local.domain.exceptions;
 /**
- * Klasse die eine Exception wirft falls die angeforderte Menge negativ ist.
+ * Klasse die eine Exception wirft falls die angeforderte Menge nicht der Packungsgröße einer massengutware entspricht
  * Beim hinzufügen und entfernen von Waren im Korb
- * @author Maik
+ * @author Florian
  *
  */
 public class NichtVielfachesVonPackGroesseException extends Exception {

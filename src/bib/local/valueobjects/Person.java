@@ -1,17 +1,19 @@
-/**
- * Personenklasse zum darstellen von Personen, manche mit Mitarbeiterberechtigung
- * Jede Person hat einen eigenen Warenkorb um einzukaufen
- */
+
 
 package bib.local.valueobjects;
 
 import java.io.Serializable;
 import java.util.Vector;
 
+/**
+ * Personenklasse zum darstellen von Personen, manche mit Mitarbeiterberechtigung
+ * Jede Person hat einen eigenen Warenkorb um einzukaufen
+ *
+ * @author Florian
+ *
+ */
 public class Person implements Serializable{
-	/**
-	 *
-	 */
+	
 	private static final long serialVersionUID = -4136988681207212891L;
 	private int nummer;
 	private String anrede="";
@@ -46,11 +48,9 @@ public class Person implements Serializable{
 	
 	
 	/**
-	 * Standard-Methode von Object Ã¼berschrieben.
+	 * Standard-Methode von Object überschrieben.
 	 * Methode dient Vergleich von zwei Personen-Objekten anhand ihrer Werte,
 	 * d.h. nummer und name.
-	 * 
-	 *
 	 */
 	public boolean equals(Object anderePerson){
 		if (anderePerson instanceof Person)
@@ -61,61 +61,15 @@ public class Person implements Serializable{
 	}
 	
 	/**
-	 * Standard-Methode  von Object ï¿½berschrieben
+	 * Standard-Methode  von Object überschrieben
 	 * dient der einfachereren Ausgabe der attribute der Person
-	 * Natï¿½rlich sollte im normalfall das Passwort nicht mit ausgegeben werden, da
-	 * wir aber sonst den wert nicht erkennen kï¿½nnen haben wir ihn uns mit ausgeben lassen
+	 * Natürlich sollte im normalfall das Passwort nicht mit ausgegeben werden, da
+	 * wir aber sonst den wert nicht erkennen können haben wir ihn uns mit ausgeben lassen
 	 */
 	public String toString() {
 		return ("User: " + username + " Nummer : "+nummer +" Passwort : " +password+"\n"
 					+ anrede + " " + name + " / E-Mail: " + email + "\nAdresse:\n" + strasse + "\t" + plz + "\t" + wohnort + "\nMitarbeiter : "+mitarbeiter+"\n\n");
 	}
-	
-	/*public void warenkorbAusgeben(Vector<Ware> warenkorb){
-		if(!warenkorb.isEmpty()){
-			int anzahl = 1;
-			int i = 0;
-			Ware ware1 = warenkorb.elementAt(i);
-			warenkorb.remove(i);
-			if(warenkorb.contains(ware1))
-			
-		}
-	}
-	
-	
-	/*public void schreibeWarenkorb(Vector<Ware> warenkorb) {
-		// PersistenzManager fï¿½r Schreibvorgï¿½nge ï¿½ffnen
-		if (!warenkorb.isEmpty()) {
-			int anzahl = 1;
-			Iterator<Ware> iter = warenkorb.iterator();
-			while (iter.hasNext()) {
-				if(iter.equals(iter.next())){
-					anzahl++;
-				} else {
-					System.out.println("<-- Artikel: " + iter.next().getBezeichnung() + " - Menge: " + anzahl + " -->");
-					anzahl = 1;
-				}
-			}
-		}			
-		
-		// Persistenz-Schnittstelle wieder schlieï¿½en
-		//pm.close();
-	}
-	
-	/*public void warenkorbAusgeben(Vector<Ware> w){
-		int i = 0;
-		int anzahl = 1;
-		//int u = 0;
-		while(w.elementAt(i).equals(w.elementAt(i+1)) && (i+1) <= w.capacity()){
-			anzahl++;
-			i++;
-			//u++;
-		}
-		System.out.println("<-- Artikel: " + w.elementAt(i).getBezeichnung() + " - Menge: " + anzahl + " -->");
-		anzahl = 1;
-		i++;
-		//u++;
-	}*/
 	
 	/**
 	 * Methode zum kaufen der Waren
@@ -134,7 +88,7 @@ public class Person implements Serializable{
 	}
 	
 	/**
-	 * methode zum hinzufï¿½gen von Waren in den Warenkorb
+	 * methode zum hinzufügen von Waren in den Warenkorb
 	 * @param w
 	 * @param menge
 	 */
@@ -206,6 +160,10 @@ public class Person implements Serializable{
 	
 	public Vector<Ware> getWarenkorb(){
 		return this.warenkorb;
+	}
+	
+	public void setMitarbeiterberechtigung(boolean recht){
+		this.mitarbeiter=recht;
 	}
 	
 	public boolean getMitarbeiterberechtigung(){

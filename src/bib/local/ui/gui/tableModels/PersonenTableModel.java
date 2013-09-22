@@ -1,4 +1,4 @@
-package bib.local.ui.gui;
+package bib.local.ui.gui.tableModels;
 
 import java.util.List;
 import java.util.Vector;
@@ -6,7 +6,12 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 import bib.local.valueobjects.Person;
-
+/**
+ * Ein PersonenTableModel zum darstellen der wichtigsten Daten der vorhandenen Personen
+ * von der Funktion her so wie das WarenTableModel
+ * @author Florian
+ *
+ */
 public class PersonenTableModel extends DefaultTableModel{
 	
 	private Vector<String> columnNames;

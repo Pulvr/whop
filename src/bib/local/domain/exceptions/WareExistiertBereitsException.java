@@ -5,6 +5,7 @@ import bib.local.valueobjects.Ware;
 /**
  * Exception zur Signalisierung, dass ein ware bereits existiert (z.B. bei einem Einfügevorgang).
  * 
+ * @author Florian
  */
 public class WareExistiertBereitsException extends Exception {
 

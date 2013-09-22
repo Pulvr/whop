@@ -1,6 +1,10 @@
 package bib.local.valueobjects;
 
-
+/**
+ * Massenware ist von ware abgeleitet und hat das extra attribut packungsgröße
+ * @author Florian
+ *
+ */
 public class MassengutWare extends Ware {
     private static final long serialVersionUID = 1L;
     
@@ -30,8 +34,11 @@ public class MassengutWare extends Ware {
         String ausgabe = super.toString(false);
         return ausgabe + " / Packungsgröße: " + packungsGroesse + "\n";
     }
-
+    
     @Override
+    /**
+     * Methode die überprüft ob die bestelltemenge (gui oder cui) der packungsgröße entspricht
+     */
     public boolean checkBestellmengeGueltig(int menge) {
         return (menge % packungsGroesse == 0);
     }

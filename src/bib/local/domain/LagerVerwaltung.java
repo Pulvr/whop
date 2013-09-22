@@ -21,14 +21,13 @@ import bib.local.valueobjects.WarenLog;
 
 /**
  * Klasse zur Verwaltung eines (sehr einfachen) Lagers.
- * Bietet Methoden zum Zurï¿½ckgeben aller Waren im Bestand, 
- * zur Suche nach Waren, zum Einfï¿½gen neuer Waren 
+ * Bietet Methoden zum Zurückgeben aller Waren im Bestand, 
+ * zur Suche nach Waren, zum Einfügen neuer Waren 
  * und zum Speichern des Bestands.
- * 
  * 
  */
 public class LagerVerwaltung {
-	// Prï¿½fix fï¿½r Namen der Dateien, in der die Lagerdaten gespeichert sind
+	// Präfix für Namen der Dateien, in der die Lagerdaten gespeichert sind
 	private String datei = "";
 	
 	private WarenVerwaltung meineWaren;
@@ -39,8 +38,8 @@ public class LagerVerwaltung {
 	 * Konstruktor, der die Basisdaten (Waren, Personen) aus Dateien einliest
 	 * (Initialisierung des shops).
 	 * 
-	 * Namensmuster fï¿½r Dateien:
-	 *   datei+"_B.ser" ist die Datei der Waren
+	 * Namensmuster für Dateien:
+	 *   datei+"_W.ser" ist die Datei der Waren
 	 *   datei+"_P.ser" ist die Datei der Personen
 	 * 
 	 * @param datei
@@ -59,43 +58,43 @@ public class LagerVerwaltung {
 	}
 
 	/**
-	 * Methode, die eine Liste aller im Bestand befindlichen Waren zurï¿½ckgibt.
+	 * Methode, die eine java.util.List aller im Bestand befindlichen Waren zurückgibt.
 	 * 
 	 * @return Liste aller Waren im Lager
 	 */
 	public List<Ware> gibAlleWaren() {
-		// einfach delegieren an meineWaren
 		return meineWaren.getWarenBestand();
 	}
 	
 	/**
-	 * Methode, die eine Liste aller Personen gibt
+	 * Methode, die eine java.util.List aller Personen gibt
 	 * 
 	 * @return Liste aller Personen
 	 */
 	public List<Person> gibAllePersonen() {
-		// einfach delegieren an meinePersonen
 		return meinePersonen.getPersonen();
 	}
 
 	/**
 	 * Methode zum Suchen von Waren anhand der Bezeichnung. Es wird eine Liste von Waren
-	 * zurï¿½ckgegeben, die alle Waren mit exakt ï¿½bereinstimmender Bezeichnung enthï¿½lt.
+	 * zurückgegeben, die alle Waren mit exakt übereinstimmender Bezeichnung enthält.
 	 * 
 	 * @param bezeichnung Bezeichnung der gesuchten Ware
 	 * @return Liste der gefundenen Waren (evtl. leer)
 	 */
 	public List<Ware> sucheNachBezeichnung(String bezeichnung) {
-		// einfach delegieren an meineWaren
 		return meineWaren.sucheWaren(bezeichnung); 
 	}
 
     /**
-     * Methode zum Einfï¿½gen einer neuen Ware in den Bestand. 
-     * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht geï¿½ndert.
+     * Methode zum Einfügen einer neuen Ware in den Bestand. 
+     * Wenn die Ware bereits im Bestand ist, wird der Bestand nicht geändert.
      * 
      * @param bezeichnung Bezeichnung des Ware
      * @param nummer Nummer der Waren
+     * @param bestand Bestand der Ware
+     * @param preis Preis der Ware in float
+     * @param packungsGroesse sollte dieser wert größer als eins sein handelt es sich um eine MassengutWare
      * @throws WareExistiertBereitsException wenn die Ware bereits existiert
      */
     public void fuegeWareEin(String bezeichnung, int nummer, int bestand, float preis, int packungsGroesse) throws WareExistiertBereitsException {
@@ -109,8 +108,8 @@ public class LagerVerwaltung {
     }
     
 	/**
-	 * Methode zum lï¿½schen von Waren aus dem Bestand
-	 * @param eineWare
+	 * Methode zum löschen von Waren aus dem Bestand
+	 * @param eineWare die zu löschende Ware
 	 * @throws WareExistiertNichtException
 	 */
 	public void entferneWare(Ware eineWare)throws WareExistiertNichtException{
@@ -120,7 +119,7 @@ public class LagerVerwaltung {
 	/**
 	 * Methode zum neusetzen des Bestands einer Ware, ohne Addition oder Subtraktion
 	 * @param w Die Ware
-	 * @param neuerBestand
+	 * @param neuerBestand der neue Bestand
 	 * @throws WareExistiertNichtException
 	 */
 	public void aendereBestand(Ware w,int neuerBestand)throws WareExistiertNichtException, IOException{
@@ -128,10 +127,8 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum EinfÃ¼gen einer Person in eine Liste
-	 * 
-	 *
-	 * @throws PersonExistiertBereitsException wenn die Ware bereits existiert wird aber noch nicht verwendet
+	 * Methode zum Einfügen einer Person in eine Liste
+	 * @throws PersonExistiertBereitsException 
 	 */
 	public void fuegePersonEin(int nr, String name, String anr, String strasse, String plz, String ort ,String email, String usr, String pw, boolean ma) throws PersonExistiertBereitsException {
 		Person p = new Person(nr,name,anr,strasse,plz,ort , email, usr, pw, ma);
@@ -139,7 +136,7 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Methode zum lï¿½schen einer Person
+	 * Methode zum löschen einer Person
 	 * 
 	 * @param einePerson
 	 * @throws PersonExistiertNichtException
@@ -147,11 +144,18 @@ public class LagerVerwaltung {
 	public void personEntfernen(Person einePerson) throws PersonExistiertNichtException{
 		meinePersonen.personEntfernen(einePerson);
 	}
+	/**
+	 * Setzt das Mitarbeiter attribut einer Person auf true um ihr mitarbeiterBerechtigungen zu geben
+	 * @param einePerson
+	 * @throws PersonExistiertNichtException
+	 */
+	public void personBefördern(Person einePerson)throws PersonExistiertNichtException{
+		meinePersonen.personBefördern(einePerson);
+	}
 	
 	/**
 	 * Methode zum sortieren des Vectors der die Waren speichert.
-	 * Nach Bezeichnung oder Waren nummer
-	 * 
+	 * Nach Bezeichnung , Waren nummer oder Preis
 	 * @param aufgabe soll nach Bezeichnung oder Nummer sortiert werden?
 	 */
 	 public void sortiereDieWaren(String aufgabe) {
@@ -161,14 +165,11 @@ public class LagerVerwaltung {
 			 meineWaren.artikelSortieren(Sortierung.Nummer); 
 		 }else if (aufgabe.equals("e")){
 			 meineWaren.artikelSortieren(Sortierung.Bestand);
-		 }/*else if (aufgabe.equals("p")){
-			 meineWaren.artikelSortieren(Sortierung.Preis);
-		 }*/
+		 }
 	 }
 
 	/**
 	 * Methode zum Speichern des Warenbestands in einer Datei.
-	 * 
 	 * @throws IOException
 	 */
 	public void schreibeWaren() throws IOException {
@@ -198,13 +199,14 @@ public class LagerVerwaltung {
 	 * @param ware welche Ware?
 	 * @param p welche Person?
 	 * @throws BestellteMengeNegativException
+	 * @throws NichtVielfachesVonPackGroesseException
 	 */
 	public void inWarenKorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException, NichtVielfachesVonPackGroesseException {
 		meinePersonen.inWarenkorbLegen(menge, ware, p);
 	}
 	
 	/**
-	 * Methode die Waren aus dem Korb entfernen kann, sollte die angegebene Zahl die Anzahl der Waren im Korb ï¿½bersteigen
+	 * Methode die Waren aus dem Korb entfernen kann, sollte die angegebene Zahl die Anzahl der Waren im Korb übersteigen
 	 * wird die Anzahl dieser Ware im Korb auf 0 gesetzt anstatt ins negative zu gehen
 	 * @param menge Wieviele von der Ware entfernen
 	 * @param ware welche Ware soll entfernt werden
@@ -224,9 +226,9 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt den Warenlog fï¿½r eine Ware zurï¿½ck mit einer Angabe wie weit der Log zurï¿½ck liegen soll
-	 * @param bezeichnung Log fï¿½r welche Ware?
-	 * @param daysInPast wieviele Tage soll der Log zurï¿½ck liegen
+	 * Gibt den Warenlog für eine Ware zurück mit einer Angabe wie weit der Log zurück liegen soll
+	 * @param bezeichnung Log für welche Ware?
+	 * @param daysInPast wieviele Tage soll der Log zurück liegen
 	 * @return den WarenLog
 	 * @throws IOException
 	 * @throws ParseException
@@ -236,30 +238,30 @@ public class LagerVerwaltung {
 	}
 	
 	/**
-	 * Gibt die PersonenVerwaltung zurï¿½ck
-	 * @return
+	 * Gibt die PersonenVerwaltung zurück
+	 * @return meinePersonen
 	 */
 	public PersonenVerwaltung getMeinePersonenVerwaltung(){
 		return this.meinePersonen;
 	}
 	
 	/**
-	 * Gibt die WarenVerwaltung zurï¿½ck
-	 * @return
+	 * Gibt die WarenVerwaltung zurpck
+	 * @return meineWaren
 	 */
 	public WarenVerwaltung getMeineWarenVerwaltung(){
 		return this.meineWaren;
 	}
 	
 	/**
-	 * Gibt die Rechnung die beim Kauf entsteht zurï¿½ck
-	 * @return
+	 * Gibt die Rechnung die beim Kauf entsteht zurück
+	 * @return rechnung
 	 */
 	public Rechnung getRechnung(){
 		return this.rechnung;
 	}
 	/**
-	 * Hiermit lï¿½sst sich die Rechnung fï¿½r einen Kauf setzen
+	 * Hiermit lïässt sich die Rechnung für einen Kauf setzen
 	 * @param r die Rechnung
 	 */
 	public void setRechnung(Rechnung r){

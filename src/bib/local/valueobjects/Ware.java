@@ -5,12 +5,12 @@ import java.text.DecimalFormat;
 
 /**
  * Klasse zur Repräsentation einzelner Waren.
+ * 
+ * @author Florian
+ * 
  */
 public class Ware implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 918917690547978048L;
 	// Attribute zur Beschreibung einer Ware:
 	private String bezeichnung;
@@ -47,9 +47,9 @@ public class Ware implements Serializable{
      */
     public String toString(boolean mitNeuerZeile) {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        String ausgabe = bezeichnung + " " + df.format(preis) + "€ / Noch auf Lager: " + bestand;
+        String ausgabe = "Nummer : "+nummer +" / "+bezeichnung + " " + df.format(preis) + "€ / Noch auf Lager: " + bestand;
         if (mitNeuerZeile) {
-            // += bedeutet das selbe wie: ausgabe = ausgabe + "\n"
+           
             ausgabe += "\n";
         }
         return ausgabe;

@@ -21,9 +21,9 @@ import bib.local.valueobjects.Ware;
 import bib.local.valueobjects.WarenLog;
 
 /**
- * Klasse zur Verwaltung der Waren.
- * 
- * 
+ * Klasse zur Verwaltung der Waren, liest daten ein, speichert und hat methoden zum waren verwalten
+ * zb einfügen, löschen oder Bestand einer ware ändern
+ *
  */
 public class WarenVerwaltung {
 
@@ -36,6 +36,8 @@ public class WarenVerwaltung {
 	//Der Warenbestand wird ebenfalls in einer Hashmap verwaltet dessen Key-Value Paar aus Bezeichnung der Ware
 	//(String) und der Ware selbst besteht
 	private HashMap<String, Ware> warenObjekte = new HashMap<String, Ware>();
+	
+	//Für den Warenlog der den bestand von waren mithilfe einer textdatei einliest
 	private LogPersistenceManager logP = new LogPersistenceManager();
 	private File warenLog = new File("WAREN_LOG.txt");
 	private SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
@@ -43,6 +45,7 @@ public class WarenVerwaltung {
 	
 	/**
 	 * Methode zum Einlesen von Warendaten aus einer Datei.
+	 * Einlesen ist serialisert
 	 * 
 	 * @param datei Datei, die einzulesenden Warenbestand enthält
 	 * @throws IOException
@@ -76,7 +79,7 @@ public class WarenVerwaltung {
 
 	/**
 	 * Methode zum Schreiben der Warendaten in eine Datei.
-	 * Ebenfalls wird der Warenlog gespeichert
+	 * Ebenfalls wird hier der Warenlog geschrieben
 	 * 
 	 * @param datei Datei, in die der Warenbestand geschrieben werden soll
 	 * @throws IOException
@@ -161,8 +164,7 @@ public class WarenVerwaltung {
 	}
 	
 	/**
-	 * Methode zum sortieren der Waren nach Bezeichnung oder Nummer , die methode ist erweiterbar um noch nach bestand o.ä.
-	 * zu sortieren
+	 * Methode zum sortieren der Waren nach Bezeichnung, Nummer oder Bestand
 	 * 
 	 * @param sortieren nach was soll sortiert werden
 	 */
@@ -184,7 +186,6 @@ public class WarenVerwaltung {
 		});
 		break;
 		
-
 		case Bestand:
 		Collections.sort(warenBestand, new Comparator<Ware>(){
 			public int compare(Ware w1, Ware w2){
@@ -192,15 +193,6 @@ public class WarenVerwaltung {
 			}
 		});
 		break;
-		
-//		Sortieren nach Preis geht noch nicht ganz wegen int typecast
-//		case Preis:
-//		Collections.sort(warenBestand, new Comparator<Ware>(){
-//			public int compare(Ware w1, Ware w2){
-//				return (int) (w1.getPreis() - w2.getPreis());
-//			}
-//		});
-//		break;
 		}
 	}
 
@@ -213,7 +205,6 @@ public class WarenVerwaltung {
 		Bezeichnung,
 		Nummer,
 		Bestand,
-		//Preis
 	}
 	
 	
@@ -236,9 +227,9 @@ public class WarenVerwaltung {
 	}
 	/**
 	 * Methode die den Warenlog zurück gibt
-	 * @param bezeichnung
-	 * @param daysInPast
-	 * @return
+	 * @param bezeichnung für welche Ware
+	 * @param daysInPast wieviele Tage soll der Logg zurück liegen
+	 * @return warenLog
 	 * @throws ParseException
 	 * @throws IOException
 	 */

@@ -15,8 +15,10 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- * Klasse zur Verwaltung von Personen (noch ohne Mitarbeiter und Kunden).
+ * Klasse zur Verwaltung von Personen, hat methoden zum laden und schreiben der Personen
+ * einfügen, warenkorbMethoden usw
  * 
+ * @author Florian
  * 
  */
 public class PersonenVerwaltung {
@@ -24,8 +26,8 @@ public class PersonenVerwaltung {
 	// Verwaltung der Personen in einem Vector
 	private List<Person> personen = new Vector<Person>();
 	
-	//Ebenso werden die Personen in einer Hashmap verwaltet dessen Key-Value Paar aus der KundenNummer
-	//(Integer) und der Person selbst besteht
+	//Ebenso werden die Personen in einer Hashmap verwaltet dessen Key-Value Paar aus der UserNamen
+	//(String) und der Person selbst besteht
 	private HashMap<String, Person> personenObjekte = new HashMap<String, Person>();
 
 	// Persistenz-Schnittstelle, die für die Details des Dateizugriffs
@@ -34,6 +36,7 @@ public class PersonenVerwaltung {
 
 	/**
 	 * Methode zum Einlesen von Personendaten aus einer Datei.
+	 * Einlesen ist serialisiertf
 	 * 
 	 * @param datei Datei, die einzulesende Kundeninformationen enthält
 	 * @throws IOException
@@ -89,9 +92,21 @@ public class PersonenVerwaltung {
 			throw new PersonExistiertNichtException();
 		}
 	}
+	
+	/**
+	 * Methode die das mitarbeiterattribut einer Person auf true setzt damit sie mitarbeiterberechtigung hat
+	 * @param einePerson
+	 * @throws PersonExistiertNichtException
+	 */
+	public void personBefördern(Person einePerson) throws PersonExistiertNichtException{
+		if(personen.contains(einePerson)){
+			einePerson.setMitarbeiterberechtigung(true);
+		}else 
+			throw new PersonExistiertNichtException();
+	}
+	
 	/**
 	 * Schreibe die Daten in eine Datei
-	 * 
 	 * @param datei
 	 * @throws IOException
 	 */
@@ -131,12 +146,14 @@ public class PersonenVerwaltung {
 	
 	/**
 	 * Methode die Waren in den Warenkorb legt, aber nur wenn die verlangte Menge > 0 und der
-	 * Bestand der Anfrage standhalten kann
+	 * Bestand der Anfrage standhalten kann 
+	 * wenn NichtVielfachesVonPackGroesseException wird die ware nicht in den korb gelegt
 	 * 
 	 * @param menge wieviele von der angegeben Ware?
 	 * @param ware welche ware?
 	 * @param p welche Person?
 	 * @throws BestellteMengeNegativException
+	 * @throws NichtVielfachesVonPackGroesseException
 	 */
 	public void inWarenkorbLegen(int menge, Ware ware, Person p) throws BestellteMengeNegativException, NichtVielfachesVonPackGroesseException {
 	    if (!ware.checkBestellmengeGueltig(menge)) {
@@ -148,7 +165,9 @@ public class PersonenVerwaltung {
 		}
 	}
 	/**
-	 * Von der Funktion her wie inWarenkorbLegen() nur werden die Waren entfernt
+	 * entfernt die angegebene Ware mit der angegebenen menge, sollte die angegebene menge die tatsächlich im warenkorb vorhandene menge
+	 * übersteigen, wird diese ware komplett entfernt anstatt in den minusbereich zu gehen
+	 * 
 	 * @param menge
 	 * @param ware
 	 * @param p

@@ -19,7 +19,7 @@ import bib.local.valueobjects.Rechnung;
 import bib.local.valueobjects.Ware;
 
 /**
- * Klasse fï¿½r sehr einfache Benutzungsschnittstelle fï¿½r eina Lager. Die
+ * Klasse für sehr einfache Benutzungsschnittstelle für eina Lager. Die
  * Benutzungsschnittstelle basiert auf Ein- und Ausgaben auf der Kommandozeile,
  * daher der Name CUI (Command line User Interface).
  * 
@@ -46,11 +46,7 @@ public class LagerClientCUI {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * Interne (private) Methode zur Ausgabe des Menï¿½s.
-     */
+    //Interne private methode zur ausgabe des menüs
     private void gibMenueAus() {
         if (!eingelogged)
             System.out.print("\nBefehle:\n \n  Einloggen: 'i'\n");
@@ -62,16 +58,16 @@ public class LagerClientCUI {
         // einzuloggen
         if (mitarbeiterAngemeldet) {
             System.out.print("         \n  Person einfuegen: 'p'");
-            System.out.print("		   \n  Person lï¿½schen: 'x'");
+            System.out.print("		   \n  Person löschen: 'x'");
             System.out.print("         \n  Personen ausgeben:  'l'");
             System.out.print("         \n  Personen speichern:  'b'");
 
             System.out.print("		   \n  Ware EINFUEGEN: 'e'");
-            System.out.print("		   \n  Ware Lï¿½SCHEN: 'y'");
+            System.out.print("		   \n  Ware LÖSCHEN: 'y'");
         }
         System.out.print("	       \n  Waren SORTIEREN : 't'");
         if (mitarbeiterAngemeldet)
-            System.out.print("         \n  WarenBestand ï¿½ndern:  'c'");
+            System.out.print("         \n  WarenBestand ändern:  'c'");
         System.out.print("         \n  Waren AUSGEBEN:  'a'");
         System.out.print("         \n  Waren SUCHEN:  'f'");
         if (mitarbeiterAngemeldet)
@@ -92,8 +88,7 @@ public class LagerClientCUI {
     /**
      * Die Eingabe wird verarbeitet
      * 
-     * @param line
-     *            die eingabe
+     * @param line die eingabe
      * @throws IOException
      */
 
@@ -101,47 +96,39 @@ public class LagerClientCUI {
 
         // Die ganze eingabe ist mit einem try catch -NumberFormatException
         // umgeben
-        try {
+    	try{
 
             // EINLOGGEN:
             if (line.equals("i")) {
                 if (!eingelogged) {
-                    System.out
-                            .print("Bitte geben Sie ihren UserNamen ein > \n");
+                    System.out.print("Bitte geben Sie ihren UserNamen ein > \n");
                     String userName = this.liesEingabe();
 
-                    while (!lag.getMeinePersonenVerwaltung()
-                            .getPersonenObjekte().containsKey(userName)) {
-                        System.out
-                                .print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
+                    while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(userName)) {
+                        System.out.print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
                         userName = liesEingabe();
                     }
-                    System.out
-                            .print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
+                    System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
                     String passwort = liesEingabe();
-                    while (!lag.getMeinePersonenVerwaltung()
-                            .getPersonenObjekte().get(userName).getPassword()
-                            .equals(passwort)) {
-                        System.out
-                                .print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
+                    while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getPassword().equals(passwort)) {
+                        System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
                         passwort = liesEingabe();
                     }
 
                     einloggen(userName);
                 } else
-                    System.out.print("Sie sind bereits als "
-                            + user.getUsername() + " eingeloggt.");
+                    System.out.print("Sie sind bereits als "+ user.getUsername() + " eingeloggt.");
             }
             // AUSLOGGEN:
             if (line.equals("u") && eingelogged) {
-                if (nachfragen("dich ausloggen mï¿½chtest")) {
+                if (nachfragen("dich ausloggen möchtest")) {
                     user = null;
                     System.out.print("Erfolgreich ausgeloggt.");
                     eingelogged = false;
                     mitarbeiterAngemeldet = false;
                 }
             }
-            // WARE EINFÃœGEN:
+            // WARE EINFÜGEN:
             if (line.equals("e")) {
 
                 // Liest die Eigenschaften der neuen Ware nacheinander ein
@@ -153,10 +140,16 @@ public class LagerClientCUI {
                 System.out.print("Warennummer > ");
                 String nummernString = liesEingabe();
                 int nummer = Integer.parseInt(nummernString);
-
+                
+                while(checkWarenNummer(lag.gibAlleWaren(),nummer)==false){
+                	System.out.println("nummer bereits vergeben, wähl eine neue");
+                	System.out.println("Warennummer > ");
+                    nummernString = liesEingabe();
+                    nummer = Integer.parseInt(nummernString);
+                }
+                
                 while (nummer < 0) {
-                    System.out
-                            .println("Die WarenNummer darf nicht negativ sein!");
+                    System.out.println("Die WarenNummer darf nicht negativ sein!");
                     nummernString = liesEingabe();
                     nummer = Integer.parseInt(nummernString);
                 }
@@ -197,22 +190,19 @@ public class LagerClientCUI {
                 }
 
                 if (ok)
-                    System.out.println("EinfÃ¼gen ok");
+                    System.out.println("Einfügen ok");
                 else
-                    System.out.println("Fehler beim EinfÃ¼gen");
+                    System.out.println("Fehler beim Einfügen");
 
-                // WARE AUS DEM BESTAND LÃ–SCHEN
+                // WARE AUS DEM BESTAND LÖSCHEN
             } else if (line.equals("y")) {
                 try {
                     einloggenAbfrage();
-                    System.out
-                            .print("Gib die exakte Bezeichnung der Ware ein, die gelÃ¶scht werden soll >");
+                    System.out.print("Gib die exakte Bezeichnung der Ware ein, die gelöscht werden soll >");
                     String bezeichnung = liesEingabe();
 
-                    lag.entferneWare(lag.getMeineWarenVerwaltung()
-                            .getWarenObjekte().get(bezeichnung));
-                    System.out
-                            .println("Der Eintrag im Warenbestand wurde gelÃ¶scht");
+                    lag.entferneWare(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung));
+                    System.out.println("Der Eintrag im Warenbestand wurde gelöscht");
                 } catch (WareExistiertNichtException e) {
                     System.err.println(e.getMessage());
                     e.printStackTrace();
@@ -223,44 +213,47 @@ public class LagerClientCUI {
 
                 try {
                     einloggenAbfrage();
-                    System.out
-                            .print("Gib die exakte Bezeichnung der Ware ein, dessen Bestand geÃ¤ndert werden soll >");
+                    System.out.print("Gib die exakte Bezeichnung der Ware ein, dessen Bestand geÃ¤ndert werden soll >");
                     String bezeichnung = liesEingabe();
 
                     System.out.print("neuer Bestand > ");
                     String bstd = liesEingabe();
                     int neuerBestand = Integer.parseInt(bstd);
 
-                    lag.aendereBestand(lag.getMeineWarenVerwaltung()
-                            .getWarenObjekte().get(bezeichnung), neuerBestand);
+                    lag.aendereBestand(lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), neuerBestand);
 
-                    System.out.println("Der Bestand fÃ¼r '"
-                            + lag.getMeineWarenVerwaltung().getWarenObjekte()
-                                    .get(bezeichnung).getBezeichnung()
-                            + "' wurde geï¿½ndert");
+                    System.out.println("Der Bestand für '"+ lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBezeichnung()+ "' wurde gändert");
                 } catch (WareExistiertNichtException e) {
                     // TODO Auto-generated catch block
                     System.err.println(e.getMessage());
                     e.printStackTrace();
                 }
 
-                // PERSON EINFï¿½GEN
+                // PERSON EINFÜGEN
             } else if (line.equals("p")) {
                 einloggenAbfrage();
                 System.out.print("Nummer > ");
                 String nummernString = liesEingabe();
                 int personenNummer = Integer.parseInt(nummernString);
+                
+                while(checkPersonNummer(lag.gibAllePersonen(),personenNummer)==false){
+                	System.out.println("nummer bereits vergeben, wähl eine neue");
+                	System.out.println("PersonenNummer > ");
+                	nummernString = liesEingabe();
+                    personenNummer = Integer.parseInt(nummernString);
+                }
+                
                 while (personenNummer < 0) {
-                    System.out
-                            .println("Die PersonenNummer darf nicht negativ sein!");
+                    System.out.println("Die PersonenNummer darf nicht negativ sein!");
                     nummernString = liesEingabe();
                     personenNummer = Integer.parseInt(nummernString);
                 }
+                
                 System.out.print("Anrede > ");
                 String anr = liesEingabe();
                 System.out.print("ganzer Name > ");
                 String name = liesEingabe();
-                System.out.print("StraÃŸe > ");
+                System.out.print("Straße > ");
                 String strasse = liesEingabe();
                 System.out.print("PLZ > ");
                 String plz = liesEingabe();
@@ -282,43 +275,39 @@ public class LagerClientCUI {
                 }
                 if (ma.equals("j")) {
                     try {
-                        lag.fuegePersonEin(personenNummer, name, anr, strasse,
-                                plz, ort, email, usr, pw, true);
+                        lag.fuegePersonEin(personenNummer, name, anr, strasse,plz, ort, email, usr, pw, true);
                         ok = true;
                     } catch (PersonExistiertBereitsException e) {
                         System.err.println(e.getMessage());
                         e.printStackTrace();
                     }
                     if (ok)
-                        System.out.println("EinfÃ¼gen ok");
+                        System.out.println("Einfügen ok");
                     else
-                        System.out.println("Fehler beim EinfÃ¼gen");
+                        System.out.println("Fehler beim Einfügen");
 
                 } else if (ma.equals("n")) {
                     try {
-                        lag.fuegePersonEin(personenNummer, name, anr, strasse,
-                                plz, ort, email, usr, pw, false);
+                        lag.fuegePersonEin(personenNummer, name, anr, strasse,plz, ort, email, usr, pw, false);
                         ok = true;
                     } catch (PersonExistiertBereitsException e) {
                         System.err.println(e.getMessage());
                         e.printStackTrace();
                     }
                     if (ok)
-                        System.out.println("EinfÃ¼gen ok");
+                        System.out.println("Einfügen ok");
                     else
-                        System.out.println("Fehler beim EinfÃ¼gen");
+                        System.out.println("Fehler beim Einfügen");
                 }
 
-                // PERSON LÃ–SCHEN
+                // PERSON LÖSCHEN
             } else if (line.equals("x")) {
                 try {
                     einloggenAbfrage();
-                    System.out
-                            .print("Gib den UserNamen der Person ein, die gelÃ¶scht werden soll >");
+                    System.out.print("Gib den UserNamen der Person ein, die gelöscht werden soll >");
                     String userName = liesEingabe();
 
-                    lag.personEntfernen(lag.getMeinePersonenVerwaltung()
-                            .getPersonenObjekte().get(userName));
+                    lag.personEntfernen(lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName));
                     System.out.println("Die Person wurde entfernt");
                 } catch (PersonExistiertNichtException e) {
                     System.err.println(e.getMessage());
@@ -329,11 +318,9 @@ public class LagerClientCUI {
             else if (line.equals("o")) {
                 einloggenAbfrage();
                 if (!user.getWarenkorb().isEmpty()) {
-                    System.out.println("Ihr Warenkorb beinhaltet: \n"
-                            + user.getWarenkorb());
+                    System.out.println("Ihr Warenkorb beinhaltet: \n"+ user.getWarenkorb());
                 } else
-                    System.err
-                            .println("\nIhr Warenkorb enthÃ¤lt bislang noch keine Artikel.");
+                    System.err.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
             }
 
             // GIB ALLE WAREN AUS
@@ -356,14 +343,12 @@ public class LagerClientCUI {
                 System.out.println("b = WarenBezeichnung");
                 System.out.println("n = WarenNummer");
                 System.out.println("e = WarenBestand");
-                // System.out.println("p = WarenPreis");
                 String antwort = liesEingabe();
                 if (antwort.equals("b")) {
                     lag.sortiereDieWaren("b");
                     List<Ware> listeW = lag.gibAlleWaren();
                     gibWarenlisteAus(listeW);
-                    System.out
-                            .println("Waren wurden nach Bezeichnung sortiert");
+                    System.out.println("Waren wurden nach Bezeichnung sortiert");
                 } else if (antwort.equals("n")) {
                     lag.sortiereDieWaren("n");
                     List<Ware> listeW = lag.gibAlleWaren();
@@ -374,18 +359,7 @@ public class LagerClientCUI {
                     List<Ware> listeW = lag.gibAlleWaren();
                     gibWarenlisteAus(listeW);
                     System.out.println("Waren wurden nach Bestand sortiert");
-                    // Sortieren nach Preis funktioniert noch nicht ganz, da
-                    // compare() eine int merhode ist und nicht mit float werten
-                    // umgehen kann
-                    // somit musste der float wert in einen int wert
-                    // getypecastet werden dies fÃ¤hrt aber zu Ungenauigkeiten
-                } /*
-                   * else if(antwort.equals("p")){ lag.sortiereDieWaren("p");
-                   * List<Ware> listeW = lag.gibAlleWaren();
-                   * gibWarenlisteAus(listeW);
-                   * System.out.println("Waren wurden nach Preis sortiert"); }
-                   */
-
+                }
                 // SUCHE NACH WAREN
             } else if (line.equals("f")) {
                 System.out.print("Warenbezeichnung  > ");
@@ -405,70 +379,54 @@ public class LagerClientCUI {
             // IN KORB LEGEN
             else if (line.equals("j")) {
                 einloggenAbfrage();
-                System.out
-                        .println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
+                System.out.println("\nGib die exakte Bezeichnung der Ware ein, die in den Korb soll > ");
                 String bezeichnung = liesEingabe();
                 System.out.println("\nZu bestellende Anzahl? > ");
                 String mengenString = liesEingabe();
                 int menge = Integer.parseInt(mengenString);
 
-                if (lag.getMeineWarenVerwaltung().getWarenObjekte()
-                        .containsKey(bezeichnung)) {
-                    if (lag.getMeineWarenVerwaltung().getWarenObjekte()
-                            .get(bezeichnung).getBestand() >= menge) {
+                if (lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)) {
+                    if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() >= menge) {
                         try {
-                            lag.inWarenKorbLegen(menge, lag
-                                    .getMeineWarenVerwaltung()
-                                    .getWarenObjekte().get(bezeichnung), user);
-                            System.out.println("\nIhr Warenkorb beinhaltet:\n"
-                                    + user.getWarenkorb());
+                            lag.inWarenKorbLegen(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
+                            System.out.println("\nIhr Warenkorb beinhaltet:\n"+ user.getWarenkorb());
                         } catch (BestellteMengeNegativException | NichtVielfachesVonPackGroesseException e) {
                             // TODO Auto-generated catch block
                             System.err.print(e.getMessage());
                         }
-                    } else if (lag.getMeineWarenVerwaltung().getWarenObjekte()
-                            .get(bezeichnung).getBestand() < menge) {
-                        System.err
-                                .println("Die angeforderte Menge Ã¼bersteigt den Bestand des von Ihnen gewÃ¼nschten Artikels.");
+                    } else if (lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung).getBestand() < menge) {
+                        System.err.println("Die angeforderte Menge übersteigt den Bestand des von Ihnen gewünschten Artikels.");
                     }
-                } else if (!lag.getMeineWarenVerwaltung().getWarenObjekte()
-                        .containsKey(bezeichnung)) {
+                } else if (!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)) {
                     System.err.println("Die Ware existiert nicht.");
                 }
 
                 // ENTFERNEN
             } else if (line.equals("z")) {
                 einloggenAbfrage();
-                System.out
-                        .println("\nGib die exakte Bezeichnung der Ware ein, die du aus dem Korb entfernen mÃ¶chtest > ");
+                System.out.println("\nGib die exakte Bezeichnung der Ware ein, die du aus dem Korb entfernen möchtest > ");
                 String bezeichnung = liesEingabe();
                 System.out.println("\nZu entfernende Anzahl? > ");
                 String mengenString = liesEingabe();
                 int menge = Integer.parseInt(mengenString);
 
-                if (lag.getMeineWarenVerwaltung().getWarenObjekte()
-                        .containsKey(bezeichnung)) {
+                if (lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)) {
                     try {
-                        lag.entferneAusWarenkorb(menge, lag
-                                .getMeineWarenVerwaltung().getWarenObjekte()
-                                .get(bezeichnung), user);
+                        lag.entferneAusWarenkorb(menge, lag.getMeineWarenVerwaltung().getWarenObjekte().get(bezeichnung), user);
                         if (user.getWarenkorb().isEmpty()) {
                             System.out.println("Ihr Warenkorb ist leer");
                         } else
-                            System.out.println("\nIhr Warenkorb beinhaltet:\n"
-                                    + user.getWarenkorb());
+                            System.out.println("\nIhr Warenkorb beinhaltet:\n"+ user.getWarenkorb());
                     } catch (BestellteMengeNegativException e) {
                         System.err.print(e.getMessage());
                     }
-                } else if (!lag.getMeineWarenVerwaltung().getWarenObjekte()
-                        .containsKey(bezeichnung)) {
+                } else if (!lag.getMeineWarenVerwaltung().getWarenObjekte().containsKey(bezeichnung)) {
                     System.err.println("Die Ware existiert nicht.");
                 }
                 // WARENKORB KAUFEN
             } else if (line.equals("k")) {
                 if (user.getWarenkorb().isEmpty()) {
-                    System.err
-                            .println("\nIhr Warenkorb enthÃ¤lt bislang noch keine Artikel.");
+                    System.err.println("\nIhr Warenkorb enthält bislang noch keine Artikel.");
                 } else {
                     lag.setRechnung(new Rechnung(user));
                     System.out.println(lag.getRechnung().toString());
@@ -482,15 +440,12 @@ public class LagerClientCUI {
                     System.out.print("Warenbezeichnung  > ");
                     String bezeichnung = liesEingabe();
 
-                    System.out
-                            .print("Wie viele Tage soll der Log zurueckliegen? > ");
+                    System.out.print("Wie viele Tage soll der Log zurueckliegen? > ");
                     String daysInPastString = liesEingabe();
                     int daysInPast = Integer.parseInt(daysInPastString);
 
-                    for (int i = 0; i < lag
-                            .getWarenLog(bezeichnung, daysInPast).size(); i++) {
-                        System.out.println(lag.getWarenLog(bezeichnung,
-                                daysInPast).elementAt(i));
+                    for (int i = 0; i < lag.getWarenLog(bezeichnung, daysInPast).size(); i++) {
+                        System.out.println(lag.getWarenLog(bezeichnung,daysInPast).elementAt(i));
                     }
                 } catch (IOException | ParseException e) {
                     e.printStackTrace();
@@ -505,30 +460,19 @@ public class LagerClientCUI {
                         System.out.println("Der Warenkorb wurde geleert.");
                     }
                 } else
-                    System.out.println("Ihr Warenkorb enthÃ¤lt keine Artikel.");
-                // Automatisches Speichern vorm schlieÃŸen
+                    System.out.println("Ihr Warenkorb enthät keine Artikel.");
+                // Automatisches Speichern vorm schließen
             } else if (line.equals("q")) {
-                System.out
-                        .println("wollen sie vor dem beenden speichern (j/n)?");
-                String yesOrNo = liesEingabe();
-                while (!yesOrNo.equals("j") && !yesOrNo.equals("n")) {
-                    System.out.println("Bitte geben sie 'j' oder 'n' an > ");
-                    yesOrNo = liesEingabe();
-                }
-                if (yesOrNo.equals("j")) {
-                    lag.schreibePersonen();
-                    lag.schreibeWaren();
-                    System.out
-                            .println("Erfolgreich gespeichert, bis zum nÃ¤chsten mal!");
-                } else {
-                    System.out.println("Erfolgreich beendet ohne zu speichern");
-                }
+            	lag.schreibePersonen();
+            	lag.schreibeWaren();      
             }
-        } catch (NumberFormatException e) {
-            System.err.println(e.getMessage());
-            e.getStackTrace();
+            
+        } catch(NumberFormatException e){
+        	e.getMessage();
+        	e.printStackTrace();
         }
     }
+    
 
     /*
      * (non-Javadoc)
@@ -563,26 +507,53 @@ public class LagerClientCUI {
             }
         }
     }
-
+    /*(non-javadoc)
+     * private Methode um auf nummernvergabe zu prüfen, ist eine nummer vergeben muss eine nicht vorhandene angegeben werden
+     * Für Waren
+     */
+    private boolean checkWarenNummer(List<Ware> waren, int nummer){
+    	Iterator<Ware> iter = waren.iterator();
+    	while (iter.hasNext()){
+    		Ware ware = iter.next();
+    		if(ware.getNummer() == nummer){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /*(non-javadoc)
+     * private Methode um auf nummernvergabe zu prüfen, ist eine nummer vergeben muss eine nicht vorhandene angegeben werden
+     * Für Personen
+     */
+    private boolean checkPersonNummer(List<Person> personen,int nummer){
+    	Iterator<Person> iter = personen.iterator();
+    	while (iter.hasNext()){
+    		Person person = iter.next();
+    		if(person.getNummer() == nummer){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    /*
+     * falls auf etwas zugegriffen werden sollte für das man sich eigenltlich einloggen muss
+     * @throws IOException
+     */
     private void einloggenAbfrage() throws IOException {
         if (!eingelogged) {
-            System.out.println("\nBitte loggen Sie sich zunÃ¤chst ein!\n");
+            System.out.println("\nBitte loggen Sie sich zunächst ein!\n");
             System.out.println("Geben sie ihren UserNamen an > \n");
             String userName = this.liesEingabe();
 
-            while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte()
-                    .containsKey(userName)) {
-                System.out
-                        .print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
+            while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte().containsKey(userName)) {
+                System.out.print("Es existiert kein User mit diesem Namen. Bitte versuchen Sie es erneut > \n");
                 userName = liesEingabe();
             }
-            System.out
-                    .print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
+            System.out.print("\nBitte geben Sie nun Ihr entsprechendes Passwort ein > \n");
             String passwort = liesEingabe();
-            while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte()
-                    .get(userName).getPassword().equals(passwort)) {
-                System.out
-                        .print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
+            while (!lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getPassword().equals(passwort)) {
+                System.out.print("Das eingegebene Passwort war nicht korrekt. Bitte versuchen Sie es erneut > \n");
                 passwort = liesEingabe();
             }
 
@@ -590,6 +561,12 @@ public class LagerClientCUI {
         }
     }
 
+    /*
+     * SicherheitsAbfrage die manchmal benutzt wird wenn genauer nachgefragt wird
+     * @param zusatz
+     * @return
+     * @throws IOException
+     */
     private boolean nachfragen(String zusatz) throws IOException {
         System.out.print("Bist du sicher, dass du " + zusatz + "?");
         System.out.print("         \n  ja: 'j'");
@@ -601,51 +578,41 @@ public class LagerClientCUI {
         else
             return false;
     }
-
+    
+    /*
+     * Methode zum einloggen, wenn username und passwort (die in der cui abgefragt wurden) übereinstimmen hat der user eingloggt rechte
+     * und als mitarbeiter noch ein paar mehr rechte
+     * @param userName
+     */
     private void einloggen(String userName) {
 
         this.eingelogged = true;
-        this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte()
-                .get(userName);
+        this.user = lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName);
         if (this.user.getMitarbeiterberechtigung())
             this.mitarbeiterAngemeldet = true;
         System.out.print("\nErfolgreich eingeloggt!");
-        System.out.print("\nWilkommen, "
-                + lag.getMeinePersonenVerwaltung().getPersonenObjekte()
-                        .get(userName).getUsername() + "!\n");
+        System.out.print("\nWilkommen, "+ lag.getMeinePersonenVerwaltung().getPersonenObjekte().get(userName).getUsername() + "!\n");
     }
 
-    // public boolean getEingelogged(){
-    // return this.eingelogged;
-    // }
-    //
-    // public void setEingelogged(boolean log){
-    // this.eingelogged=log;
-    // }
-    //
-    // public Person getPerson(){
-    // return this.user;
-    // }
-    //
-    // public void setUser (Person p){
-    // this.user = p;
-    // }
-
+    /*
+     * (non-javadoc)
+     * damit der text nicht immer sofort verschwindet und man wieder hochscrollen muss eine enter abfrage zum fortfahren
+     * @throws IOException
+     */
     private void enterZumFortfahren() throws IOException {
-        System.out
-                .println("\n		-> Zum Fortfahren bitte die Enter-Taste drÃ¼cken.");
+        System.out.println("\n		-> Zum Fortfahren bitte die Enter-Taste drücken.");
         String input = this.liesEingabe();
         System.out.println("\n\n");
         input = null;
     }
 
     /**
-     * Methode zur AusfÃ¼hrung der Hauptschleife: - MenÃ¼ ausgeben - Eingabe des
+     * Methode zur Ausführung der Hauptschleife: - Menü ausgeben - Eingabe des
      * Benutzers einlesen - Eingabe verarbeiten und Ergebnis ausgeben
      * (EVA-Prinzip: Eingabe-Verarbeitung-Ausgabe)
      */
     public void run() {
-        // Variable fÃ¼r Eingaben von der Konsole
+        // Variable für Eingaben von der Konsole
         String input = "";
 
         // Hauptschleife der Benutzungsschnittstelle
@@ -670,7 +637,7 @@ public class LagerClientCUI {
     }
 
     /**
-     * Die main-Methode...
+     * Die main-Methode
      */
     public static void main(String[] args) {
         LagerClientCUI cui;

@@ -2,6 +2,7 @@ package bib.local.valueobjects;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 /**
  * Ein WarenLog der anzeigt der Bestand von welcher Ware geändert wurde ... Mit Datum
  * @author Florian
@@ -9,6 +10,7 @@ import java.util.Date;
  */
 public class WarenLog {
 	
+	//Attribute des Logs
 	private SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
 	private Date d;
 	private String bezeichnung;
@@ -24,10 +26,14 @@ public class WarenLog {
 		this.bestand = bestand;
 	}
 	
+	/**
+	 * Standard Methode von Object überschrieben zum einfacheren ausgeben
+	 */
 	public String toString(){
 		return ("Datum: " + this.ft.format(this.d) + "\nBezeichnung: " + this.bezeichnung + "\nNummer: " + this.nummer + "\nPreis: " + this.preis + "\nBestand: " + this.bestand + "\n");
 	}
 	
+	//Accessor methoden
 	public Date getDate(){
 		return this.d;
 	}

@@ -6,14 +6,14 @@ import bib.local.valueobjects.Person;
 import bib.local.valueobjects.Ware;
 
 /**
- * @author Maik
- *
  * Allgemeine Schnittstelle für den Zugriff auf ein Speichermedium
  * (z.B. Datei oder Datenbank) zum Ablegen von beispielsweise
  * Waren- oder Kundendaten.
  * 
  * Das Interface muss von Klassen implementiert werden, die eine
  * Persistenz-Schnittstelle realisieren wollen.
+ * 
+ * @author Florian
  */
 public interface PersistenceManager {
 
