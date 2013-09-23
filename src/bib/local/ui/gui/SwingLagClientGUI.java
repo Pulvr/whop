@@ -3,7 +3,6 @@ package bib.local.ui.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -17,20 +16,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -602,6 +598,10 @@ public class SwingLagClientGUI extends JFrame {
 					  bestandsItem.setVisible(true);
 					  delWareItem.setVisible(true);
 					  warenlogItem.setVisible(true);
+					  if(!user.getWarenkorb().isEmpty()){
+						  warenkorbLeerenButton.setVisible(true);
+						  ausKorbEntfernenButton.setVisible(true);
+					  }
 					  
 					// Einfügen-panel sichtbar machen sobald der Benutzer eingeloggt ist.
 					  panelLinks.setVisible(true);
@@ -644,6 +644,8 @@ public class SwingLagClientGUI extends JFrame {
 		        	  bestandsItem.setVisible(false);
 		        	  delWareItem.setVisible(false);
 		        	  warenlogItem.setVisible(false);
+		        	  warenkorbLeerenButton.setVisible(false);
+					  ausKorbEntfernenButton.setVisible(false);
 		        	  
 		        	  logoutItem.setVisible(false);
 					  logoutButton.setVisible(false);

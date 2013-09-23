@@ -16,7 +16,6 @@ import bib.local.domain.exceptions.WareExistiertBereitsException;
 import bib.local.domain.exceptions.WareExistiertNichtException;
 import bib.local.persistence.FilePersistenceManager;
 import bib.local.persistence.LogPersistenceManager;
-import bib.local.persistence.PersistenceManager;
 import bib.local.valueobjects.Ware;
 import bib.local.valueobjects.WarenLog;
 
