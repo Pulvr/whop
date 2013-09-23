@@ -145,18 +145,20 @@ public class WarenVerwaltung {
 
 	/**
 	 * Methode, die anhand einer Bezeichnung nach Waren sucht. Es wird eine Liste von Waren
-	 * zurückgegeben, die alle Waren mit exakt übereinstimmender Bezeichnung enthält.
+	 * zurückgegeben, die die gesuchte Bezeichnung beinhalten. Zum Beispiel ein Buchstabe bzw 
+	 * eines Wortinhaltes wie 'kokos' im Wort Kokosbaum. Dafür ist die Methode contains (beinhaltet) verantwortlich als auch
+	 * toLowerCase (Kleinschreibung).
 	 * 
 	 * @param bezeichnung Bezeichnung der gesuchten Ware
 	 * @return Liste der Waren mit gesuchter Bezeichnung (evtl. leer)
 	 */
 	public List<Ware> sucheWaren(String bezeichnung) {
 		List<Ware> ergebnis = new Vector<Ware>();
-		
+		bezeichnung = bezeichnung.toLowerCase();
 		Iterator<Ware> iter = warenBestand.iterator();
 		while (iter.hasNext()) {
 			Ware ware = iter.next();
-			if ( ware.getBezeichnung().equals(bezeichnung)) {
+			if ( ware.getBezeichnung().toLowerCase().contains(bezeichnung)) {
 				ergebnis.add(ware);
 			}
 		}

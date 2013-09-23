@@ -3,6 +3,7 @@ package bib.local.ui.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -23,10 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -105,6 +108,10 @@ public class SwingLagClientGUI extends JFrame {
   
   private boolean eingelogged = false;
   private boolean mitarbeiterBerechtigung = false;
+
+  private JDialog graphDialog;
+
+  private BestandsGraph graph;
 
   private static Person user ;
   
@@ -185,17 +192,17 @@ public class SwingLagClientGUI extends JFrame {
     }catch(IOException e){
     	e.getMessage();
     }
-    warenkorbButton.setPreferredSize(new Dimension(155,33));
+    warenkorbButton.setPreferredSize(new Dimension(140,33));
     warenkorbButton.addActionListener(new WarenkorbListener());
    
     //Kaufenbutton um die waren zu kaufen
     kaufenButton = new JButton ("KAUFEN");
-    kaufenButton.setPreferredSize(new Dimension(155,33)); //damit er die gleiche größe hat wie der warenkorbButton
+    kaufenButton.setPreferredSize(new Dimension(100, 33)); //damit er die gleiche größe hat wie der warenkorbButton
     kaufenButton.addActionListener(new KaufenListener());
     
     //einzelne oder mehrere Waren aus dem Korb entfernen
     ausKorbEntfernenButton = new JButton("Ware aus Korb entfernen");
-    ausKorbEntfernenButton.setPreferredSize(new Dimension(155,33));
+    ausKorbEntfernenButton.setPreferredSize(new Dimension(170, 33));
     ausKorbEntfernenButton.setVisible(false);
     ausKorbEntfernenButton.addActionListener(new AusKorbEntfernenListener());
     
@@ -205,11 +212,31 @@ public class SwingLagClientGUI extends JFrame {
     warenkorbLeerenButton.setVisible(false);
     warenkorbLeerenButton.addActionListener(new KorbLeerenListener());
     
+    //Button zum öffnen des Graphen einfügen
+    JButton graphOeffnenButton = new JButton("Bestandshistorie", null);
+    graphOeffnenButton.setPreferredSize(new Dimension(155,33));
+    graphOeffnenButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            if (warenTable.getSelectedRow() > -1) {
+                String warenName = (String) warenTable.getValueAt(warenTable.getSelectedRow(), 1);
+                try {
+                    graph.setDaten(lag.getWarenLog(warenName, graph.getTage()));
+                } catch (IOException | ParseException e) {
+                    JOptionPane.showMessageDialog(null, "Es ist ein Fehler beim laden der Log-Daten aufgetreten.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+                graphDialog.setVisible(true);
+            }
+        }
+    });
+    
     panelUnten.add(warenkorbButton);
     panelUnten.add(kaufenButton);
     panelUnten.add(ausKorbEntfernenButton);
     panelUnten.add(warenkorbLeerenButton);
+    panelUnten.add(graphOeffnenButton);
     panelUnten.setBorder(BorderFactory.createTitledBorder("Warenkorb"));
+
     
     // PANEL RECHTS
     // PANEL RECHTS
@@ -367,10 +394,26 @@ public class SwingLagClientGUI extends JFrame {
     // Menu aufbauen
     initMenu();
     
+    // Den Graphen und einen JDialog erstellen, dem Graphen werden später die Daten gesetzt
+    graphDialog = new JDialog();  //erstellt ein separates Fenster 
+    graphDialog.setSize(700, 450);
+    graphDialog.setLayout(new BorderLayout());
+    graph = new BestandsGraph();
+    graphDialog.add(graph, BorderLayout.CENTER);
+    JButton graphSchliessenButton = new JButton("Schliessen", null);
+    graphSchliessenButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            graphDialog.setVisible(false);
+        }
+    });
+    graphDialog.add(graphSchliessenButton, BorderLayout.SOUTH);
+
+    
     setVisible(true);
   }
   /**
-   * Nimmt die waranTabe und macht die Spalten sortierbar
+   * Nimmt die warenTable und macht die Spalten sortierbar
    * @param table
    */
   public void tableSorter(JTable table){
@@ -721,7 +764,7 @@ public class SwingLagClientGUI extends JFrame {
   class KorbLeerenListener implements ActionListener{
 	  public void actionPerformed(ActionEvent ae){
 		  if(ae.getSource().equals(warenkorbLeerenButton)){
-			 int result = JOptionPane.showConfirmDialog(null, "wollen sie ihren Warenkorb leeren?","Meldung",JOptionPane.OK_CANCEL_OPTION);
+			 int result = JOptionPane.showConfirmDialog(null, "wollen Sie ihren Warenkorb leeren?","Meldung",JOptionPane.OK_CANCEL_OPTION);
 			 if (result == JOptionPane.OK_OPTION){
 				 lag.warenkorbLeeren(user);
 				 JOptionPane.showMessageDialog(null, "Erfolgreich geleert");
